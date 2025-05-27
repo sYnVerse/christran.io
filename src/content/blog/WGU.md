@@ -1,9 +1,9 @@
 ---
 title: "Fast-Track Your IT Career with WGU's Accelerated BS/MS Program"
 description: "Earn both your bachelor's and master's degrees in IT at an accelerated pace with WGU's unique competency-based model."
-author: "Chris"
+author: "Chris Tran"
 pubDate: "2025-05-26"
-heroImage: "/blog-placeholder-1.jpg"
+heroImage: "/WGU.png"
 tags: ["IT", "Education", "WGU", "Accelerated Degree"]
 ---
 
