@@ -7,7 +7,7 @@ heroImage: "/WGU.png"
 tags: ["IT", "Education", "WGU", "Accelerated Degree"]
 ---
 
-The **Accelerated BS/MS Program in IT** from **Western Governors University (WGU)** allows students to earn both a **bachelor's degree in IT** and a **master's in IT management** in a streamlined manner. The program is **fully online**, making it ideal for professionals looking to **balance work, education, and personal life**.
+The **[Accelerated BS/MS Program in IT](https://www.wgu.edu/online-it-degrees/accelerated-information-technology-bachelors-masters-program.html)** from **Western Governors University (WGU)** allows students to earn both a **bachelor's degree in IT** and a **master's in IT management** in a streamlined manner. The program is **fully online**, making it ideal for professionals looking to **balance work, education, and personal life**.
 
 ## 🚀 Why Choose This Program?
 
