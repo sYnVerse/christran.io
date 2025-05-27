@@ -10,6 +10,7 @@ import { SITE_TITLE } from '../consts';
 			<HeaderLink href="/">Home</HeaderLink>
 			<HeaderLink href="/blog">Blog</HeaderLink>
 			<HeaderLink href="/about">About</HeaderLink>
+			<a href="/resume.pdf" class="resume-button" target="_blank">Resume <span class="icon">↗</span></a>
 		</div>
 		<div class="social-links">
 			<a href="https://linkedin.com/in/synchris" target="_blank">
@@ -79,9 +80,31 @@ import { SITE_TITLE } from '../consts';
 	.social-links a:hover {
 		color: var(--accent);
 	}
+	.resume-button {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.3em;
+		padding: 0.5em 1em;
+		background: var(--accent);
+		color: var(--background) !important;
+		border-radius: 4px;
+		font-weight: 600;
+		text-decoration: none;
+		transition: all 0.3s ease;
+	}
+	.resume-button:hover {
+		background: var(--accent-dark);
+		transform: translateY(-1px);
+	}
+	.resume-button .icon {
+		font-size: 0.9em;
+	}
 	@media (max-width: 720px) {
 		.social-links {
 			display: none;
+		}
+		.resume-button {
+			margin-left: 0.5em;
 		}
 	}
 </style>

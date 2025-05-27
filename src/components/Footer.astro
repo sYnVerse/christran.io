@@ -23,6 +23,10 @@ const today = new Date();
 				></path></svg
 			>
 		</a>
+		<a href="/resume.pdf" class="resume-link" target="_blank">
+			<span class="resume-text">View Resume</span>
+			<span class="icon">↗</span>
+		</a>
 	</div>
 </footer>
 <style>
@@ -37,6 +41,7 @@ const today = new Date();
 		justify-content: center;
 		gap: 1em;
 		margin-top: 1em;
+		align-items: center;
 	}
 	.social-links a {
 		text-decoration: none;
@@ -44,5 +49,33 @@ const today = new Date();
 	}
 	.social-links a:hover {
 		color: var(--accent);
+	}
+	.resume-link {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.3em;
+		padding: 0.5em 1em;
+		background: rgba(var(--gray-light), 0.3);
+		border-radius: 4px;
+		font-size: 0.9em;
+		transition: all 0.3s ease;
+	}
+	.resume-link:hover {
+		background: rgba(var(--gray-light), 0.5);
+		transform: translateY(-1px);
+	}
+	.resume-link .icon {
+		font-size: 0.9em;
+	}
+	@media (max-width: 480px) {
+		.resume-text {
+			display: none;
+		}
+		.resume-link {
+			padding: 0.5em;
+		}
+		.resume-link .icon {
+			margin: 0;
+		}
 	}
 </style>
