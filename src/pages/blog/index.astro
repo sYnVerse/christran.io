@@ -9,6 +9,7 @@ import FormattedDate from '../../components/FormattedDate.astro';
 const posts = (await getCollection('blog')).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
+const firstPost = posts[0]; // Get only the first post
 ---
 
 <!doctype html>
@@ -19,67 +20,43 @@ const posts = (await getCollection('blog')).sort(
 			main {
 				width: 960px;
 			}
-			ul {
-				display: flex;
-				flex-wrap: wrap;
-				gap: 2rem;
-				list-style-type: none;
-				margin: 0;
+			.post-container {
+				max-width: 100%;
+				margin: 0 auto;
 				padding: 0;
 			}
-			ul li {
-				width: calc(50% - 1rem);
-			}
-			ul li * {
+			.post-link {
 				text-decoration: none;
-				transition: 0.2s ease;
-			}
-			ul li:first-child {
-				width: 100%;
-				margin-bottom: 1rem;
+				display: block;
 				text-align: center;
 			}
-			ul li:first-child img {
+			.post-image {
 				width: 100%;
-			}
-			ul li:first-child .title {
-				font-size: 2.369rem;
-			}
-			ul li img {
-				margin-bottom: 0.5rem;
+				max-width: 720px;
+				height: auto;
 				border-radius: 12px;
-			}
-			ul li a {
-				display: block;
+				margin-bottom: 1rem;
+				transition: 0.2s ease;
 			}
 			.title {
 				margin: 0;
 				color: rgb(var(--black));
-				line-height: 1;
+				line-height: 1.2;
+				font-size: 2.369rem;
 			}
 			.date {
-				margin: 0;
+				margin: 0.5rem 0 0 0;
 				color: rgb(var(--gray));
 			}
-			ul li a:hover h4,
-			ul li a:hover .date {
+			.post-link:hover .title,
+			.post-link:hover .date {
 				color: rgb(var(--accent));
 			}
-			ul a:hover img {
+			.post-link:hover .post-image {
 				box-shadow: var(--box-shadow);
 			}
 			@media (max-width: 720px) {
-				ul {
-					gap: 0.5em;
-				}
-				ul li {
-					width: 100%;
-					text-align: center;
-				}
-				ul li:first-child {
-					margin-bottom: 0;
-				}
-				ul li:first-child .title {
+				.title {
 					font-size: 1.563em;
 				}
 			}
@@ -89,21 +66,21 @@ const posts = (await getCollection('blog')).sort(
 		<Header />
 		<main>
 			<section>
-				<ul>
-					{
-						posts.map((post) => (
-							<li>
-								<a href={`/blog/${post.id}/`}>
-									<img width={720} height={360} src={post.data.heroImage} alt="" />
-									<h4 class="title">{post.data.title}</h4>
-									<p class="date">
-										<FormattedDate date={post.data.pubDate} />
-									</p>
-								</a>
-							</li>
-						))
-					}
-				</ul>
+				<div class="post-container">
+					<a href={`/blog/${firstPost.id}/`} class="post-link">
+						<img 
+							class="post-image"
+							width={720} 
+							height={360} 
+							src={firstPost.data.heroImage} 
+							alt="" 
+						/>
+						<h2 class="title">{firstPost.data.title}</h2>
+						<p class="date">
+							<FormattedDate date={firstPost.data.pubDate} />
+						</p>
+					</a>
+				</div>
 			</section>
 		</main>
 		<Footer />
