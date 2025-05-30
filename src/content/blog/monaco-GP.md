@@ -2,7 +2,7 @@
 title: "Reimagining Monaco: The 2025 Grand Prix and the Future of a Legend"
 author: "Chris Tran"
 pubDate: "2025-05-27"
-heroImage: "img/monaco-gp.webp"
+heroImage: "/img/monaco-gp.webp"
 description: "A deep dive into the 2025 Monaco Grand Prix – its highlights, the recurring criticisms, proposed track tweaks from industry insiders, and an ultimatum for maintaining the iconic event on the F1 calendar."
 tags: ["Formula 1", "Monaco Grand Prix", "Track Improvements", "F1 Analysis"]
 ---
