@@ -19,43 +19,67 @@ const posts = (await getCollection('blog')).sort(
 			main {
 				width: 960px;
 			}
-			.posts-grid {
-				display: grid;
+			ul {
+				display: flex;
+				flex-wrap: wrap;
 				gap: 2rem;
+				list-style-type: none;
+				margin: 0;
 				padding: 0;
 			}
-			.post-card {
+			ul li {
+				width: calc(50% - 1rem);
+			}
+			ul li * {
 				text-decoration: none;
-				display: block;
+				transition: 0.2s ease;
+			}
+			ul li:first-child {
+				width: 100%;
+				margin-bottom: 1rem;
 				text-align: center;
 			}
-			.post-image {
+			ul li:first-child img {
 				width: 100%;
-				max-width: 720px;
-				height: auto;
+			}
+			ul li:first-child .title {
+				font-size: 2.369rem;
+			}
+			ul li img {
+				margin-bottom: 0.5rem;
 				border-radius: 12px;
-				margin-bottom: 1rem;
-				transition: 0.2s ease;
+			}
+			ul li a {
+				display: block;
 			}
 			.title {
 				margin: 0;
 				color: rgb(var(--black));
-				line-height: 1.2;
-				font-size: 2.369rem;
+				line-height: 1;
 			}
 			.date {
-				margin: 0.5rem 0 0 0;
+				margin: 0;
 				color: rgb(var(--gray));
 			}
-			.post-card:hover .title,
-			.post-card:hover .date {
+			ul li a:hover h4,
+			ul li a:hover .date {
 				color: rgb(var(--accent));
 			}
-			.post-card:hover .post-image {
+			ul a:hover img {
 				box-shadow: var(--box-shadow);
 			}
 			@media (max-width: 720px) {
-				.title {
+				ul {
+					gap: 0.5em;
+				}
+				ul li {
+					width: 100%;
+					text-align: center;
+				}
+				ul li:first-child {
+					margin-bottom: 0;
+				}
+				ul li:first-child .title {
 					font-size: 1.563em;
 				}
 			}
@@ -65,25 +89,21 @@ const posts = (await getCollection('blog')).sort(
 		<Header />
 		<main>
 			<section>
-				<div class="posts-grid">
+				<ul>
 					{
 						posts.map((post) => (
-							<a href={`/blog/${post.id}/`} class="post-card">
-								<img
-									class="post-image"
-									width={720}
-									height={360}
-									src={post.data.heroImage}
-									alt=""
-								/>
-								<h2 class="title">{post.data.title}</h2>
-								<p class="date">
-									<FormattedDate date={post.data.pubDate} />
-								</p>
-							</a>
+							<li>
+								<a href={`/blog/${post.id}/`}>
+									<img width={720} height={360} src={post.data.heroImage} alt="" />
+									<h4 class="title">{post.data.title}</h4>
+									<p class="date">
+										<FormattedDate date={post.data.pubDate} />
+									</p>
+								</a>
+							</li>
 						))
 					}
-				</div>
+				</ul>
 			</section>
 		</main>
 		<Footer />
