@@ -9,7 +9,6 @@ import FormattedDate from '../../components/FormattedDate.astro';
 const posts = (await getCollection('blog')).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
-const firstPost = posts[0]; // Get only the first post
 ---
 
 <!doctype html>
@@ -20,12 +19,12 @@ const firstPost = posts[0]; // Get only the first post
 			main {
 				width: 960px;
 			}
-			.post-container {
-				max-width: 100%;
-				margin: 0 auto;
+			.posts-grid {
+				display: grid;
+				gap: 2rem;
 				padding: 0;
 			}
-			.post-link {
+			.post-card {
 				text-decoration: none;
 				display: block;
 				text-align: center;
@@ -48,11 +47,11 @@ const firstPost = posts[0]; // Get only the first post
 				margin: 0.5rem 0 0 0;
 				color: rgb(var(--gray));
 			}
-			.post-link:hover .title,
-			.post-link:hover .date {
+			.post-card:hover .title,
+			.post-card:hover .date {
 				color: rgb(var(--accent));
 			}
-			.post-link:hover .post-image {
+			.post-card:hover .post-image {
 				box-shadow: var(--box-shadow);
 			}
 			@media (max-width: 720px) {
@@ -66,20 +65,24 @@ const firstPost = posts[0]; // Get only the first post
 		<Header />
 		<main>
 			<section>
-				<div class="post-container">
-					<a href={`/blog/${firstPost.id}/`} class="post-link">
-						<img 
-							class="post-image"
-							width={720} 
-							height={360} 
-							src={firstPost.data.heroImage} 
-							alt="" 
-						/>
-						<h2 class="title">{firstPost.data.title}</h2>
-						<p class="date">
-							<FormattedDate date={firstPost.data.pubDate} />
-						</p>
-					</a>
+				<div class="posts-grid">
+					{
+						posts.map((post) => (
+							<a href={`/blog/${post.id}/`} class="post-card">
+								<img
+									class="post-image"
+									width={720}
+									height={360}
+									src={post.data.heroImage}
+									alt=""
+								/>
+								<h2 class="title">{post.data.title}</h2>
+								<p class="date">
+									<FormattedDate date={post.data.pubDate} />
+								</p>
+							</a>
+						))
+					}
 				</div>
 			</section>
 		</main>
