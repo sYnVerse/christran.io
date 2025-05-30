@@ -15,22 +15,20 @@ export default defineConfig({
     },
   }),
   headers: {
-    // Astro build output
-    '/_astro/*': [
+    // Match all image files in any directory
+    '/*': [
       {
         key: 'Cache-Control',
         value: 'public, max-age=31536000, immutable'
       }
     ],
-    // Root level files
-    '/*.{jpg,jpeg,png,gif,webp,svg,ico,js,css,woff,woff2}': [
+    '/*/*': [
       {
         key: 'Cache-Control',
         value: 'public, max-age=31536000, immutable'
       }
     ],
-    // Nested files in subdirectories
-    '/**/*.{jpg,jpeg,png,gif,webp,svg,ico,js,css,woff,woff2}': [
+    '/*/*/*': [
       {
         key: 'Cache-Control',
         value: 'public, max-age=31536000, immutable'
