@@ -10,5 +10,11 @@
   "observability": {
     "enabled": true
   },
-  "upload_source_maps": true
+  "upload_source_maps": true,
+  "routes": [
+    {
+      "pattern": "christran.io",
+      "custom_domain": true
+    }
+  ]
 }
