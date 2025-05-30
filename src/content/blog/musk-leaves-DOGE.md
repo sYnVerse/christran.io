@@ -1,7 +1,7 @@
 ---
 title: "Elon Musk Leaves DOGE: A New Era for Tesla Shareholders"
 author: "Chris Tran"
-pubDate: "2025-05-29"
+pubDate: "2025-05-28"
 heroImage: "/img/elon-doge.webp"
 description: "Elon Musk’s departure from DOGE signals a renewed focus on Tesla—a move that promises to reinvigorate innovation, boost operational efficiency, and, hopefully, drive shareholder value."
 tags: ["Tesla", "Elon Musk", "DOGE", "Shareholders", "Astro Blog"]
