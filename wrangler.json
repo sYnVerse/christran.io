@@ -15,6 +15,10 @@
     {
       "pattern": "christran.io",
       "custom_domain": true
+    },
+    {
+      "pattern": "www.christran.io",
+      "custom_domain": true
     }
   ]
 }
