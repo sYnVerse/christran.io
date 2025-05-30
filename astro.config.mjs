@@ -15,32 +15,25 @@ export default defineConfig({
     },
   }),
   headers: {
-    // Images
-    '/**/*.{jpg,jpeg,png,gif,webp,svg,ico}': [
+    // Astro build output
+    '/_astro/*': [
       {
         key: 'Cache-Control',
-        value: 'public, max-age=31536000, stale-while-revalidate=86400'
+        value: 'public, max-age=31536000, immutable'
       }
     ],
-    // Fonts
-    '/**/*.{woff,woff2,eot,ttf,otf}': [
+    // Root level files
+    '/*.{jpg,jpeg,png,gif,webp,svg,ico,js,css,woff,woff2}': [
       {
         key: 'Cache-Control',
-        value: 'public, max-age=31536000, stale-while-revalidate=86400'
+        value: 'public, max-age=31536000, immutable'
       }
     ],
-    // Media files
-    '/**/*.{mp3,mp4,webm,ogg,wav}': [
+    // Nested files in subdirectories
+    '/**/*.{jpg,jpeg,png,gif,webp,svg,ico,js,css,woff,woff2}': [
       {
         key: 'Cache-Control',
-        value: 'public, max-age=31536000, stale-while-revalidate=86400'
-      }
-    ],
-    // Scripts and stylesheets
-    '/**/*.{js,css,mjs}': [
-      {
-        key: 'Cache-Control',
-        value: 'public, max-age=31536000, stale-while-revalidate=86400'
+        value: 'public, max-age=31536000, immutable'
       }
     ]
   }
