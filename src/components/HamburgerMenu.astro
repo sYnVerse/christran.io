@@ -23,6 +23,7 @@ import HeaderLink from './HeaderLink.astro';
 <style>
 	.hamburger-menu {
 		position: relative;
+		display: block;
 	}
 
 	.hamburger-button {
@@ -36,12 +37,13 @@ import HeaderLink from './HeaderLink.astro';
 		cursor: pointer;
 		padding: 0;
 		z-index: 1001;
+		position: relative;
 	}
 
 	.hamburger-line {
 		width: 2rem;
 		height: 0.25rem;
-		background: rgb(var(--black));
+		background: #000;
 		border-radius: 10px;
 		transition: all 0.3s linear;
 		position: relative;
@@ -49,7 +51,7 @@ import HeaderLink from './HeaderLink.astro';
 	}
 
 	.hamburger-button:hover .hamburger-line {
-		background: var(--accent);
+		background: #007acc;
 	}
 
 	/* Hamburger animation when open */
@@ -71,7 +73,7 @@ import HeaderLink from './HeaderLink.astro';
 		left: -300px;
 		width: 300px;
 		height: 100vh;
-		background: var(--background);
+		background: #ffffff;
 		box-shadow: 2px 0 8px rgba(0, 0, 0, 0.3);
 		transition: left 0.3s ease-in-out;
 		z-index: 1000;
@@ -93,10 +95,13 @@ import HeaderLink from './HeaderLink.astro';
 		padding: 0.5rem 0;
 		border-bottom: 2px solid transparent;
 		transition: all 0.2s ease;
+		color: #000;
+		text-decoration: none;
 	}
 
 	.nav-links a:hover {
-		border-bottom-color: var(--accent);
+		border-bottom-color: #007acc;
+		color: #007acc;
 	}
 
 	.overlay {
