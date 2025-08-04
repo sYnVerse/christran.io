@@ -1,16 +1,14 @@
 ---
-import HeaderLink from './HeaderLink.astro';
+import HamburgerMenu from './HamburgerMenu.astro';
 import { SITE_TITLE } from '../consts';
 ---
 
 <header>
 	<nav>
-		<h2><a href="/">{SITE_TITLE}</a></h2>
-		<div class="internal-links">
-			<HeaderLink href="/">Home</HeaderLink>
-			<HeaderLink href="/blog">Blog</HeaderLink>
-			<HeaderLink href="/about">About</HeaderLink>
+		<div class="left-section">
+			<HamburgerMenu />
 		</div>
+		<h2><a href="/">{SITE_TITLE}</a></h2>
 		<div class="social-links">
 			<a href="https://linkedin.com/in/synchris" target="_blank">
 				<span class="sr-only">Connect with me on LinkedIn</span>
@@ -64,6 +62,12 @@ import { SITE_TITLE } from '../consts';
 		align-items: center;
 		justify-content: space-between;
 	}
+	
+	.left-section {
+		display: flex;
+		align-items: center;
+	}
+	
 	nav a {
 		padding: 1em 0.5em;
 		color: rgb(var(--gray-dark));
