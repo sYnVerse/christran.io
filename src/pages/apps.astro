@@ -1,0 +1,193 @@
+---
+import Layout from '../layouts/BlogPost.astro';
+---
+
+<Layout
+	title="Apps"
+	description="A collection of applications and tools I've built"
+	pubDate={new Date('January 15 2025')}
+	heroImage="/img/apps.webp"
+>
+	<div class="apps-grid">
+		<div class="app-card">
+			<h3>2do.christran.io</h3>
+			<p>
+				A modern task management application for organizing and tracking personal and professional tasks. 
+				Features intuitive interface, priority levels, due dates, and progress tracking to help you stay 
+				productive and organized.
+			</p>
+			<div class="app-tags">
+				<span class="tag">Task Management</span>
+				<span class="tag">Productivity</span>
+				<span class="tag">Web App</span>
+			</div>
+			<div class="app-link">
+				<a href="https://2do.christran.io" target="_blank" rel="noopener noreferrer">Visit App →</a>
+			</div>
+		</div>
+
+		<div class="app-card">
+			<h3>chat.christran.io</h3>
+			<p>
+				Real-time chat application for seamless communication and collaboration. Built with modern 
+				web technologies, featuring instant messaging, user authentication, and responsive design 
+				for both desktop and mobile use.
+			</p>
+			<div class="app-tags">
+				<span class="tag">Real-time Chat</span>
+				<span class="tag">Communication</span>
+				<span class="tag">WebSocket</span>
+			</div>
+			<div class="app-link">
+				<a href="https://chat.christran.io" target="_blank" rel="noopener noreferrer">Visit App →</a>
+			</div>
+		</div>
+
+		<div class="app-card">
+			<h3>llm.christran.io</h3>
+			<p>
+				Large Language Model interface for AI-powered text generation and conversation. Provides 
+				access to advanced language models for content creation, analysis, and interactive 
+				conversations with customizable parameters and response handling.
+			</p>
+			<div class="app-tags">
+				<span class="tag">AI</span>
+				<span class="tag">Language Model</span>
+				<span class="tag">Text Generation</span>
+			</div>
+			<div class="app-link">
+				<a href="https://llm.christran.io" target="_blank" rel="noopener noreferrer">Visit App →</a>
+			</div>
+		</div>
+
+		<div class="app-card">
+			<h3>t2i.christran.io</h3>
+			<p>
+				Text-to-Image generation platform that transforms written descriptions into visual artwork. 
+				Leverages AI image generation models to create custom images from text prompts, perfect for 
+				content creators, designers, and creative projects.
+			</p>
+			<div class="app-tags">
+				<span class="tag">AI Art</span>
+				<span class="tag">Image Generation</span>
+				<span class="tag">Creative</span>
+			</div>
+			<div class="app-link">
+				<a href="https://t2i.christran.io" target="_blank" rel="noopener noreferrer">Visit App →</a>
+			</div>
+		</div>
+	</div>
+
+	<div class="coming-soon">
+		<h2>More Coming Soon</h2>
+		<p>
+			I'm continuously working on new applications and tools. Check back regularly for updates 
+			and new features across all my existing applications!
+		</p>
+	</div>
+</Layout>
+
+<style>
+	.apps-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+		gap: 2rem;
+		margin-bottom: 3rem;
+	}
+
+	.app-card {
+		padding: 1.5rem;
+		border: 1px solid rgba(var(--gray-light), 0.3);
+		border-radius: 8px;
+		background: rgba(var(--gray-light), 0.05);
+		transition: all 0.2s ease;
+	}
+
+	.app-card:hover {
+		border-color: var(--accent);
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+		transform: translateY(-2px);
+	}
+
+	.app-card h3 {
+		margin: 0 0 1rem 0;
+		color: rgb(var(--black));
+		font-size: 1.3rem;
+	}
+
+	.app-card p {
+		margin: 0 0 1rem 0;
+		color: rgb(var(--gray-dark));
+		line-height: 1.6;
+	}
+
+	.app-tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		margin-bottom: 1rem;
+	}
+
+	.tag {
+		padding: 0.25rem 0.75rem;
+		background: var(--accent);
+		color: white;
+		border-radius: 20px;
+		font-size: 0.8rem;
+		font-weight: 500;
+	}
+
+	.app-link {
+		margin-top: auto;
+	}
+
+	.app-link a {
+		display: inline-block;
+		padding: 0.5rem 1rem;
+		background: var(--accent);
+		color: white;
+		text-decoration: none;
+		border-radius: 6px;
+		font-weight: 500;
+		transition: all 0.2s ease;
+	}
+
+	.app-link a:hover {
+		background: #0056b3;
+		transform: translateY(-1px);
+	}
+
+	.coming-soon {
+		margin-top: 3rem;
+		padding: 2rem;
+		background: rgba(var(--gray-light), 0.1);
+		border-radius: 8px;
+		text-align: center;
+	}
+
+	.coming-soon h2 {
+		margin: 0 0 1rem 0;
+		color: rgb(var(--black));
+	}
+
+	.coming-soon p {
+		margin: 0;
+		color: rgb(var(--gray-dark));
+		line-height: 1.6;
+	}
+
+	@media (max-width: 720px) {
+		.apps-grid {
+			grid-template-columns: 1fr;
+			gap: 1.5rem;
+		}
+
+		.app-card {
+			padding: 1rem;
+		}
+
+		.coming-soon {
+			padding: 1.5rem;
+		}
+	}
+</style> 
