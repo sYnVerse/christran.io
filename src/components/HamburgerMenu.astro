@@ -30,8 +30,8 @@ import HeaderLink from './HeaderLink.astro';
 		display: flex;
 		flex-direction: column;
 		justify-content: space-around;
-		width: 2rem;
-		height: 2rem;
+		width: 1.5rem;
+		height: 1.5rem;
 		background: transparent;
 		border: none;
 		cursor: pointer;
@@ -41,10 +41,10 @@ import HeaderLink from './HeaderLink.astro';
 	}
 
 	.hamburger-line {
-		width: 2rem;
-		height: 0.25rem;
+		width: 1.5rem;
+		height: 0.2rem;
 		background: #000;
-		border-radius: 10px;
+		border-radius: 2px;
 		transition: all 0.3s linear;
 		position: relative;
 		transform-origin: 1px;
@@ -78,10 +78,12 @@ import HeaderLink from './HeaderLink.astro';
 		transition: left 0.3s ease-in-out;
 		z-index: 1000;
 		padding: 5rem 2rem 2rem 2rem;
+		visibility: hidden;
 	}
 
 	.hamburger-menu.open .sidebar-nav {
 		left: 0;
+		visibility: visible;
 	}
 
 	.nav-links {
