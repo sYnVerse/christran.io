@@ -35,6 +35,39 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 					</a>
 				</div>
 			</div>
+
+			<section class="terminal-section" aria-label="Interactive terminal">
+				<div class="terminal-window">
+					<div class="terminal-titlebar">
+						<div class="terminal-dots">
+							<span class="dot red"></span>
+							<span class="dot yellow"></span>
+							<span class="dot green"></span>
+						</div>
+						<span class="terminal-title">visitor@portfolio — bash</span>
+					</div>
+					<div class="terminal-body">
+						<div class="terminal-output" id="term-output" role="log">
+							<div class="term-line">
+								<span class="term-prompt">visitor@portfolio:~$</span> type a command and press Enter. try <code>help</code>
+							</div>
+						</div>
+						<div class="terminal-input-line">
+							<span class="term-prompt">visitor@portfolio:~$</span>
+							<input
+								type="text"
+								class="terminal-input"
+								id="term-input"
+								autocomplete="off"
+								autocapitalize="off"
+								spellcheck="false"
+								aria-label="Terminal command input"
+							/>
+							<span class="term-cursor" aria-hidden="true"></span>
+						</div>
+					</div>
+				</div>
+			</section>
 		</main>
 		<Footer />
 		<style>
@@ -82,7 +115,163 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 				font-size: 0.9em;
 				color: rgb(var(--gray-dark));
 			}
+
+			.terminal-section {
+				margin-top: 2.5rem;
+			}
+			.terminal-window {
+				font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace;
+				font-size: 0.85rem;
+				line-height: 1.5;
+				background: #1a1d29;
+				border-radius: 10px;
+				overflow: hidden;
+				box-shadow: var(--box-shadow), 0 0 0 1px rgba(123, 158, 255, 0.15);
+				max-width: 100%;
+			}
+			.terminal-titlebar {
+				display: flex;
+				align-items: center;
+				gap: 0.75rem;
+				padding: 0.5rem 0.75rem;
+				background: #252836;
+				border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+			}
+			.terminal-dots {
+				display: flex;
+				gap: 6px;
+			}
+			.terminal-dots .dot {
+				width: 10px;
+				height: 10px;
+				border-radius: 50%;
+			}
+			.terminal-dots .dot.red { background: #ff5f56; }
+			.terminal-dots .dot.yellow { background: #ffbd2e; }
+			.terminal-dots .dot.green { background: #27c93f; }
+			.terminal-title {
+				color: rgba(210, 215, 235, 0.7);
+				font-size: 0.75rem;
+			}
+			.terminal-body {
+				padding: 0.75rem 1rem;
+				min-height: 140px;
+			}
+			.terminal-output {
+				max-height: 200px;
+				overflow-y: auto;
+				margin-bottom: 0.5rem;
+			}
+			.terminal-output .term-line {
+				margin-bottom: 0.25rem;
+				word-break: break-word;
+			}
+			.terminal-output .term-line code {
+				background: rgba(123, 158, 255, 0.2);
+				padding: 1px 4px;
+				border-radius: 3px;
+			}
+			.term-prompt {
+				color: var(--accent);
+				margin-right: 0.5rem;
+			}
+			.terminal-input-line {
+				display: flex;
+				align-items: center;
+				flex-wrap: wrap;
+				gap: 0;
+			}
+			.terminal-input {
+				flex: 1;
+				min-width: 120px;
+				background: transparent;
+				border: none;
+				color: rgb(var(--gray-dark));
+				font: inherit;
+				outline: none;
+				padding: 0;
+			}
+			.terminal-input::placeholder {
+				color: rgba(210, 215, 235, 0.4);
+			}
+			.term-cursor {
+				display: inline-block;
+				width: 8px;
+				height: 1.1em;
+				background: var(--accent);
+				animation: blink 1s step-end infinite;
+				vertical-align: text-bottom;
+			}
+			@keyframes blink {
+				50% { opacity: 0; }
+			}
+			.terminal-output .term-response {
+				color: rgb(var(--gray));
+				white-space: pre-wrap;
+			}
 		</style>
+		<script define:vars={{}}>
+			(function () {
+				const output = document.getElementById('term-output');
+				const input = document.getElementById('term-input');
+				if (!output || !input) return;
+
+				const promptText = 'visitor@portfolio:~$';
+
+				const commands = {
+					whoami: () =>
+						'chris\nNetwork Engineer in the SF Bay Area. IT infrastructure, security, and turning caffeine into configs.',
+					'ping skills': () =>
+						'PING skills.chris.local (10.0.0.42) 56(84) bytes of data.\n64 bytes from skills: icmp_seq=1 ttl=64 time=0.042 ms\n--- skills.chris.local ping statistics ---\n1 packets transmitted, 1 received, 0% packet loss\n\nKey skills: networking, security, automation, and way too many tabs of documentation.',
+					'traceroute career': () =>
+						'traceroute to career (192.168.1.1), 30 hops max\n 1  education.gateway (0.5 ms)\n 2  first-job.local (2 ms)\n 3  network-engineer.sf (5 ms)\n 4  * still.routing (present) *\n\nDestination reached. Next hop: whatever you\'re building next.',
+					help: () =>
+						'Available commands:\n  whoami           — who is Chris?\n  ping skills      — probe my skills\n  traceroute career — path to where I am now\n  clear            — clear the screen',
+					clear: () => '__CLEAR__'
+				};
+
+				function appendLine(html: string) {
+					const line = document.createElement('div');
+					line.className = 'term-line';
+					line.innerHTML = html;
+					output.appendChild(line);
+					output.scrollTop = output.scrollHeight;
+				}
+
+				function runCommand(cmd: string) {
+					const trimmed = cmd.trim().toLowerCase();
+					const response = commands[trimmed];
+					if (response === undefined) {
+						appendLine(`<span class="term-prompt">${promptText}</span> ${escapeHtml(cmd)}`);
+						appendLine(`<span class="term-response">bash: ${escapeHtml(trimmed)}: command not found. Try \`help\`</span>`);
+						return;
+					}
+					appendLine(`<span class="term-prompt">${promptText}</span> ${escapeHtml(cmd)}`);
+					const result = typeof response === 'function' ? response() : response;
+					if (result === '__CLEAR__') {
+						output.innerHTML = '';
+						return;
+					}
+					appendLine(`<span class="term-response">${escapeHtml(result)}</span>`);
+				}
+
+				function escapeHtml(s: string) {
+					const div = document.createElement('div');
+					div.textContent = s;
+					return div.innerHTML;
+				}
+
+				input.addEventListener('keydown', (e) => {
+					if (e.key !== 'Enter') return;
+					e.preventDefault();
+					const cmd = input.value;
+					input.value = '';
+					runCommand(cmd);
+				});
+
+				input.focus();
+			})();
+		</script>
 	</body>
 </html>
 
