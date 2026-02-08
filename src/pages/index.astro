@@ -48,7 +48,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 				I’m Chris Tran, a San Francisco Bay Area-based engineer passionate about building infrastructure that just works. Explore my latest projects, read my technical deep-dives, or use the terminal below to query my skills directly.
 			</p>
 			<section class="terminal-section" aria-label="Interactive terminal">
-				<div class="terminal-window">
+				<div class="terminal-window" id="terminal-window">
 					<div class="terminal-titlebar">
 						<div class="terminal-dots">
 							<span class="dot red"></span>
@@ -185,6 +185,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 				padding: 0.5rem 0.75rem;
 				background: #252836;
 				border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+				cursor: text;
 			}
 			.terminal-dots {
 				display: flex;
@@ -205,6 +206,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 			.terminal-body {
 				padding: 0.75rem 1rem;
 				min-height: 140px;
+				cursor: text;
 			}
 			.terminal-output {
 				max-height: 200px;
@@ -334,7 +336,14 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 
 				const output = document.getElementById('term-output');
 				const input = document.getElementById('term-input');
+				const terminalWindow = document.getElementById('terminal-window');
 				if (!output || !input) return;
+
+				if (terminalWindow) {
+					terminalWindow.addEventListener('click', function () {
+						input.focus();
+					});
+				}
 
 				function updateInputWidth() {
 					var len = input.value.length;
