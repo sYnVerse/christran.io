@@ -210,8 +210,8 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 				white-space: pre-wrap;
 			}
 		</style>
-		<script define:vars={{}}>
-			(function () {
+		<script is:inline>
+			document.addEventListener('DOMContentLoaded', function () {
 				const output = document.getElementById('term-output');
 				const input = document.getElementById('term-input');
 				if (!output || !input) return;
@@ -219,18 +219,22 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 				const promptText = 'visitor@portfolio:~$';
 
 				const commands = {
-					whoami: () =>
-						'chris\nNetwork Engineer in the SF Bay Area. IT infrastructure, security, and turning caffeine into configs.',
-					'ping skills': () =>
-						'PING skills.chris.local (10.0.0.42) 56(84) bytes of data.\n64 bytes from skills: icmp_seq=1 ttl=64 time=0.042 ms\n--- skills.chris.local ping statistics ---\n1 packets transmitted, 1 received, 0% packet loss\n\nKey skills: networking, security, automation, and way too many tabs of documentation.',
-					'traceroute career': () =>
-						'traceroute to career (192.168.1.1), 30 hops max\n 1  education.gateway (0.5 ms)\n 2  first-job.local (2 ms)\n 3  network-engineer.sf (5 ms)\n 4  * still.routing (present) *\n\nDestination reached. Next hop: whatever you\'re building next.',
-					help: () =>
-						'Available commands:\n  whoami           — who is Chris?\n  ping skills      — probe my skills\n  traceroute career — path to where I am now\n  clear            — clear the screen',
-					clear: () => '__CLEAR__'
+					whoami: function () {
+						return 'chris\nNetwork Engineer in the SF Bay Area. IT infrastructure, security, and turning caffeine into configs.';
+					},
+					'ping skills': function () {
+						return 'PING skills.chris.local (10.0.0.42) 56(84) bytes of data.\n64 bytes from skills: icmp_seq=1 ttl=64 time=0.042 ms\n--- skills.chris.local ping statistics ---\n1 packets transmitted, 1 received, 0% packet loss\n\nKey skills: networking, security, automation, and way too many tabs of documentation.';
+					},
+					'traceroute career': function () {
+						return 'traceroute to career (192.168.1.1), 30 hops max\n 1  education.gateway (0.5 ms)\n 2  first-job.local (2 ms)\n 3  network-engineer.sf (5 ms)\n 4  * still.routing (present) *\n\nDestination reached. Next hop: whatever you\'re building next.';
+					},
+					help: function () {
+						return 'Available commands:\n  whoami           — who is Chris?\n  ping skills      — probe my skills\n  traceroute career — path to where I am now\n  clear            — clear the screen';
+					},
+					clear: function () { return '__CLEAR__'; }
 				};
 
-				function appendLine(html: string) {
+				function appendLine(html) {
 					const line = document.createElement('div');
 					line.className = 'term-line';
 					line.innerHTML = html;
@@ -238,39 +242,39 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 					output.scrollTop = output.scrollHeight;
 				}
 
-				function runCommand(cmd: string) {
-					const trimmed = cmd.trim().toLowerCase();
-					const response = commands[trimmed];
-					if (response === undefined) {
-						appendLine(`<span class="term-prompt">${promptText}</span> ${escapeHtml(cmd)}`);
-						appendLine(`<span class="term-response">bash: ${escapeHtml(trimmed)}: command not found. Try \`help\`</span>`);
-						return;
-					}
-					appendLine(`<span class="term-prompt">${promptText}</span> ${escapeHtml(cmd)}`);
-					const result = typeof response === 'function' ? response() : response;
-					if (result === '__CLEAR__') {
-						output.innerHTML = '';
-						return;
-					}
-					appendLine(`<span class="term-response">${escapeHtml(result)}</span>`);
-				}
-
-				function escapeHtml(s: string) {
+				function escapeHtml(s) {
 					const div = document.createElement('div');
 					div.textContent = s;
 					return div.innerHTML;
 				}
 
-				input.addEventListener('keydown', (e) => {
+				function runCommand(cmd) {
+					const trimmed = cmd.trim().toLowerCase();
+					const response = commands[trimmed];
+					if (response === undefined) {
+						appendLine('<span class="term-prompt">' + promptText + '</span> ' + escapeHtml(cmd));
+						appendLine('<span class="term-response">bash: ' + escapeHtml(trimmed) + ': command not found. Try `help`</span>');
+						return;
+					}
+					appendLine('<span class="term-prompt">' + promptText + '</span> ' + escapeHtml(cmd));
+					const result = typeof response === 'function' ? response() : response;
+					if (result === '__CLEAR__') {
+						output.innerHTML = '';
+						return;
+					}
+					appendLine('<span class="term-response">' + escapeHtml(result) + '</span>');
+				}
+
+				input.addEventListener('keydown', function (e) {
 					if (e.key !== 'Enter') return;
 					e.preventDefault();
-					const cmd = input.value;
+					var cmd = input.value;
 					input.value = '';
 					runCommand(cmd);
 				});
 
 				input.focus();
-			})();
+			});
 		</script>
 	</body>
 </html>
