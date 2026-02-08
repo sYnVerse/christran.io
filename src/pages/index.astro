@@ -45,7 +45,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 		<main>
 			<h1>Network Engineering. Security. Automation.</h1>
 			<p>
-				I’m Chris Tran, a San Francisco-based engineer passionate about building infrastructure that just works. Explore my latest projects, read my technical deep-dives, or use the terminal below to query my skills directly.
+				I’m Chris Tran, a San Francisco Bay Area-based engineer passionate about building infrastructure that just works. Explore my latest projects, read my technical deep-dives, or use the terminal below to query my skills directly.
 			</p>
 			<section class="terminal-section" aria-label="Interactive terminal">
 				<div class="terminal-window">
@@ -278,7 +278,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 
 				function updateInputWidth() {
 					var len = input.value.length;
-					input.style.width = (len + 1) + 'ch';
+					input.style.width = (len - 1) + 'ch';
 				}
 				updateInputWidth();
 				input.addEventListener('input', updateInputWidth);
@@ -293,7 +293,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 						return 'PING skills.chris.local (10.0.0.42) 56(84) bytes of data.\n64 bytes from skills: icmp_seq=1 ttl=64 time=0.042 ms\n--- skills.chris.local ping statistics ---\n1 packets transmitted, 1 received, 0% packet loss\n\nKey skills: networking, security, automation, and way too many tabs of documentation.';
 					},
 					'traceroute career': function () {
-						return 'traceroute to career (192.168.1.1), 30 hops max\n 1  education.gateway (0.5 ms)\n 2  first-job.local (2 ms)\n 3  network-engineer.sf (5 ms)\n 4  * still.routing (present) *\n\nDestination reached. Next hop: whatever you\'re building next.';
+						return 'traceroute to career (192.168.1.1), 30 hops max\n 1  education.gateway (0.5 ms)\n 2  first-job.local (2 ms)\n 3  network-engineer.sf (5 ms)\n 4  * still.routing (present) *\n\nDestination reached. Next hop: whatever I\'m building next!';
 					},
 					help: function () {
 						return 'Available commands:\n  whoami           — who is Chris?\n  ping skills      — probe my skills\n  traceroute career — path to where I am now\n  clear            — clear the screen';
