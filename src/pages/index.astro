@@ -278,7 +278,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 
 				function updateInputWidth() {
 					var len = input.value.length;
-					input.style.width = (len - 1) + 'ch';
+					input.style.width = (len + 1) + 'ch';
 				}
 				updateInputWidth();
 				input.addEventListener('input', updateInputWidth);
