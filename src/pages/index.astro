@@ -248,6 +248,10 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 					return div.innerHTML;
 				}
 
+				function escapeHtmlWithBreaks(s) {
+					return s.split('\n').map(escapeHtml).join('<br>');
+				}
+
 				function runCommand(cmd) {
 					const trimmed = cmd.trim().toLowerCase();
 					const response = commands[trimmed];
@@ -262,7 +266,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 						output.innerHTML = '';
 						return;
 					}
-					appendLine('<span class="term-response">' + escapeHtml(result) + '</span>');
+					appendLine('<span class="term-response">' + escapeHtmlWithBreaks(result) + '</span>');
 				}
 
 				input.addEventListener('keydown', function (e) {
