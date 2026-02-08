@@ -1,7 +1,7 @@
 ---
 title: "The 2026 Revolution: New Rules, New Engines, and an 11th Team"
 author: "Chris Tran"
-pubDate: "2026-01-12"
+pubDate: "2026-01-28"
 heroImage: "/img/f1-2026-concept.webp"
 description: "A comprehensive look at the dawn of a new Formula 1 era. We break down the radical chassis and power unit regulation changes, the arrival of Audi and Cadillac, and the complete reshuffle of the driver market for the 2026 season."
 tags: ["Formula 1", "F1 2026", "Audi F1", "Cadillac F1", "Lewis Hamilton", "Red Bull-Ford", "Sergio Perez", "Valterri Bottas"]
