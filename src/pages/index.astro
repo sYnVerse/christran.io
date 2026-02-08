@@ -414,7 +414,10 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 					runCommand(cmd);
 				});
 
-				input.focus();
+				// Only autofocus on non-mobile to avoid opening the keyboard on small screens
+				if (window.matchMedia('(min-width: 641px)').matches) {
+					input.focus();
+				}
 			});
 		</script>
 	</body>
