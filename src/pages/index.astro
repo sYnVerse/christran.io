@@ -17,19 +17,6 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 			<p>
 				I’m Chris Tran, a San Francisco-based engineer passionate about building infrastructure that just works. Explore my latest projects, read my technical deep-dives, or use the terminal below to query my skills directly.
 			</p>
-			<div class="cta-links">
-				<div class="cta-grid">
-					<a href="/about" class="cta-item">
-						<h3>About Me →</h3>
-						<p>Learn more about my professional background and expertise</p>
-					</a>
-					<a href="/blog" class="cta-item">
-						<h3>Blog →</h3>
-						<p>Read my latest thoughts and technical articles</p>
-					</a>
-				</div>
-			</div>
-
 			<section class="terminal-section" aria-label="Interactive terminal">
 				<div class="terminal-window">
 					<div class="terminal-titlebar">
@@ -80,36 +67,6 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 				margin: 1rem auto;
 				max-width: 65ch;
 			}
-			.cta-links {
-				margin-top: 2rem;
-			}
-			.cta-grid {
-				display: grid;
-				grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-				gap: 1rem;
-			}
-			.cta-item {
-				padding: 1.5rem;
-				background: rgba(var(--gray-light), 0.1);
-				border-radius: 8px;
-				text-decoration: none;
-				transition: all 0.3s ease;
-			}
-			.cta-item:hover {
-				background: rgba(var(--gray-light), 0.2);
-				transform: translateY(-2px);
-			}
-			.cta-item h3 {
-				margin: 0;
-				font-size: 1.2em;
-				color: var(--accent);
-			}
-			.cta-item p {
-				margin: 0.5rem 0 0 0;
-				font-size: 0.9em;
-				color: rgb(var(--gray-dark));
-			}
-
 			.terminal-section {
 				margin-top: 2.5rem;
 			}
