@@ -226,6 +226,11 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 				color: var(--accent);
 				margin-right: 0.5rem;
 			}
+			/* Apply prompt color to dynamically appended lines (Astro scoping doesn't apply to innerHTML) */
+			.terminal-output :global(.term-prompt) {
+				color: var(--accent);
+				margin-right: 0.5rem;
+			}
 			.term-prompt-short {
 				display: none;
 			}
