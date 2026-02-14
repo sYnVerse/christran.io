@@ -272,6 +272,13 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 				color: rgb(var(--gray));
 				white-space: pre-wrap;
 			}
+			.terminal-output .term-response a {
+				color: inherit;
+				text-decoration: underline;
+			}
+			.terminal-output .term-response a:hover {
+				color: var(--accent);
+			}
 
 			@media (max-width: 640px) {
 				.home-page {
@@ -362,7 +369,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 						return 'PING skills.chris.local (10.0.0.42) 56(84) bytes of data.\n64 bytes from skills: icmp_seq=1 ttl=64 time=0.042 ms\n--- skills.chris.local ping statistics ---\n1 packets transmitted, 1 received, 0% packet loss\n\nKey skills: networking, security, automation, and way too many tabs of documentation.';
 					},
 					'traceroute career': function () {
-						return 'traceroute to career (192.168.1.1), 30 hops max\n 1  education.gateway (0.5 ms)\n 2  first-job.local (2 ms)\n 3  network-engineer.sf (5 ms)\n 4  * still.routing (present) *\n\nDestination reached. Next hop: whatever I\'m building next!';
+						return 'traceroute to career (192.168.1.1), 30 hops max\n 1  foothill.edu (1.2 ms)\n 2  ucsd.edu (4.8 ms)\n 3  amazon.com (8.4 ms)\n 4  santaclaracounty.gov (12.1 ms)\n 5  microsoft.com (18.7 ms)\n 6  autochlor.com (22.3 ms)\n 7  wgu.edu (28.9 ms)\n\nDestination reached. Next hop: whatever I\'m building next!';
 					},
 					help: function () {
 						return 'Available commands:\n  \u2002whoami           — who is Chris?\n  \u2002ping skills      — probe my skills\n  \u2002traceroute career — path to where I am now\n  \u2002clear            — clear the screen';
@@ -400,6 +407,11 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 					const result = typeof response === 'function' ? response() : response;
 					if (result === '__CLEAR__') {
 						output.innerHTML = '';
+						return;
+					}
+					if (trimmed === 'traceroute career') {
+						const tracerouteHtml = 'traceroute to career (192.168.1.1), 30 hops max<br> 1  <a href="https://foothill.edu" target="_blank" rel="noopener noreferrer">foothill.edu</a> (1.2 ms)<br> 2  <a href="https://ucsd.edu" target="_blank" rel="noopener noreferrer">ucsd.edu</a> (4.8 ms)<br> 3  <a href="https://amazon.com" target="_blank" rel="noopener noreferrer">amazon.com</a> (8.4 ms)<br> 4  <a href="https://santaclaracounty.gov" target="_blank" rel="noopener noreferrer">santaclaracounty.gov</a> (12.1 ms)<br> 5  <a href="https://microsoft.com" target="_blank" rel="noopener noreferrer">microsoft.com</a> (18.7 ms)<br> 6  <a href="https://autochlor.com" target="_blank" rel="noopener noreferrer">autochlor.com</a> (22.3 ms)<br> 7  <a href="https://wgu.edu" target="_blank" rel="noopener noreferrer">wgu.edu</a> (28.9 ms)<br><br>Destination reached. Next hop: whatever I\'m building next!';
+						appendLine('<span class="term-response">' + tracerouteHtml + '</span>');
 						return;
 					}
 					appendLine('<span class="term-response">' + escapeHtmlWithBreaks(result) + '</span>');
