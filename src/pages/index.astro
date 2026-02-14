@@ -400,11 +400,11 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 					const canonical = trimmed === 'tracert' ? 'traceroute career' : trimmed === 'ping' ? 'ping skills' : trimmed;
 					const response = commands[canonical];
 					if (response === undefined) {
-						appendLine('<span class="term-prompt">' + promptText + '</span> ' + escapeHtml(cmd));
+						appendLine('<span class="term-prompt">' + promptText + '</span>' + escapeHtml(cmd));
 						appendLine('<span class="term-response">bash: ' + escapeHtml(trimmed) + ': command not found. Try `help`</span>');
 						return;
 					}
-					appendLine('<span class="term-prompt">' + promptText + '</span> ' + escapeHtml(cmd));
+					appendLine('<span class="term-prompt">' + promptText + '</span>' + escapeHtml(cmd));
 					const result = typeof response === 'function' ? response() : response;
 					if (result === '__CLEAR__') {
 						output.innerHTML = '';
