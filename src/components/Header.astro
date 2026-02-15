@@ -180,7 +180,12 @@ import { SITE_TITLE } from '../consts';
 		transform: translateY(-6px) rotate(90deg);
 	}
 
-	/* Desktop: inline nav menu */
+	/* Desktop: solid header and inline nav menu */
+	@media (min-width: 721px) {
+		header {
+			background: var(--background);
+		}
+	}
 	.nav-menu {
 		display: flex;
 		align-items: center;
