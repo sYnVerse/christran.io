@@ -60,7 +60,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 					<div class="terminal-body">
 						<div class="terminal-output" id="term-output" role="log">
 							<div class="term-line">
-								<span class="term-prompt">visitor@christran.io:~$</span>type a command and press Enter. try <code>help</code>
+								<span class="term-prompt">visitor@christran.io:~$</span>type a command and press Enter. try <code>help</code> or <code>ls</code>
 							</div>
 						</div>
 						<div class="terminal-input-line">
@@ -370,8 +370,32 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 					'traceroute career': function () {
 						return 'traceroute to career (192.168.1.1), 30 hops max\n 1  foothill.edu (1.2 ms)\n 2  ucsd.edu (4.8 ms)\n 3  amazon.com (8.4 ms)\n 4  santaclaracounty.gov (12.1 ms)\n 5  microsoft.com (18.7 ms)\n 6  autochlor.com (22.3 ms)\n 7  wgu.edu (28.9 ms)\n\nDestination reached. Next hop: whatever I\'m building next!';
 					},
+					ls: function () {
+						return '__HTML__' + 'skills  certs  contact  projects  resume  about<br><br>Tip: try <code>cat resume</code>, <code>certs</code>, or <code>contact</code>.';
+					},
+					certs: function () {
+						return 'Certificate inventory (chris.local):\n\n  ITILv4 Foundations\n  CompTIA A+\n  CompTIA Network+ (in progress)\n  CompTIA Security+ (planned)\n  (and counting — always learning)';
+					},
+					skills: function () {
+						return 'Technical skills:\n\n  Networking: routing, switching, firewall, VPN, DNS, DHCP\n  Security: hardening, monitoring, incident response\n  Automation: Python, Ansible, Bash, APIs\n  Cloud/Infra: AWS, Cloudflare Workers, GitHub CI/CD';
+					},
+					contact: function () {
+						return '__HTML__' + 'Reach out:<br><br>  <a href="https://linkedin.com/in/synchris" target="_blank" rel="noopener noreferrer">LinkedIn</a> — connect professionally<br>  <a href="https://github.com/sYnVerse" target="_blank" rel="noopener noreferrer">GitHub</a> — code & projects<br>  <a href="/resume" target="_blank" rel="noopener noreferrer">Resume</a> — full background';
+					},
+					projects: function () {
+						return '__HTML__' + 'Selected projects and apps. Browse all: <a href="/projects" target="_blank" rel="noopener noreferrer">/projects</a> · <a href="/apps" target="_blank" rel="noopener noreferrer">/apps</a>';
+					},
+					resume: function () {
+						return '__HTML__' + 'Network Engineer · Security · Automation. Full resume: <a href="/resume" target="_blank" rel="noopener noreferrer">/resume</a>';
+					},
+					'cat resume': function () {
+						return '__HTML__' + 'Network Engineer · Security · Automation. Full resume: <a href="/resume" target="_blank" rel="noopener noreferrer">/resume</a>';
+					},
+					about: function () {
+						return '__HTML__' + 'More about me: <a href="/about" target="_blank" rel="noopener noreferrer">/about</a>';
+					},
 					help: function () {
-						return 'Available commands:\n  \u2002whoami             — who is Chris?\n  \u2002ping skills — probe my skills\n  \u2002traceroute career — path of my career\n  \u2002clear              — clear the screen';
+						return 'Available commands:\n  \u2002whoami              — who is Chris?\n  \u2002ping skills        — probe my skills\n  \u2002traceroute career  — path of my career\n  \u2002ls                  — list areas to explore\n  \u2002certs               — certifications\n  \u2002skills              — technical skills\n  \u2002contact             — LinkedIn, GitHub, resume\n  \u2002projects            — projects & apps\n  \u2002resume / cat resume — resume summary\n  \u2002about               — about page\n  \u2002clear               — clear the screen';
 					},
 					clear: function () { return '__CLEAR__'; }
 				};
@@ -396,8 +420,11 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 
 				function runCommand(cmd) {
 					const trimmed = cmd.trim().toLowerCase();
-					// Shortcuts: tr, tracert, tracert career -> traceroute career; ping (alone) -> ping skills
-					const canonical = (trimmed === 'tr' || trimmed === 'tracert' || trimmed === 'tracert career') ? 'traceroute career' : trimmed === 'ping' ? 'ping skills' : trimmed;
+					// Aliases: tr, tracert -> traceroute career; ping -> ping skills; certifications -> certs
+					var canonical = trimmed;
+					if (trimmed === 'tr' || trimmed === 'tracert' || trimmed === 'tracert career') canonical = 'traceroute career';
+					else if (trimmed === 'ping') canonical = 'ping skills';
+					else if (trimmed === 'certifications') canonical = 'certs';
 					const response = commands[canonical];
 					if (response === undefined) {
 						appendLine('<span class="term-prompt">' + promptText + '</span>' + escapeHtml(cmd));
@@ -408,6 +435,10 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 					const result = typeof response === 'function' ? response() : response;
 					if (result === '__CLEAR__') {
 						output.innerHTML = '';
+						return;
+					}
+					if (String(result).indexOf('__HTML__') === 0) {
+						appendLine('<span class="term-response">' + result.slice(7) + '</span>');
 						return;
 					}
 					if (canonical === 'traceroute career') {
