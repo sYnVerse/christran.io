@@ -223,21 +223,21 @@ import { SITE_TITLE } from '../consts';
 		.nav-menu--open {
 			grid-template-rows: 1fr;
 			pointer-events: auto;
-			/* Solid panel so menu is readable on light page backgrounds */
-			background: rgba(255, 255, 255, 0.98);
+			/* Dark panel to match site theme */
+			background: var(--background);
 			border-radius: 0.5em;
-			box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-			border: 1px solid rgba(var(--gray-light), 0.15);
+			box-shadow: var(--box-shadow);
+			border: 1px solid rgba(255, 255, 255, 0.08);
 			margin-top: 0.5em;
 		}
 		.nav-menu--open .internal-links a,
 		.nav-menu--open .social-links a {
-			color: rgb(var(--gray-light));
+			color: rgb(var(--gray-dark));
 		}
 		.nav-menu--open .internal-links a:hover,
 		.nav-menu--open .social-links a:hover,
 		.nav-menu--open .internal-links a.active {
-			color: var(--accent-dark);
+			color: var(--accent);
 		}
 		.nav-menu > .internal-links,
 		.nav-menu > .social-links {
