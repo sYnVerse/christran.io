@@ -39,7 +39,7 @@ const featured = getFeaturedProjects();
 					<line class="loader-link" x1="60" y1="60" x2="25" y2="45" />
 					<!-- packet traveling the path -->
 					<circle class="loader-packet" r="4" fill="#7B9EFF">
-						<animateMotion dur="1s" repeatCount="1" fill="freeze" path="M60 60 L60 20 L95 45 L60 60 L95 95 L60 60 L25 95 L60 60 L25 45 Z" />
+						<animateMotion dur="0.5s" repeatCount="1" fill="freeze" path="M60 60 L60 20 L95 45 L60 60 L95 95 L60 60 L25 95 L60 60 L25 45 Z" />
 					</circle>
 				</svg>
 				<p class="loader-text">Establishing connection...</p>
@@ -49,8 +49,9 @@ const featured = getFeaturedProjects();
 		<main>
 			<h1>Network Engineering. Security. Automation.</h1>
 			<p>
-				I’m Chris Tran, a San Francisco Bay Area-based engineer passionate about building infrastructure that just works. Explore my latest projects, read my technical deep-dives, or use the terminal below to query my skills directly.
+				I’m Chris Tran, a San Francisco Bay Area-based engineer passionate about building infrastructure that just works. Explore my latest projects, read my technical deep-dives, or click the terminal icon in the bottom right to query my skills directly.
 			</p>
+
 			<section class="featured-section" aria-label="Featured work">
 				<h2 class="featured-heading">Featured Work</h2>
 				<div class="featured-grid">
@@ -60,42 +61,49 @@ const featured = getFeaturedProjects();
 				</div>
 				<a href="/portfolio" class="view-all-link">View all projects →</a>
 			</section>
-			<section class="terminal-section" aria-label="Interactive terminal">
-				<div class="terminal-window" id="terminal-window">
-					<div class="terminal-titlebar">
-						<div class="terminal-dots">
-							<span class="dot red"></span>
-							<span class="dot yellow"></span>
-							<span class="dot green"></span>
-						</div>
-						<span class="terminal-title">visitor@christran.io — bash</span>
+		</main>
+
+		<button id="terminal-trigger" class="terminal-trigger-btn" aria-label="Open interactive terminal" aria-expanded="false" aria-controls="terminal-widget">
+			<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="trigger-icon-svg"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+			<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="close-icon-svg" style="display: none;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+		</button>
+
+		<section class="terminal-widget" id="terminal-widget" aria-label="Interactive terminal widget">
+			<div class="terminal-window" id="terminal-window">
+				<div class="terminal-titlebar">
+					<div class="terminal-dots">
+						<span class="dot red" id="terminal-dot-close" title="Close" role="button" aria-label="Close terminal"></span>
+						<span class="dot yellow"></span>
+						<span class="dot green"></span>
 					</div>
-					<div class="terminal-body">
-						<div class="terminal-output" id="term-output" role="log">
-							<div class="term-line">
-								<span class="term-prompt">visitor@christran.io:~$</span>type a command and press Enter. try <code>help</code> or <code>ls</code>
-							</div>
+					<span class="terminal-title">visitor@christran.io — bash</span>
+				</div>
+				<div class="terminal-body">
+					<div class="terminal-output" id="term-output" role="log">
+						<div class="term-line">
+							<span class="term-prompt">visitor@christran.io:~$</span>type a command and press Enter. try <code>help</code> or <code>ls</code>
 						</div>
-						<div class="terminal-input-line">
-							<span class="term-prompt term-prompt-full">visitor@christran.io:~$</span>
-							<span class="term-prompt term-prompt-short" aria-hidden="true">$ </span>
-							<span class="terminal-input-wrap">
-								<input
-									type="text"
-									class="terminal-input"
-									id="term-input"
-									autocomplete="off"
-									autocapitalize="off"
-									spellcheck="false"
-									aria-label="Terminal command input"
-								/>
-								<span class="term-cursor" aria-hidden="true"></span>
-							</span>
-						</div>
+					</div>
+					<div class="terminal-input-line">
+						<span class="term-prompt term-prompt-full">visitor@christran.io:~$</span>
+						<span class="term-prompt term-prompt-short" aria-hidden="true">$ </span>
+						<span class="terminal-input-wrap">
+							<input
+								type="text"
+								class="terminal-input"
+								id="term-input"
+								autocomplete="off"
+								autocapitalize="off"
+								spellcheck="false"
+								aria-label="Terminal command input"
+							/>
+							<span class="term-cursor" aria-hidden="true"></span>
+						</span>
 					</div>
 				</div>
-			</section>
-		</main>
+			</div>
+		</section>
+
 		<Footer />
 		<style>
 			.loader-overlay {
@@ -106,7 +114,7 @@ const featured = getFeaturedProjects();
 				display: flex;
 				align-items: center;
 				justify-content: center;
-				transition: opacity 0.35s ease-out, visibility 0.35s ease-out;
+				transition: opacity 0.175s ease-out, visibility 0.175s ease-out;
 			}
 			.loader-overlay.hide {
 				opacity: 0;
@@ -124,14 +132,14 @@ const featured = getFeaturedProjects();
 			}
 			.loader-node {
 				opacity: 0;
-				animation: loader-node-in 0.15s ease-out forwards;
+				animation: loader-node-in 0.075s ease-out forwards;
 			}
 			.loader-node:nth-child(1) { animation-delay: 0s; }
-			.loader-node:nth-child(2) { animation-delay: 0.08s; }
-			.loader-node:nth-child(3) { animation-delay: 0.16s; }
-			.loader-node:nth-child(4) { animation-delay: 0.24s; }
-			.loader-node:nth-child(5) { animation-delay: 0.32s; }
-			.loader-node:nth-child(6) { animation-delay: 0.4s; }
+			.loader-node:nth-child(2) { animation-delay: 0.04s; }
+			.loader-node:nth-child(3) { animation-delay: 0.08s; }
+			.loader-node:nth-child(4) { animation-delay: 0.12s; }
+			.loader-node:nth-child(5) { animation-delay: 0.16s; }
+			.loader-node:nth-child(6) { animation-delay: 0.2s; }
 			@keyframes loader-node-in {
 				to { opacity: 1; }
 			}
@@ -140,14 +148,14 @@ const featured = getFeaturedProjects();
 				stroke-width: 2;
 				stroke-dasharray: 120;
 				stroke-dashoffset: 120;
-				animation: loader-link-draw 0.2s ease-out forwards;
+				animation: loader-link-draw 0.1s ease-out forwards;
 			}
-			.loader-link:nth-of-type(1) { animation-delay: 0.05s; }
-			.loader-link:nth-of-type(2) { animation-delay: 0.2s; }
-			.loader-link:nth-of-type(3) { animation-delay: 0.35s; }
-			.loader-link:nth-of-type(4) { animation-delay: 0.5s; }
-			.loader-link:nth-of-type(5) { animation-delay: 0.65s; }
-			.loader-link:nth-of-type(6) { animation-delay: 0.8s; }
+			.loader-link:nth-of-type(1) { animation-delay: 0.025s; }
+			.loader-link:nth-of-type(2) { animation-delay: 0.1s; }
+			.loader-link:nth-of-type(3) { animation-delay: 0.175s; }
+			.loader-link:nth-of-type(4) { animation-delay: 0.25s; }
+			.loader-link:nth-of-type(5) { animation-delay: 0.325s; }
+			.loader-link:nth-of-type(6) { animation-delay: 0.4s; }
 			@keyframes loader-link-draw {
 				to { stroke-dashoffset: 0; }
 			}
@@ -170,14 +178,110 @@ const featured = getFeaturedProjects();
 			.home-page main {
 				position: relative;
 				background: rgba(11, 16, 33, 0.88);
-				padding: 1.5rem;
-				border-radius: 8px;
-				margin: 1rem auto;
-				max-width: 65ch;
+				padding: 2rem;
+				border-radius: 12px;
+				margin: 2rem auto;
+				max-width: 720px;
 				box-sizing: border-box;
 			}
-			.terminal-section {
-				margin-top: 2.5rem;
+			/* Floating Terminal Widget */
+			.terminal-trigger-btn {
+				position: fixed;
+				bottom: 2rem;
+				right: 2rem;
+				width: 56px;
+				height: 56px;
+				border-radius: 50%;
+				background: linear-gradient(135deg, rgba(30, 35, 50, 0.95) 0%, rgba(15, 20, 35, 0.98) 100%);
+				backdrop-filter: blur(12px);
+				-webkit-backdrop-filter: blur(12px);
+				border: 1px solid rgba(123, 158, 255, 0.3);
+				color: var(--accent);
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				cursor: pointer;
+				box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+				z-index: 1001;
+				transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+			}
+			.terminal-trigger-btn:hover {
+				transform: translateY(-4px) scale(1.05);
+				border-color: var(--accent);
+				box-shadow: 0 12px 40px rgba(123, 158, 255, 0.25);
+			}
+			.terminal-trigger-btn:active {
+				transform: translateY(-1px) scale(0.98);
+			}
+			.terminal-widget {
+				position: fixed;
+				bottom: 6rem;
+				right: 2rem;
+				width: 760px;
+				height: 480px;
+				max-width: calc(100vw - 4rem);
+				max-height: calc(100vh - 9rem);
+				z-index: 1000;
+				display: flex;
+				flex-direction: column;
+				opacity: 0;
+				transform: translateY(20px) scale(0.95);
+				pointer-events: none;
+				transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+			}
+			.terminal-widget.open {
+				opacity: 1;
+				transform: translateY(0) scale(1);
+				pointer-events: auto;
+			}
+			.terminal-widget .terminal-window {
+				height: 100%;
+				display: flex;
+				flex-direction: column;
+				box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+			}
+			.terminal-widget .terminal-body {
+				flex: 1;
+				display: block !important;
+				overflow-y: auto;
+				min-height: 0;
+				padding: 0.75rem 1rem;
+			}
+			.terminal-widget .terminal-output {
+				max-height: none;
+				overflow-y: visible;
+				margin-bottom: 0.5rem;
+			}
+			.terminal-widget .dot.red {
+				cursor: pointer;
+				position: relative;
+			}
+			.terminal-widget .dot.red:hover::after {
+				content: '×';
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -52%);
+				font-size: 8px;
+				color: rgba(0, 0, 0, 0.6);
+				font-weight: bold;
+			}
+			@media (max-width: 640px) {
+				.terminal-widget {
+					bottom: 5.5rem;
+					right: 1rem;
+					width: calc(100vw - 2rem);
+					height: calc(100vh - 7.5rem);
+					max-width: none;
+					max-height: none;
+				}
+				.terminal-trigger-btn {
+					bottom: 1.5rem;
+					right: 1rem;
+				}
+				.home-page main {
+					padding: 1.25rem;
+				}
 			}
 			.terminal-window {
 				font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace;
@@ -217,13 +321,13 @@ const featured = getFeaturedProjects();
 				font-size: 0.75rem;
 			}
 			.terminal-body {
+				display: block !important;
 				padding: 0.75rem 1rem;
 				min-height: 210px;
+				overflow-y: auto;
 				cursor: text;
 			}
 			.terminal-output {
-				max-height: 300px;
-				overflow-y: auto;
 				margin-bottom: 0.5rem;
 			}
 			.terminal-output .term-line {
@@ -261,8 +365,8 @@ const featured = getFeaturedProjects();
 			}
 			.terminal-input {
 				flex: none;
-				width: 1ch;
-				min-width: 1ch;
+				width: 0;
+				min-width: 0;
 				max-width: 50ch;
 				background: transparent;
 				border: none;
@@ -270,6 +374,7 @@ const featured = getFeaturedProjects();
 				font: inherit;
 				outline: none;
 				padding: 0;
+				caret-color: transparent;
 			}
 			.terminal-input::placeholder {
 				color: rgba(210, 215, 235, 0.4);
@@ -278,7 +383,6 @@ const featured = getFeaturedProjects();
 				display: inline-block;
 				width: 8px;
 				height: 1.1em;
-				margin-left: -1ch;
 				background: var(--accent);
 				animation: blink 1s step-end infinite;
 				vertical-align: text-bottom;
@@ -395,7 +499,7 @@ const featured = getFeaturedProjects();
 				if (loader) {
 					setTimeout(function () {
 						loader.classList.add('hide');
-					}, 1000);
+					}, 500);
 				}
 
 				const output = document.getElementById('term-output');
@@ -411,7 +515,7 @@ const featured = getFeaturedProjects();
 
 				function updateInputWidth() {
 					var len = input.value.length;
-					input.style.width = (len || 1) + 'ch';
+					input.style.width = len + 'ch';
 				}
 				updateInputWidth();
 				input.addEventListener('input', updateInputWidth);
@@ -466,7 +570,11 @@ const featured = getFeaturedProjects();
 					line.className = 'term-line';
 					line.innerHTML = html;
 					output.appendChild(line);
-					output.scrollTop = output.scrollHeight;
+					
+					const body = output.parentElement;
+					if (body) {
+						body.scrollTop = body.scrollHeight;
+					}
 				}
 
 				function escapeHtml(s) {
@@ -519,10 +627,51 @@ const featured = getFeaturedProjects();
 					runCommand(cmd);
 				});
 
-				// Only autofocus on non-mobile to avoid opening the keyboard on small screens
-				if (window.matchMedia('(min-width: 641px)').matches) {
-					input.focus();
+				// Terminal widget trigger & close logic
+				const trigger = document.getElementById('terminal-trigger');
+				const widget = document.getElementById('terminal-widget');
+				const dotClose = document.getElementById('terminal-dot-close');
+				const triggerIcon = trigger ? trigger.querySelector('.trigger-icon-svg') : null;
+				const closeIcon = trigger ? trigger.querySelector('.close-icon-svg') : null;
+
+				function toggleTerminal() {
+					if (!widget || !trigger) return;
+					const isOpen = widget.classList.toggle('open');
+					trigger.setAttribute('aria-expanded', String(isOpen));
+					if (isOpen) {
+						if (triggerIcon) triggerIcon.style.display = 'none';
+						if (closeIcon) closeIcon.style.display = 'block';
+						// Focus input after the transition finishes
+						setTimeout(function () {
+							input.focus();
+						}, 150);
+					} else {
+						if (triggerIcon) triggerIcon.style.display = 'block';
+						if (closeIcon) closeIcon.style.display = 'none';
+						input.blur();
+					}
 				}
+
+				if (trigger) {
+					trigger.addEventListener('click', toggleTerminal);
+				}
+
+				if (dotClose) {
+					dotClose.addEventListener('click', function (e) {
+						e.stopPropagation();
+						toggleTerminal();
+					});
+				}
+
+				// Click outside to close (desktop only, to avoid issues on mobile tap interactions)
+				document.addEventListener('click', function (event) {
+					if (!widget || !trigger) return;
+					if (widget.classList.contains('open') && 
+						!widget.contains(event.target) && 
+						!trigger.contains(event.target)) {
+						toggleTerminal();
+					}
+				});
 			});
 		</script>
 	</body>
