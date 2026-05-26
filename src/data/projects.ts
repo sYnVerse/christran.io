@@ -24,7 +24,7 @@ export const projects: Project[] = [
     techStack: ['Cloudflare Workers', 'TypeScript', 'Workers AI'],
     image: '/img/projects/ai-chat.png',
     liveUrl: 'https://llm.christran.io',
-    featured: true,
+    featured: false,
     order: 3,
   },
   {
@@ -37,7 +37,7 @@ export const projects: Project[] = [
     techStack: ['Cloudflare Workers', 'TypeScript', 'Workers AI'],
     image: '/img/projects/ai-image-gen.png',
     liveUrl: 'https://t2i.christran.io',
-    featured: true,
+    featured: false,
     order: 4,
   },
   {
@@ -89,7 +89,7 @@ export const projects: Project[] = [
     techStack: ['MediaWiki', 'Lua', 'CSS'],
     image: '/img/projects/f1-wiki.png',
     liveUrl: 'https://f1.fandom.com',
-    featured: false,
+    featured: true,
     order: 2,
   },
 ];
