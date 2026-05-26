@@ -269,10 +269,11 @@ const featured = getFeaturedProjects();
 			}
 			@media (max-width: 640px) {
 				.terminal-widget {
+					top: calc(1rem + env(safe-area-inset-top));
 					bottom: 5.5rem;
 					right: 1rem;
 					width: calc(100vw - 2rem);
-					height: calc(100vh - 7.5rem);
+					height: auto;
 					max-width: none;
 					max-height: none;
 				}
