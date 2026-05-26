@@ -2,7 +2,11 @@
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import ProjectCard from '../components/ProjectCard.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+import { getFeaturedProjects } from '../data/projects';
+
+const featured = getFeaturedProjects();
 ---
 
 <!doctype html>
@@ -47,6 +51,15 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 			<p>
 				I’m Chris Tran, a San Francisco Bay Area-based engineer passionate about building infrastructure that just works. Explore my latest projects, read my technical deep-dives, or use the terminal below to query my skills directly.
 			</p>
+			<section class="featured-section" aria-label="Featured work">
+				<h2 class="featured-heading">Featured Work</h2>
+				<div class="featured-grid">
+					{featured.map((project) => (
+						<ProjectCard project={project} compact />
+					))}
+				</div>
+				<a href="/portfolio" class="view-all-link">View all projects →</a>
+			</section>
 			<section class="terminal-section" aria-label="Interactive terminal">
 				<div class="terminal-window" id="terminal-window">
 					<div class="terminal-titlebar">
@@ -327,6 +340,54 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 					min-width: 0;
 				}
 			}
+
+			/* Featured section */
+			.featured-section {
+				margin: 2.5rem 0;
+			}
+			.featured-heading {
+				font-size: 1.4rem;
+				margin-bottom: 1.25rem;
+				color: rgb(var(--black));
+				position: relative;
+				padding-bottom: 0.5rem;
+			}
+			.featured-heading::after {
+				content: '';
+				position: absolute;
+				bottom: 0;
+				left: 0;
+				width: 3rem;
+				height: 2px;
+				background: var(--accent);
+				border-radius: 1px;
+			}
+			.featured-grid {
+				display: grid;
+				grid-template-columns: repeat(3, 1fr);
+				gap: 1rem;
+				margin-bottom: 1rem;
+			}
+			.view-all-link {
+				display: inline-block;
+				color: var(--accent);
+				text-decoration: none;
+				font-size: 0.9rem;
+				font-weight: 500;
+				transition: opacity 0.2s ease;
+			}
+			.view-all-link:hover {
+				opacity: 0.8;
+			}
+			@media (max-width: 640px) {
+				.featured-grid {
+					grid-template-columns: 1fr;
+					gap: 1rem;
+				}
+				.featured-section {
+					margin: 1.5rem 0;
+				}
+			}
 		</style>
 		<script is:inline>
 			document.addEventListener('DOMContentLoaded', function () {
@@ -368,7 +429,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 						return 'traceroute to career (192.168.1.1), 30 hops max\n 1  foothill.edu (1.2 ms)\n 2  ucsd.edu (4.8 ms)\n 3  amazon.com (8.4 ms)\n 4  santaclaracounty.gov (12.1 ms)\n 5  microsoft.com (18.7 ms)\n 6  autochlor.com (22.3 ms)\n 7  wgu.edu (28.9 ms)\n\nDestination reached. Next hop: whatever I\'m building next!';
 					},
 					ls: function () {
-						return '__HTML__' + 'skills  certs  contact  projects  resume  about<br><br>Tip: try <code>cat resume</code>, <code>certs</code>, or <code>contact</code>.';
+						return '__HTML__' + 'skills  certs  contact  portfolio  resume  about<br><br>Tip: try <code>cat resume</code>, <code>certs</code>, or <code>contact</code>.';
 					},
 					certs: function () {
 						return 'Certificate inventory (chris.local):\n\n  ITILv4 Foundations\n  CompTIA A+\n  CompTIA Network+ (in progress)\n  CompTIA Security+ (planned)\n  (and counting — always learning)';
@@ -380,7 +441,10 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 						return '__HTML__' + 'Reach out:<br><br>  <a href="https://linkedin.com/in/synchris" target="_blank" rel="noopener noreferrer">LinkedIn</a> — connect professionally<br>  <a href="https://github.com/sYnVerse" target="_blank" rel="noopener noreferrer">GitHub</a> — code & projects<br>  <a href="/resume" target="_blank" rel="noopener noreferrer">Resume</a> — full background';
 					},
 					projects: function () {
-						return '__HTML__' + 'Selected projects and apps. Browse all: <a href="/projects" target="_blank" rel="noopener noreferrer">/projects</a> · <a href="/apps" target="_blank" rel="noopener noreferrer">/apps</a>';
+						return '__HTML__' + 'Selected projects and apps. Browse all: <a href="/portfolio" target="_blank" rel="noopener noreferrer">/portfolio</a>';
+					},
+					portfolio: function () {
+						return '__HTML__' + 'Selected projects and apps. Browse all: <a href="/portfolio" target="_blank" rel="noopener noreferrer">/portfolio</a>';
 					},
 					resume: function () {
 						return '__HTML__' + 'Network Engineer · Security · Automation. Full resume: <a href="/resume" target="_blank" rel="noopener noreferrer">/resume</a>';
@@ -392,7 +456,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 						return '__HTML__' + 'More about me: <a href="/about" target="_blank" rel="noopener noreferrer">/about</a>';
 					},
 					help: function () {
-						return 'Available commands:\n  \u2002whoami              — who is Chris?\n  \u2002ping skills        — probe my skills\n  \u2002traceroute career  — path of my career\n  \u2002ls                  — list areas to explore\n  \u2002certs               — certifications\n  \u2002skills              — technical skills\n  \u2002contact             — LinkedIn, GitHub, resume\n  \u2002projects            — projects & apps\n  \u2002resume / cat resume — resume summary\n  \u2002about               — about page\n  \u2002clear               — clear the screen';
+						return 'Available commands:\n  \u2002whoami              — who is Chris?\n  \u2002ping skills        — probe my skills\n  \u2002traceroute career  — path of my career\n  \u2002ls                  — list areas to explore\n  \u2002certs               — certifications\n  \u2002skills              — technical skills\n  \u2002contact             — LinkedIn, GitHub, resume\n  \u2002portfolio           — projects & apps\n  \u2002resume / cat resume — resume summary\n  \u2002about               — about page\n  \u2002clear               — clear the screen';
 					},
 					clear: function () { return '__CLEAR__'; }
 				};

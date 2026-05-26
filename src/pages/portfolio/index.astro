@@ -1,0 +1,268 @@
+---
+import BaseHead from '../../components/BaseHead.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import { projects } from '../../data/projects';
+
+const sortedProjects = [...projects].sort((a, b) => a.order - b.order);
+const categories = ['all', 'app', 'infrastructure', 'community'] as const;
+const categoryLabels: Record<string, string> = {
+	all: 'All',
+	app: 'Apps',
+	infrastructure: 'Infrastructure',
+	community: 'Community',
+};
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead
+			title="Portfolio | Chris Tran"
+			description="Projects, apps, and contributions I've built — from AI-powered tools to enterprise infrastructure."
+		/>
+	</head>
+	<body>
+		<Header />
+		<main class="portfolio-page">
+			<div class="portfolio-container">
+				<div class="portfolio-header">
+					<h1>Portfolio</h1>
+					<p class="portfolio-subtitle">Projects, apps, and contributions I've built</p>
+				</div>
+
+				<div class="filter-bar" role="tablist" aria-label="Filter projects by category">
+					{categories.map((cat) => (
+						<button
+							class:list={['filter-btn', { active: cat === 'all' }]}
+							data-filter={cat}
+							role="tab"
+							aria-selected={cat === 'all' ? 'true' : 'false'}
+							id={`filter-${cat}`}
+						>
+							{categoryLabels[cat]}
+						</button>
+					))}
+				</div>
+
+				<div class="projects-grid" id="projects-grid" role="tabpanel">
+					{sortedProjects.map((project) => (
+						<div class="project-item" data-category={project.category}>
+							<ProjectCard project={project} />
+						</div>
+					))}
+				</div>
+
+				<div class="empty-state" id="empty-state" style="display: none;">
+					<p>No projects in this category yet. Check back soon!</p>
+				</div>
+
+				<div class="github-cta">
+					<div class="cta-icon">
+						<svg viewBox="0 0 16 16" width="32" height="32" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+					</div>
+					<h2>Explore More on GitHub</h2>
+					<p>Check out my repositories for more projects, experiments, and open-source contributions.</p>
+					<a href="https://github.com/sYnVerse" target="_blank" rel="noopener noreferrer" class="cta-link">
+						Visit GitHub Profile
+						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+					</a>
+				</div>
+			</div>
+		</main>
+		<Footer />
+
+		<style>
+			.portfolio-page {
+				min-height: calc(100vh - 200px);
+				padding: 1rem;
+				box-sizing: border-box;
+			}
+
+			.portfolio-container {
+				max-width: 960px;
+				margin: 0 auto;
+			}
+
+			.portfolio-header {
+				text-align: center;
+				margin-bottom: 2.5rem;
+			}
+
+			.portfolio-header h1 {
+				font-size: 2.5rem;
+				margin: 0 0 0.5rem 0;
+				background: linear-gradient(135deg, rgb(var(--black)) 0%, var(--accent) 100%);
+				-webkit-background-clip: text;
+				-webkit-text-fill-color: transparent;
+				background-clip: text;
+			}
+
+			.portfolio-subtitle {
+				color: rgb(var(--gray));
+				font-size: 1.05rem;
+				margin: 0;
+			}
+
+			/* Filter bar */
+			.filter-bar {
+				display: flex;
+				justify-content: center;
+				gap: 0.5rem;
+				margin-bottom: 2rem;
+				flex-wrap: wrap;
+			}
+
+			.filter-btn {
+				padding: 0.4rem 1.1rem;
+				background: transparent;
+				border: 1px solid rgba(123, 158, 255, 0.2);
+				border-radius: 20px;
+				color: rgb(var(--gray));
+				font-family: inherit;
+				font-size: 0.85rem;
+				font-weight: 500;
+				cursor: pointer;
+				transition: all 0.25s ease;
+			}
+
+			.filter-btn:hover {
+				border-color: var(--accent);
+				color: var(--accent);
+			}
+
+			.filter-btn.active {
+				background: var(--accent);
+				border-color: var(--accent);
+				color: #0B1021;
+				font-weight: 600;
+			}
+
+			/* Project grid */
+			.projects-grid {
+				display: grid;
+				grid-template-columns: repeat(2, 1fr);
+				gap: 1.5rem;
+			}
+
+			.project-item {
+				transition: opacity 0.3s ease, transform 0.3s ease;
+			}
+
+			.project-item.hidden {
+				display: none;
+			}
+
+			/* Empty state */
+			.empty-state {
+				text-align: center;
+				padding: 3rem 1rem;
+				color: rgb(var(--gray));
+			}
+
+			/* GitHub CTA */
+			.github-cta {
+				margin-top: 3rem;
+				padding: 2.5rem;
+				text-align: center;
+				border-radius: 12px;
+				background: rgba(30, 35, 50, 0.5);
+				backdrop-filter: blur(12px);
+				-webkit-backdrop-filter: blur(12px);
+				border: 1px solid rgba(123, 158, 255, 0.1);
+			}
+
+			.cta-icon {
+				color: var(--accent);
+				margin-bottom: 1rem;
+				opacity: 0.7;
+			}
+
+			.github-cta h2 {
+				margin: 0 0 0.5rem 0;
+				font-size: 1.4rem;
+				color: rgb(var(--black));
+			}
+
+			.github-cta p {
+				margin: 0 0 1.25rem 0;
+				color: rgb(var(--gray));
+				font-size: 0.95rem;
+			}
+
+			.cta-link {
+				display: inline-flex;
+				align-items: center;
+				gap: 0.4rem;
+				padding: 0.6rem 1.3rem;
+				background: var(--accent);
+				color: #0B1021;
+				text-decoration: none;
+				border-radius: 8px;
+				font-weight: 600;
+				font-size: 0.9rem;
+				transition: all 0.2s ease;
+			}
+
+			.cta-link:hover {
+				background: #9bb3ff;
+				transform: translateY(-1px);
+				color: #0B1021;
+			}
+
+			@media (max-width: 720px) {
+				.projects-grid {
+					grid-template-columns: 1fr;
+				}
+
+				.portfolio-header h1 {
+					font-size: 2rem;
+				}
+
+				.github-cta {
+					padding: 1.5rem;
+				}
+			}
+		</style>
+
+		<script is:inline>
+			document.addEventListener('DOMContentLoaded', function () {
+				const buttons = document.querySelectorAll('.filter-btn');
+				const items = document.querySelectorAll('.project-item');
+				const emptyState = document.getElementById('empty-state');
+
+				buttons.forEach(function (btn) {
+					btn.addEventListener('click', function () {
+						const filter = btn.getAttribute('data-filter');
+
+						// Update active button
+						buttons.forEach(function (b) {
+							b.classList.remove('active');
+							b.setAttribute('aria-selected', 'false');
+						});
+						btn.classList.add('active');
+						btn.setAttribute('aria-selected', 'true');
+
+						// Filter items
+						let visibleCount = 0;
+						items.forEach(function (item) {
+							const cat = item.getAttribute('data-category');
+							if (filter === 'all' || cat === filter) {
+								item.classList.remove('hidden');
+								visibleCount++;
+							} else {
+								item.classList.add('hidden');
+							}
+						});
+
+						// Toggle empty state
+						if (emptyState) {
+							emptyState.style.display = visibleCount === 0 ? 'block' : 'none';
+						}
+					});
+				});
+			});
+		</script>
+	</body>
+</html>
