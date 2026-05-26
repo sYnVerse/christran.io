@@ -25,7 +25,7 @@ export const projects: Project[] = [
     image: '/img/projects/ai-chat.png',
     liveUrl: 'https://llm.christran.io',
     featured: true,
-    order: 1,
+    order: 3,
   },
   {
     slug: 'ai-image-gen',
@@ -38,7 +38,7 @@ export const projects: Project[] = [
     image: '/img/projects/ai-image-gen.png',
     liveUrl: 'https://t2i.christran.io',
     featured: true,
-    order: 2,
+    order: 4,
   },
   {
     slug: 'homelab',
@@ -51,7 +51,7 @@ export const projects: Project[] = [
     image: '/img/projects/homelab.png',
     detailUrl: '/portfolio/homelab',
     featured: true,
-    order: 3,
+    order: 1,
   },
   {
     slug: 'chat',
@@ -64,7 +64,7 @@ export const projects: Project[] = [
     image: '/img/projects/chat.png',
     liveUrl: 'https://chat.christran.io',
     featured: false,
-    order: 4,
+    order: 5,
   },
   {
     slug: 'todo',
@@ -77,7 +77,7 @@ export const projects: Project[] = [
     image: '/img/projects/todo.png',
     liveUrl: 'https://2do.christran.io',
     featured: false,
-    order: 5,
+    order: 6,
   },
   {
     slug: 'f1-wiki',
@@ -90,7 +90,7 @@ export const projects: Project[] = [
     image: '/img/projects/f1-wiki.png',
     liveUrl: 'https://f1.fandom.com',
     featured: false,
-    order: 6,
+    order: 2,
   },
 ];
 
