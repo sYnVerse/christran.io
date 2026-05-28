@@ -33,9 +33,28 @@
 </div>
 
 <script is:inline>
+	// Run synchronously right after HTML parser encounters this script
+	// to prevent visual flash/flicker on subsequent page loads
+	(function() {
+		try {
+			var isVisited = sessionStorage.getItem('visited');
+			var loader = document.getElementById('loader-overlay');
+			if (isVisited && loader) {
+				loader.style.display = 'none';
+				loader.classList.add('hide');
+			} else {
+				sessionStorage.setItem('visited', 'true');
+			}
+		} catch (e) {
+			// Fallback for browsers with disabled sessionStorage / private mode
+		}
+	})();
+</script>
+
+<script is:inline>
 	document.addEventListener('DOMContentLoaded', function () {
 		var loader = document.getElementById('loader-overlay');
-		if (loader) {
+		if (loader && !loader.classList.contains('hide')) {
 			setTimeout(function () {
 				loader.classList.add('hide');
 			}, 500);
