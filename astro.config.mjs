@@ -7,32 +7,11 @@ import cloudflare from "@astrojs/cloudflare";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://example.com",
+  site: "https://christran.io",
   integrations: [mdx(), sitemap()],
   adapter: cloudflare({
     platformProxy: {
-      enabled: true,
+      enabled: process.env.DISABLE_PLATFORM_PROXY !== 'true',
     },
   }),
-  headers: {
-    // Match all image files in any directory
-    '/*': [
-      {
-        key: 'Cache-Control',
-        value: 'public, max-age=31536000, immutable'
-      }
-    ],
-    '/*/*': [
-      {
-        key: 'Cache-Control',
-        value: 'public, max-age=31536000, immutable'
-      }
-    ],
-    '/*/*/*': [
-      {
-        key: 'Cache-Control',
-        value: 'public, max-age=31536000, immutable'
-      }
-    ]
-  }
 });
