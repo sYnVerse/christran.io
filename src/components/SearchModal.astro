@@ -1,0 +1,701 @@
+---
+---
+
+<div id="search-modal" class="search-modal-overlay" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="search-input-label">
+	<div class="search-modal-container" id="search-modal-container">
+		<header class="search-modal-header">
+			<svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+				<circle cx="11" cy="11" r="8"></circle>
+				<line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+			</svg>
+			<span id="search-input-label" class="sr-only">Search the website</span>
+			<input
+				type="text"
+				id="search-input"
+				placeholder="Search articles, projects, logs..."
+				autocomplete="off"
+				spellcheck="false"
+			/>
+			<button id="search-close-btn" class="search-close-btn" aria-label="Close search">
+				<kbd class="kbd-hint">ESC</kbd>
+				<span class="close-icon" aria-hidden="true">&times;</span>
+			</button>
+		</header>
+
+		<div class="search-results-wrapper" id="search-results-wrapper">
+			<div class="search-suggestions" id="search-suggestions">
+				<p class="section-title">Suggested Searches</p>
+				<ul class="suggestions-list">
+					<li><a href="/portfolio/homelab" class="suggestion-item">Enterprise Home Lab</a></li>
+					<li><a href="/resume" class="suggestion-item">Professional Resume</a></li>
+					<li><a href="/blog" class="suggestion-item">Latest Blog Posts</a></li>
+				</ul>
+			</div>
+
+			<div class="search-results" id="search-results" style="display: none;">
+				<!-- Dynamic results injected here -->
+			</div>
+
+			<div class="search-empty-state" id="search-empty-state" style="display: none;">
+				<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+					<circle cx="11" cy="11" r="8"></circle>
+					<line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+					<line x1="8" y1="11" x2="14" y2="11"></line>
+				</svg>
+				<p>No results found for "<span id="search-query-display"></span>"</p>
+				<span class="empty-hint">Try searching for other terms like "virtualization", "ansible", or "WGU".</span>
+			</div>
+		</div>
+
+		<footer class="search-modal-footer">
+			<div class="footer-shortcuts">
+				<span><kbd class="kbd-key">↑↓</kbd> Navigate</span>
+				<span><kbd class="kbd-key">Enter</kbd> Select</span>
+				<span><kbd class="kbd-key">Esc</kbd> Close</span>
+			</div>
+			<div class="footer-branding">
+				<span>Search powered by Antigravity</span>
+			</div>
+		</footer>
+	</div>
+</div>
+
+<script>
+	let searchIndex: any[] | null = null;
+	let modalOpen = false;
+	let activeIndex = -1;
+	let resultItems: HTMLElement[] = [];
+	let lastActiveElement: HTMLElement | null = null;
+
+	const modal = document.getElementById('search-modal');
+	const container = document.getElementById('search-modal-container');
+	const input = document.getElementById('search-input') as HTMLInputElement;
+	const closeBtn = document.getElementById('search-close-btn');
+	const resultsWrapper = document.getElementById('search-results-wrapper');
+	const suggestions = document.getElementById('search-suggestions');
+	const resultsContainer = document.getElementById('search-results');
+	const emptyState = document.getElementById('search-empty-state');
+	const queryDisplay = document.getElementById('search-query-display');
+
+	// Lazy load search index
+	async function loadSearchIndex() {
+		if (searchIndex) return;
+		try {
+			const res = await fetch('/search-index.json');
+			if (!res.ok) throw new Error('Failed to fetch search index');
+			searchIndex = await res.json();
+		} catch (err) {
+			console.error('Error loading search index:', err);
+		}
+	}
+
+	function openModal(triggerElement: HTMLElement | null = null) {
+		if (modalOpen || !modal || !input) return;
+		
+		lastActiveElement = triggerElement || document.activeElement as HTMLElement;
+		modal.classList.add('open');
+		modal.setAttribute('aria-hidden', 'false');
+		document.body.style.overflow = 'hidden';
+		modalOpen = true;
+
+		// Focus the input with a tiny delay to ensure animation starts
+		setTimeout(() => {
+			input.focus();
+		}, 50);
+
+		// Load index immediately on open
+		loadSearchIndex();
+	}
+
+	function closeModal() {
+		if (!modalOpen || !modal) return;
+
+		modal.classList.remove('open');
+		modal.setAttribute('aria-hidden', 'true');
+		document.body.style.overflow = '';
+		modalOpen = false;
+		activeIndex = -1;
+
+		if (input) {
+			input.value = '';
+			performSearch('');
+		}
+
+		// Restore focus
+		if (lastActiveElement) {
+			lastActiveElement.focus();
+		}
+	}
+
+	function escapeRegExp(string: string) {
+		return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+	}
+
+	function highlightText(text: string, query: string): string {
+		if (!query) return text;
+		const escapedQuery = escapeRegExp(query);
+		const regex = new RegExp(`(${escapedQuery})`, 'gi');
+		return text.replace(regex, '<mark class="search-highlight">$1</mark>');
+	}
+
+	function performSearch(query: string) {
+		if (!searchIndex || !resultsContainer || !suggestions || !emptyState || !queryDisplay) return;
+
+		const cleanQuery = query.trim().toLowerCase();
+
+		if (cleanQuery === '') {
+			suggestions.style.display = 'block';
+			resultsContainer.style.display = 'none';
+			emptyState.style.display = 'none';
+			activeIndex = -1;
+			resultItems = [];
+			return;
+		}
+
+		// Search scoring and filtering
+		const matches = searchIndex
+			.map(item => {
+				let score = 0;
+				const titleIdx = item.title.toLowerCase().indexOf(cleanQuery);
+				const descIdx = item.description.toLowerCase().indexOf(cleanQuery);
+				const bodyIdx = item.body ? item.body.toLowerCase().indexOf(cleanQuery) : -1;
+				
+				// Calculate matched tags count
+				const matchedTags = item.tags ? item.tags.filter((t: string) => t.toLowerCase().includes(cleanQuery)).length : 0;
+
+				if (titleIdx === 0) score += 100; // starts with query
+				else if (titleIdx > 0) score += 80;  // contains query in title
+				
+				if (descIdx !== -1) score += 40;     // contains query in description
+				if (matchedTags > 0) score += 30 * matchedTags; // contains query in tags
+				if (bodyIdx !== -1) score += 10;     // contains query in body
+
+				return { item, score };
+			})
+			.filter(match => match.score > 0)
+			.sort((a, b) => b.score - a.score);
+
+		if (matches.length === 0) {
+			suggestions.style.display = 'none';
+			resultsContainer.style.display = 'none';
+			queryDisplay.textContent = query;
+			emptyState.style.display = 'flex';
+			activeIndex = -1;
+			resultItems = [];
+			return;
+		}
+
+		suggestions.style.display = 'none';
+		emptyState.style.display = 'none';
+		resultsContainer.style.display = 'block';
+
+		// Group results
+		const blogs = matches.filter(m => m.item.type === 'blog');
+		const projects = matches.filter(m => m.item.type === 'project');
+
+		let html = '';
+
+		if (blogs.length > 0) {
+			html += `<div class="results-section">
+				<p class="section-title">Blog Posts (${blogs.length})</p>
+				<ul class="results-list">`;
+			blogs.forEach(match => {
+				const dateStr = match.item.date ? new Date(match.item.date).toLocaleDateString(undefined, {
+					year: 'numeric',
+					month: 'short',
+					day: 'numeric'
+				}) : '';
+				html += `
+					<li>
+						<a href="${match.item.url}" class="result-card" data-search-item>
+							<div class="result-card-header">
+								<span class="result-title">${highlightText(match.item.title, query)}</span>
+								${dateStr ? `<span class="result-date">${dateStr}</span>` : ''}
+							</div>
+							<p class="result-desc">${highlightText(match.item.description, query)}</p>
+						</a>
+					</li>
+				`;
+			});
+			html += `</ul></div>`;
+		}
+
+		if (projects.length > 0) {
+			html += `<div class="results-section">
+				<p class="section-title">Portfolio Projects (${projects.length})</p>
+				<ul class="results-list">`;
+			projects.forEach(match => {
+				const tagsHtml = match.item.tags ? match.item.tags.slice(0, 3).map((t: string) => `<span class="result-tag">${t}</span>`).join('') : '';
+				html += `
+					<li>
+						<a href="${match.item.url}" class="result-card" data-search-item>
+							<div class="result-card-header">
+								<span class="result-title">${highlightText(match.item.title, query)}</span>
+								<span class="result-badge">Project</span>
+							</div>
+							<p class="result-desc">${highlightText(match.item.description, query)}</p>
+							${tagsHtml ? `<div class="result-tags">${tagsHtml}</div>` : ''}
+						</a>
+					</li>
+				`;
+			});
+			html += `</ul></div>`;
+		}
+
+		resultsContainer.innerHTML = html;
+
+		// Update result items reference for keyboard navigation
+		resultItems = Array.from(resultsContainer.querySelectorAll('[data-search-item]')) as HTMLElement[];
+		activeIndex = -1;
+	}
+
+	function updateActiveItem(direction: 'up' | 'down') {
+		if (resultItems.length === 0) return;
+
+		// Remove active class from previous active item
+		if (activeIndex >= 0 && activeIndex < resultItems.length) {
+			resultItems[activeIndex].classList.remove('active');
+		}
+
+		if (direction === 'down') {
+			activeIndex = (activeIndex + 1) % resultItems.length;
+		} else {
+			activeIndex = (activeIndex - 1 + resultItems.length) % resultItems.length;
+		}
+
+		const newActiveItem = resultItems[activeIndex];
+		newActiveItem.classList.add('active');
+
+		// Scroll into view if needed
+		newActiveItem.scrollIntoView({ block: 'nearest' });
+	}
+
+	// Register event listeners
+	document.addEventListener('click', (e) => {
+		const target = e.target as HTMLElement;
+		const trigger = target.closest('.search-trigger');
+		if (trigger) {
+			e.preventDefault();
+			openModal(trigger as HTMLElement);
+		}
+	});
+
+	if (modal) {
+		modal.addEventListener('click', (e) => {
+			if (e.target === modal) {
+				closeModal();
+			}
+		});
+	}
+
+	if (closeBtn) {
+		closeBtn.addEventListener('click', closeModal);
+	}
+
+	if (input) {
+		input.addEventListener('input', (e) => {
+			const val = (e.target as HTMLInputElement).value;
+			performSearch(val);
+		});
+
+		input.addEventListener('focus', loadSearchIndex);
+	}
+
+	// Setup prefetch on hovering trigger button
+	document.addEventListener('mouseover', (e) => {
+		const target = e.target as HTMLElement;
+		if (target.closest('.search-trigger')) {
+			loadSearchIndex();
+		}
+	});
+
+	// Global Keyboard Shortcuts
+	document.addEventListener('keydown', (e) => {
+		// Cmd+K or Ctrl+K to open
+		if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+			e.preventDefault();
+			if (modalOpen) {
+				closeModal();
+			} else {
+				openModal();
+			}
+		}
+
+		if (!modalOpen) return;
+
+		// Escape to close
+		if (e.key === 'Escape') {
+			e.preventDefault();
+			closeModal();
+		}
+
+		// ArrowDown / ArrowUp to navigate results
+		if (e.key === 'ArrowDown') {
+			e.preventDefault();
+			updateActiveItem('down');
+		}
+
+		if (e.key === 'ArrowUp') {
+			e.preventDefault();
+			updateActiveItem('up');
+		}
+
+		// Enter to navigate to selected result
+		if (e.key === 'Enter') {
+			if (activeIndex >= 0 && activeIndex < resultItems.length) {
+				e.preventDefault();
+				resultItems[activeIndex].click();
+			}
+		}
+
+		// Focus trapping
+		if (e.key === 'Tab') {
+			const focusableElements = Array.from(container?.querySelectorAll('input, button, [data-search-item]') || []) as HTMLElement[];
+			if (focusableElements.length === 0) return;
+
+			const first = focusableElements[0];
+			const last = focusableElements[focusableElements.length - 1];
+
+			if (e.shiftKey) {
+				if (document.activeElement === first) {
+					e.preventDefault();
+					last.focus();
+				}
+			} else {
+				if (document.activeElement === last) {
+					e.preventDefault();
+					first.focus();
+				}
+			}
+		}
+	});
+</script>
+
+<style>
+	.search-modal-overlay {
+		position: fixed;
+		inset: 0;
+		z-index: 10000;
+		background: rgba(11, 16, 33, 0.75);
+		backdrop-filter: blur(12px);
+		-webkit-backdrop-filter: blur(12px);
+		display: flex;
+		align-items: flex-start;
+		justify-content: center;
+		padding: 12vh 2rem 2rem;
+		opacity: 0;
+		visibility: hidden;
+		transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.2s;
+	}
+
+	.search-modal-overlay.open {
+		opacity: 1;
+		visibility: visible;
+	}
+
+	.search-modal-container {
+		width: 100%;
+		max-width: 640px;
+		background: rgba(26, 29, 41, 0.95);
+		border: 1px solid rgba(123, 158, 255, 0.15);
+		border-radius: 12px;
+		box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+		display: flex;
+		flex-direction: column;
+		max-height: 70vh;
+		transform: scale(0.97) translateY(-8px);
+		transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+		overflow: hidden;
+	}
+
+	.search-modal-overlay.open .search-modal-container {
+		transform: scale(1) translateY(0);
+	}
+
+	.search-modal-header {
+		display: flex;
+		align-items: center;
+		padding: 1rem 1.25rem;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+		gap: 0.75rem;
+	}
+
+	.search-icon {
+		color: var(--accent);
+		opacity: 0.8;
+		flex-shrink: 0;
+	}
+
+	#search-input {
+		flex: 1;
+		background: transparent;
+		border: none;
+		outline: none;
+		color: rgb(var(--gray-dark));
+		font-family: inherit;
+		font-size: 1rem;
+		padding: 0.25rem 0;
+	}
+
+	#search-input::placeholder {
+		color: rgba(176, 186, 209, 0.4);
+	}
+
+	.search-close-btn {
+		background: transparent;
+		border: none;
+		color: rgb(var(--gray));
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.25rem 0.5rem;
+		border-radius: 6px;
+		transition: all 0.2s ease;
+	}
+
+	.search-close-btn:hover {
+		color: #ffffff;
+		background: rgba(255, 255, 255, 0.05);
+	}
+
+	.kbd-hint {
+		font-family: inherit;
+		font-size: 0.7rem;
+		background: rgba(255, 255, 255, 0.08);
+		border: 1px solid rgba(255, 255, 255, 0.12);
+		border-radius: 4px;
+		padding: 2px 5px;
+		color: rgb(var(--gray));
+		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+	}
+
+	.close-icon {
+		font-size: 1.25rem;
+		line-height: 1;
+	}
+
+	/* Results container scroll wrap */
+	.search-results-wrapper {
+		flex: 1;
+		overflow-y: auto;
+		padding: 1.25rem;
+		min-height: 120px;
+	}
+
+	.section-title {
+		font-size: 0.75rem;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		color: var(--accent);
+		margin: 0 0 0.75rem 0;
+		font-weight: 700;
+		opacity: 0.85;
+	}
+
+	.suggestions-list, .results-list {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	.suggestion-item {
+		display: block;
+		padding: 0.6rem 0.8rem;
+		background: rgba(255, 255, 255, 0.02);
+		border: 1px solid rgba(255, 255, 255, 0.04);
+		border-radius: 8px;
+		color: rgb(var(--gray-dark));
+		text-decoration: none;
+		font-size: 0.9rem;
+		transition: all 0.2s ease;
+	}
+
+	.suggestion-item:hover {
+		background: rgba(123, 158, 255, 0.08);
+		border-color: rgba(123, 158, 255, 0.25);
+		color: #ffffff;
+		transform: translateX(3px);
+	}
+
+	/* Result cards */
+	.result-card {
+		display: flex;
+		flex-direction: column;
+		padding: 0.75rem 1rem;
+		background: rgba(255, 255, 255, 0.02);
+		border: 1px solid rgba(255, 255, 255, 0.04);
+		border-radius: 8px;
+		color: rgb(var(--gray-dark));
+		text-decoration: none;
+		transition: all 0.2s ease;
+		cursor: pointer;
+	}
+
+	.result-card:hover, .result-card.active {
+		background: rgba(123, 158, 255, 0.08);
+		border-color: rgba(123, 158, 255, 0.3);
+		color: #ffffff;
+		outline: none;
+	}
+	
+	.result-card.active {
+		box-shadow: 0 0 12px rgba(123, 158, 255, 0.1);
+	}
+
+	.result-card-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		margin-bottom: 0.25rem;
+	}
+
+	.result-title {
+		font-weight: 600;
+		font-size: 0.95rem;
+	}
+
+	.result-date {
+		font-size: 0.75rem;
+		color: rgb(var(--gray));
+	}
+
+	.result-badge {
+		font-size: 0.7rem;
+		background: rgba(123, 158, 255, 0.15);
+		border: 1px solid rgba(123, 158, 255, 0.2);
+		color: var(--accent);
+		padding: 1px 6px;
+		border-radius: 4px;
+		font-weight: 500;
+	}
+
+	.result-desc {
+		font-size: 0.85rem;
+		color: rgb(var(--gray));
+		margin: 0;
+		line-height: 1.4;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+
+	.result-card:hover .result-desc, .result-card.active .result-desc {
+		color: rgb(var(--gray-dark));
+	}
+
+	.result-tags {
+		display: flex;
+		gap: 0.4rem;
+		margin-top: 0.5rem;
+		flex-wrap: wrap;
+	}
+
+	.result-tag {
+		font-size: 0.7rem;
+		background: rgba(255, 255, 255, 0.05);
+		color: rgb(var(--gray));
+		padding: 1px 6px;
+		border-radius: 3px;
+	}
+
+	/* Highlights matching parts */
+	:global(.search-highlight) {
+		background: rgba(123, 158, 255, 0.25);
+		color: #ffffff;
+		border-radius: 2px;
+		padding: 0 1px;
+		font-weight: inherit;
+	}
+
+	.results-section {
+		margin-bottom: 1.5rem;
+	}
+
+	.results-section:last-child {
+		margin-bottom: 0;
+	}
+
+	/* Empty state styling */
+	.search-empty-state {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		padding: 3rem 1.5rem;
+		text-align: center;
+		color: rgb(var(--gray));
+	}
+
+	.search-empty-state svg {
+		color: var(--accent);
+		opacity: 0.5;
+		margin-bottom: 1rem;
+	}
+
+	.search-empty-state p {
+		margin: 0 0 0.5rem 0;
+		font-size: 0.95rem;
+		font-weight: 600;
+		color: rgb(var(--gray-dark));
+	}
+
+	.empty-hint {
+		font-size: 0.8rem;
+		opacity: 0.75;
+	}
+
+	/* Modal footer and shortcuts */
+	.search-modal-footer {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 0.75rem 1.25rem;
+		background: #141722;
+		border-top: 1px solid rgba(255, 255, 255, 0.06);
+		font-size: 0.7rem;
+		color: rgb(var(--gray));
+	}
+
+	.footer-shortcuts {
+		display: flex;
+		gap: 1rem;
+	}
+
+	.kbd-key {
+		font-family: inherit;
+		font-size: 0.65rem;
+		background: rgba(255, 255, 255, 0.05);
+		border: 1px solid rgba(255, 255, 255, 0.08);
+		border-radius: 3px;
+		padding: 1px 4px;
+		color: rgb(var(--gray-dark));
+		box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+	}
+
+	.footer-branding {
+		opacity: 0.6;
+	}
+
+	@media (max-width: 640px) {
+		.search-modal-overlay {
+			padding: 0;
+		}
+
+		.search-modal-container {
+			max-height: 100vh;
+			height: 100%;
+			border-radius: 0;
+			border: none;
+		}
+
+		.footer-shortcuts {
+			display: none;
+		}
+	}
+</style>

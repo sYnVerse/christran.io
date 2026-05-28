@@ -615,7 +615,46 @@ const featured = getFeaturedProjects();
 						return '__HTML__' + 'More about me: <a href="/about" target="_blank" rel="noopener noreferrer">/about</a>';
 					},
 					help: function () {
-						return 'Available commands:\n  \u2002whoami              — who is Chris?\n  \u2002ping skills        — probe my skills\n  \u2002traceroute career  — path of my career\n  \u2002ls                  — list areas to explore\n  \u2002certs               — certifications\n  \u2002skills              — technical skills\n  \u2002contact             — LinkedIn, GitHub, resume\n  \u2002portfolio           — projects & apps\n  \u2002resume / cat resume — resume summary\n  \u2002about               — about page\n  \u2002clear               — clear the screen';
+						return 'Available commands:\n  \u2002whoami              — who is Chris?\n  \u2002ping skills        — probe my skills\n  \u2002traceroute career  — path of my career\n  \u2002search <query>     — search blog posts & projects\n  \u2002ls                  — list areas to explore\n  \u2002certs               — certifications\n  \u2002skills              — technical skills\n  \u2002contact             — LinkedIn, GitHub, resume\n  \u2002portfolio           — projects & apps\n  \u2002resume / cat resume — resume summary\n  \u2002about               — about page\n  \u2002clear               — clear the screen';
+					},
+					search: function (args) {
+						if (!args || args.trim() === '') {
+							return 'Usage: search <query>\nExample: search homelab';
+						}
+						const query = args.trim().toLowerCase();
+						
+						return new Promise(function(resolve) {
+							fetch('/search-index.json')
+								.then(function(res) {
+									if (!res.ok) throw new Error();
+									return res.json();
+								})
+								.then(function(index) {
+									const matches = index.filter(function(item) {
+										const inTitle = item.title.toLowerCase().indexOf(query) !== -1;
+										const inDesc = item.description.toLowerCase().indexOf(query) !== -1;
+										const inBody = item.body ? item.body.toLowerCase().indexOf(query) !== -1 : false;
+										const inTags = item.tags ? item.tags.some(function(t) { return t.toLowerCase().indexOf(query) !== -1; }) : false;
+										return inTitle || inDesc || inBody || inTags;
+									});
+									
+									if (matches.length === 0) {
+										resolve('No matching posts or projects found for "' + args + '".');
+										return;
+									}
+									
+									let outputHtml = '__HTML__' + 'Search results for "' + escapeHtml(args) + '":<br><br>';
+									matches.forEach(function(match) {
+										const typeLabel = match.type === 'project' ? '[Project]' : '[Blog]';
+										outputHtml += '  ' + typeLabel + ' <a href="' + match.url + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(match.title) + '</a><br>';
+										outputHtml += '  <span style="opacity: 0.7; font-size: 0.8rem;">' + escapeHtml(match.description.slice(0, 120)) + '...</span><br><br>';
+									});
+									resolve(outputHtml);
+								})
+								.catch(function() {
+									resolve('Error: Could not retrieve search index.');
+								});
+						});
 					},
 					clear: function () { return '__CLEAR__'; }
 				};
@@ -643,20 +682,66 @@ const featured = getFeaturedProjects();
 				}
 
 				function runCommand(cmd) {
-					const trimmed = cmd.trim().toLowerCase();
-					// Aliases: tr, tracert -> traceroute career; ping -> ping skills; certifications -> certs
-					var canonical = trimmed;
-					if (trimmed === 'tr' || trimmed === 'tracert' || trimmed === 'tracert career') canonical = 'traceroute career';
-					else if (trimmed === 'ping') canonical = 'ping skills';
-					else if (trimmed === 'certifications') canonical = 'certs';
-					const response = commands[canonical];
-					if (response === undefined) {
-						appendLine('<span class="term-prompt">' + promptText + '</span>' + escapeHtml(cmd));
-						appendLine('<span class="term-response">bash: ' + escapeHtml(trimmed) + ': command not found. Try `help`</span>');
-						return;
-					}
+					const trimmed = cmd.trim();
+					if (trimmed === '') return;
+
+					// Print the prompt and entered command immediately
 					appendLine('<span class="term-prompt">' + promptText + '</span>' + escapeHtml(cmd));
-					const result = typeof response === 'function' ? response() : response;
+
+					// Parse command and arguments
+					const parts = trimmed.split(/\s+/);
+					const baseCmd = parts[0].toLowerCase();
+					const cmdArgs = parts.slice(1).join(' ');
+
+					// Determine canonical command name (with alias support)
+					let canonical = baseCmd;
+					if (baseCmd === 'tr' || baseCmd === 'tracert') {
+						canonical = 'traceroute';
+					} else if (baseCmd === 'certifications') {
+						canonical = 'certs';
+					}
+
+					// Let's match the exact key first (for multi-word static commands like 'ping skills')
+					const fullLower = trimmed.toLowerCase();
+					let resolvedCmdKey = '';
+					
+					if (commands[fullLower] !== undefined) {
+						resolvedCmdKey = fullLower;
+					} else if (commands[canonical] !== undefined) {
+						resolvedCmdKey = canonical;
+					}
+
+					if (resolvedCmdKey === '') {
+						// Custom alias checking for special cases
+						if (fullLower === 'tr' || fullLower === 'tracert' || fullLower === 'tracert career') {
+							resolvedCmdKey = 'traceroute career';
+						} else if (fullLower === 'ping') {
+							resolvedCmdKey = 'ping skills';
+						} else if (baseCmd === 'search') {
+							resolvedCmdKey = 'search';
+						} else {
+							appendLine('<span class="term-response">bash: ' + escapeHtml(baseCmd) + ': command not found. Try `help`</span>');
+							return;
+						}
+					}
+
+					const response = commands[resolvedCmdKey];
+					const result = typeof response === 'function' ? response(cmdArgs) : response;
+
+					if (result === undefined) return;
+
+					if (result instanceof Promise) {
+						result.then((resolvedResult) => {
+							handleCommandResult(resolvedCmdKey, resolvedResult);
+						}).catch((err) => {
+							appendLine('<span class="term-response" style="color: #ff5f56;">Error running command.</span>');
+						});
+					} else {
+						handleCommandResult(resolvedCmdKey, result);
+					}
+				}
+
+				function handleCommandResult(cmdKey, result) {
 					if (result === '__CLEAR__') {
 						output.innerHTML = '';
 						return;
@@ -665,7 +750,7 @@ const featured = getFeaturedProjects();
 						appendLine('<span class="term-response">' + result.slice(7) + '</span>');
 						return;
 					}
-					if (canonical === 'traceroute career') {
+					if (cmdKey === 'traceroute career') {
 						const tracerouteHtml = 'traceroute to career (192.168.1.1), 30 hops max<br> 1  <a href="https://foothill.edu" target="_blank" rel="noopener noreferrer">foothill.edu</a> (1.2 ms)<br> 2  <a href="https://ucsd.edu" target="_blank" rel="noopener noreferrer">ucsd.edu</a> (4.8 ms)<br> 3  <a href="https://amazon.com" target="_blank" rel="noopener noreferrer">amazon.com</a> (8.4 ms)<br> 4  <a href="https://santaclaracounty.gov" target="_blank" rel="noopener noreferrer">santaclaracounty.gov</a> (12.1 ms)<br> 5  <a href="https://microsoft.com" target="_blank" rel="noopener noreferrer">microsoft.com</a> (18.7 ms)<br> 6  <a href="https://autochlor.com" target="_blank" rel="noopener noreferrer">autochlor.com</a> (22.3 ms)<br> 7  <a href="https://wgu.edu" target="_blank" rel="noopener noreferrer">wgu.edu</a> (28.9 ms)<br><br>Destination reached. Next hop: whatever I\'m building next!';
 						appendLine('<span class="term-response">' + tracerouteHtml + '</span>');
 						return;
@@ -689,7 +774,8 @@ const featured = getFeaturedProjects();
 					'cat resume',
 					'about',
 					'clear',
-					'help'
+					'help',
+					'search'
 				];
 
 				function handleTabComplete() {

@@ -1,6 +1,7 @@
 ---
 import HeaderLink from './HeaderLink.astro';
 import { SITE_TITLE } from '../consts';
+import SearchModal from './SearchModal.astro';
 ---
 
 <header>
@@ -27,6 +28,14 @@ import { SITE_TITLE } from '../consts';
 				<HeaderLink href="/portfolio">Portfolio</HeaderLink>
 				<HeaderLink href="/about">About</HeaderLink>
 			</div>
+			<button class="search-trigger search-trigger-btn" aria-label="Open search">
+				<svg class="search-trigger-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+					<circle cx="11" cy="11" r="8"></circle>
+					<line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+				</svg>
+				<span class="search-trigger-text">Search</span>
+				<kbd class="search-trigger-shortcut">⌘K</kbd>
+			</button>
 			<div class="social-links">
 				<a href="https://linkedin.com/in/synchris" target="_blank">
 					<span class="sr-only">Connect with me on LinkedIn</span>
@@ -58,6 +67,7 @@ import { SITE_TITLE } from '../consts';
 			</div>
 		</div>
 	</nav>
+	<SearchModal />
 </header>
 
 <script>
@@ -71,8 +81,8 @@ import { SITE_TITLE } from '../consts';
 			menu.classList.toggle('nav-menu--open');
 			btn.classList.toggle('hamburger--active');
 		});
-		// Close menu when a nav link is clicked (for in-page anchors or SPA-like behavior)
-		menu.querySelectorAll('a').forEach((link) => {
+		// Close menu when a nav link or search trigger is clicked
+		menu.querySelectorAll('a, .search-trigger').forEach((link) => {
 			link.addEventListener('click', () => {
 				btn.setAttribute('aria-expanded', 'false');
 				menu.setAttribute('aria-hidden', 'true');
@@ -206,6 +216,53 @@ import { SITE_TITLE } from '../consts';
 		color: var(--accent);
 	}
 
+	/* Search trigger button styles */
+	.search-trigger-btn {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5em;
+		padding: 0.4rem 0.8rem;
+		background: rgba(30, 35, 50, 0.5);
+		border: 1px solid rgba(123, 158, 255, 0.15);
+		border-radius: 8px;
+		color: rgb(var(--gray-dark));
+		font-family: inherit;
+		font-size: 0.85rem;
+		cursor: pointer;
+		transition: all 0.2s ease;
+		margin: 0 0.5em;
+	}
+
+	.search-trigger-btn:hover {
+		border-color: var(--accent);
+		background: rgba(123, 158, 255, 0.08);
+		color: #ffffff;
+	}
+
+	.search-trigger-icon {
+		opacity: 0.7;
+		flex-shrink: 0;
+	}
+
+	.search-trigger-btn:hover .search-trigger-icon {
+		color: var(--accent);
+		opacity: 1;
+	}
+
+	.search-trigger-text {
+		font-weight: 500;
+	}
+
+	.search-trigger-shortcut {
+		font-size: 0.7rem;
+		background: rgba(255, 255, 255, 0.08);
+		border: 1px solid rgba(255, 255, 255, 0.12);
+		border-radius: 4px;
+		padding: 1px 4px;
+		color: rgb(var(--gray));
+		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+	}
+
 	@media (max-width: 720px) {
 		header {
 			padding-top: 0.75em;
@@ -270,6 +327,22 @@ import { SITE_TITLE } from '../consts';
 		}
 		.nav-menu a {
 			padding: 0.6em 0.5em;
+		}
+
+		.search-trigger-btn {
+			margin: 0.5rem 0.5rem 1rem;
+			padding: 0.6rem 1rem;
+			justify-content: center;
+			opacity: 0;
+			transform: translateY(-8px);
+			transition: opacity 0.3s ease 0.08s, transform 0.25s ease 0.08s;
+		}
+		.nav-menu--open .search-trigger-btn {
+			opacity: 1;
+			transform: translateY(0);
+		}
+		.search-trigger-shortcut {
+			display: none;
 		}
 	}
 </style>
