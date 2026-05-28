@@ -13,6 +13,39 @@ const featured = getFeaturedProjects();
 <html lang="en">
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<script type="application/ld+json" is:inline>
+		{
+		  "@context": "https://schema.org",
+		  "@type": "Person",
+		  "name": "Chris Tran",
+		  "jobTitle": "Network Engineer",
+		  "worksFor": {
+		    "@type": "Organization",
+		    "name": "Auto-Chlor System"
+		  },
+		  "url": "https://christran.io",
+		  "sameAs": [
+		    "https://linkedin.com/in/synchris",
+		    "https://github.com/sYnVerse"
+		  ],
+		  "alumniOf": [
+		    {
+		      "@type": "EducationalOrganization",
+		      "name": "University of California, San Diego"
+		    },
+		    {
+		      "@type": "EducationalOrganization",
+		      "name": "Western Governors University"
+		    }
+		  ],
+		  "address": {
+		    "@type": "PostalAddress",
+		    "addressLocality": "San Francisco Bay Area",
+		    "addressRegion": "CA",
+		    "addressCountry": "US"
+		  }
+		}
+		</script>
 	</head>
 	<body class="home-page">
 		<div class="loader-overlay" id="loader-overlay" role="status" aria-live="polite" aria-label="Loading">
@@ -49,7 +82,7 @@ const featured = getFeaturedProjects();
 		<main>
 			<h1>Network Engineering. Security. Automation.</h1>
 			<p>
-				I’m Chris Tran, a San Francisco Bay Area-based engineer passionate about building infrastructure that just works. Explore my latest projects, read my technical deep-dives, or click the terminal icon in the bottom right to query my skills directly.
+				I’m <strong>Chris Tran</strong>, a <strong>San Francisco Bay Area Network Engineer</strong> specializing in IT infrastructure, network security, virtualization, and automation. Currently working at <strong>Auto-Chlor System</strong> and pursuing my M.S. in IT Management at <strong>WGU</strong>, I hold a B.S. in Mathematics-Computer Science from the <strong>University of California, San Diego</strong> (<strong>UCSD</strong>). I am passionate about building reliable infrastructure that just works. Explore my latest projects, read my technical deep-dives, or click the terminal icon in the bottom right to query my skills directly.
 			</p>
 
 			<section class="featured-section" aria-label="Featured work">
