@@ -170,11 +170,19 @@ const featured = getFeaturedProjects();
 				letter-spacing: 0.05em;
 			}
 			.home-page {
-				background-image: url('/img/network-bg.webp');
+				min-height: 100vh;
+				position: relative;
+			}
+			.home-page::before {
+				content: '';
+				position: fixed;
+				inset: 0;
+				background-image: url('/img/network-bg.png');
 				background-size: cover;
 				background-position: center;
-				background-attachment: fixed;
-				min-height: 100vh;
+				image-rendering: -webkit-optimize-contrast;
+				image-rendering: crisp-edges;
+				z-index: -1;
 			}
 			.home-page main {
 				position: relative;
