@@ -48,36 +48,7 @@ const featured = getFeaturedProjects();
 		</script>
 	</head>
 	<body class="home-page">
-		<div class="loader-overlay" id="loader-overlay" role="status" aria-live="polite" aria-label="Loading">
-			<div class="loader-content">
-				<svg class="loader-network" viewBox="0 0 120 120" aria-hidden="true">
-					<defs>
-						<linearGradient id="loader-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-							<stop offset="0%" stop-color="var(--accent)" />
-							<stop offset="100%" stop-color="var(--accent-dark)" />
-						</linearGradient>
-					</defs>
-					<!-- network nodes -->
-					<circle class="loader-node" cx="60" cy="60" r="6" fill="url(#loader-grad)" />
-					<circle class="loader-node" cx="60" cy="20" r="5" fill="url(#loader-grad)" />
-					<circle class="loader-node" cx="95" cy="45" r="5" fill="url(#loader-grad)" />
-					<circle class="loader-node" cx="95" cy="95" r="5" fill="url(#loader-grad)" />
-					<circle class="loader-node" cx="25" cy="95" r="5" fill="url(#loader-grad)" />
-					<circle class="loader-node" cx="25" cy="45" r="5" fill="url(#loader-grad)" />
-					<!-- links (draw in sequence) -->
-					<line class="loader-link" x1="60" y1="60" x2="60" y2="20" />
-					<line class="loader-link" x1="60" y1="60" x2="95" y2="45" />
-					<line class="loader-link" x1="60" y1="60" x2="95" y2="95" />
-					<line class="loader-link" x1="60" y1="60" x2="25" y2="95" />
-					<line class="loader-link" x1="60" y1="60" x2="25" y2="45" />
-					<!-- packet traveling the path -->
-					<circle class="loader-packet" r="4" fill="#7B9EFF">
-						<animateMotion dur="0.5s" repeatCount="1" fill="freeze" path="M60 60 L60 20 L95 45 L60 60 L95 95 L60 60 L25 95 L60 60 L25 45 Z" />
-					</circle>
-				</svg>
-				<p class="loader-text">Establishing connection...</p>
-			</div>
-		</div>
+
 		<Header />
 		<main>
 			<h1>Network Engineering. Security. Automation.</h1>
@@ -140,68 +111,7 @@ const featured = getFeaturedProjects();
 
 		<Footer />
 		<style>
-			.loader-overlay {
-				position: fixed;
-				inset: 0;
-				z-index: 9999;
-				background: rgba(11, 16, 33, 0.96);
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				transition: opacity 0.175s ease-out, visibility 0.175s ease-out;
-			}
-			.loader-overlay.hide {
-				opacity: 0;
-				visibility: hidden;
-				pointer-events: none;
-			}
-			.loader-content {
-				text-align: center;
-			}
-			.loader-network {
-				width: 140px;
-				height: 140px;
-				display: block;
-				margin: 0 auto 1rem;
-			}
-			.loader-node {
-				opacity: 0;
-				animation: loader-node-in 0.075s ease-out forwards;
-			}
-			.loader-node:nth-child(1) { animation-delay: 0s; }
-			.loader-node:nth-child(2) { animation-delay: 0.04s; }
-			.loader-node:nth-child(3) { animation-delay: 0.08s; }
-			.loader-node:nth-child(4) { animation-delay: 0.12s; }
-			.loader-node:nth-child(5) { animation-delay: 0.16s; }
-			.loader-node:nth-child(6) { animation-delay: 0.2s; }
-			@keyframes loader-node-in {
-				to { opacity: 1; }
-			}
-			.loader-link {
-				stroke: rgba(123, 158, 255, 0.4);
-				stroke-width: 2;
-				stroke-dasharray: 120;
-				stroke-dashoffset: 120;
-				animation: loader-link-draw 0.1s ease-out forwards;
-			}
-			.loader-link:nth-of-type(1) { animation-delay: 0.025s; }
-			.loader-link:nth-of-type(2) { animation-delay: 0.1s; }
-			.loader-link:nth-of-type(3) { animation-delay: 0.175s; }
-			.loader-link:nth-of-type(4) { animation-delay: 0.25s; }
-			.loader-link:nth-of-type(5) { animation-delay: 0.325s; }
-			.loader-link:nth-of-type(6) { animation-delay: 0.4s; }
-			@keyframes loader-link-draw {
-				to { stroke-dashoffset: 0; }
-			}
-			.loader-packet {
-				filter: drop-shadow(0 0 4px var(--accent));
-			}
-			.loader-text {
-				margin: 0;
-				font-size: 0.9rem;
-				color: rgba(210, 215, 235, 0.8);
-				letter-spacing: 0.05em;
-			}
+
 			.home-page {
 				min-height: 100vh;
 				position: relative;
@@ -548,12 +458,6 @@ const featured = getFeaturedProjects();
 		</style>
 		<script is:inline>
 			document.addEventListener('DOMContentLoaded', function () {
-				var loader = document.getElementById('loader-overlay');
-				if (loader) {
-					setTimeout(function () {
-						loader.classList.add('hide');
-					}, 500);
-				}
 
 				const output = document.getElementById('term-output');
 				const input = document.getElementById('term-input');
