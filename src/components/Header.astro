@@ -34,7 +34,16 @@ import SearchModal from './SearchModal.astro';
 					<line x1="21" y1="21" x2="16.65" y2="16.65"></line>
 				</svg>
 				<span class="search-trigger-text">Search</span>
-				<kbd class="search-trigger-shortcut">⌘K</kbd>
+				<kbd class="search-trigger-shortcut">Ctrl+K</kbd>
+				<script is:inline>
+					(function() {
+						var isMac = /Mac|iPod|iPhone|iPad/.test(navigator.platform || navigator.userAgent || '');
+						var kbd = document.currentScript.previousElementSibling;
+						if (kbd) {
+							kbd.textContent = isMac ? '⌘K' : 'Ctrl+K';
+						}
+					})();
+				</script>
 			</button>
 			<div class="social-links">
 				<a href="https://linkedin.com/in/synchris" target="_blank">
@@ -261,6 +270,12 @@ import SearchModal from './SearchModal.astro';
 		padding: 1px 4px;
 		color: rgb(var(--gray));
 		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+	}
+
+	@media (hover: none), (pointer: coarse) {
+		.search-trigger-shortcut {
+			display: none;
+		}
 	}
 
 	@media (max-width: 720px) {
