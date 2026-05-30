@@ -1,8 +1,10 @@
 ---
 ---
 <button id="terminal-trigger" class="terminal-trigger-btn" aria-label="Open interactive terminal" aria-expanded="false" aria-controls="terminal-widget">
-			<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="trigger-icon-svg"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
-			<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="close-icon-svg" style="display: none;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+			<span class="terminal-trigger-face">
+				<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="trigger-icon-svg"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+				<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="close-icon-svg" style="display: none;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+			</span>
 		</button>
 
 		<section class="terminal-widget" id="terminal-widget" aria-label="Interactive terminal widget">
@@ -43,7 +45,6 @@
 		</section>
 
 <style>
-/* Floating Terminal Widget */
 			.terminal-trigger-btn {
 				position: fixed;
 				bottom: 2rem;
@@ -51,27 +52,91 @@
 				width: 56px;
 				height: 56px;
 				border-radius: 50%;
+				border: none;
+				background: none;
+				padding: 0;
+				cursor: pointer;
+				z-index: 1001;
+				overflow: visible;
+				transition: transform 0.22s cubic-bezier(0.34, 1.45, 0.64, 1), filter 0.2s ease;
+			}
+			.terminal-trigger-btn:hover:not([aria-expanded="true"]) {
+				transform: scale(1.07);
+			}
+			.terminal-trigger-btn:active:not([aria-expanded="true"]) {
+				transform: scale(0.98);
+			}
+			.terminal-trigger-btn::before,
+			.terminal-trigger-btn::after {
+				content: "";
+				position: absolute;
+				left: -2px;
+				top: -2px;
+				width: calc(100% + 4px);
+				height: calc(100% + 4px);
+				border-radius: 50%;
+				z-index: 0;
+				transition: opacity 0.32s ease;
+				background: linear-gradient(45deg, #042f4a, #0a4d6e, #0d6b7d, #0e7490, #0891b2, #06b6d4, #22d3ee, #2dd4bf, #34d399, #5eead4, #67e8f9, #38bdf8, #0ea5e9, #0369a1, #042f4a);
+				background-size: 400%;
+				animation: terminal-gradient-flow 90s linear infinite;
+				pointer-events: none;
+			}
+			.terminal-trigger-btn::after {
+				filter: blur(18px);
+				opacity: 0.75;
+				transition: filter 0.32s ease, opacity 0.32s ease;
+			}
+			.terminal-trigger-btn:hover:not([aria-expanded="true"])::after {
+				filter: blur(24px) brightness(1.25);
+				opacity: 1;
+			}
+			.terminal-trigger-btn[aria-expanded="true"]::before,
+			.terminal-trigger-btn[aria-expanded="true"]::after {
+				opacity: 0;
+				animation: none;
+			}
+			.terminal-trigger-face {
+				position: relative;
+				z-index: 1;
+				display: flex;
+				width: 100%;
+				height: 100%;
+				justify-content: center;
+				align-items: center;
+				border-radius: 50%;
 				background: linear-gradient(135deg, rgba(30, 35, 50, 0.95) 0%, rgba(15, 20, 35, 0.98) 100%);
 				backdrop-filter: blur(12px);
 				-webkit-backdrop-filter: blur(12px);
 				border: 1px solid rgba(123, 158, 255, 0.3);
 				color: var(--accent);
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				cursor: pointer;
-				box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-				z-index: 1001;
-				transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+				box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 8px 32px rgba(0, 0, 0, 0.5);
+				transition: all 0.22s ease;
 			}
-			.terminal-trigger-btn:hover {
-				transform: translateY(-4px) scale(1.05);
-				border-color: var(--accent);
-				box-shadow: 0 12px 40px rgba(123, 158, 255, 0.25);
+			.terminal-trigger-btn:hover:not([aria-expanded="true"]) .terminal-trigger-face {
+				color: #ffffff;
+				background: linear-gradient(135deg, rgba(40, 48, 75, 0.95) 0%, rgba(20, 27, 50, 0.98) 100%);
+				border-color: rgba(123, 158, 255, 0.6);
+				box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 12px 40px rgba(0, 0, 0, 0.6);
 			}
-			.terminal-trigger-btn:active {
-				transform: translateY(-1px) scale(0.98);
+			.terminal-trigger-btn[aria-expanded="true"] .terminal-trigger-face {
+				background: #252836;
+				border-color: rgba(255, 95, 86, 0.4);
+				color: #ff5f56;
+				box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 4px 12px rgba(0, 0, 0, 0.3);
 			}
+			@keyframes terminal-gradient-flow {
+				0% {
+					background-position: 0% 50%;
+				}
+				50% {
+					background-position: 100% 50%;
+				}
+				100% {
+					background-position: 0% 50%;
+				}
+			}
+
 			.terminal-widget {
 				position: fixed;
 				bottom: 6rem;
@@ -305,201 +370,6 @@
 					min-height: 180px;
 					max-width: 100%;
 					overflow-x: auto;
-}
-			.terminal-widget .dot.red {
-				cursor: pointer;
-				position: relative;
-			}
-			.terminal-widget .dot.red:hover::after {
-				content: '×';
-				position: absolute;
-				top: 50%;
-				left: 50%;
-				transform: translate(-50%, -52%);
-				font-size: 8px;
-				color: rgba(0, 0, 0, 0.6);
-				font-weight: bold;
-			}
-			@media (max-width: 640px) {
-				.terminal-widget {
-					top: calc(1rem + env(safe-area-inset-top));
-					bottom: 5.5rem;
-					right: 1rem;
-					width: calc(100vw - 2rem);
-					height: auto;
-					max-width: none;
-					max-height: none;
-				}
-				.terminal-trigger-btn {
-					bottom: 1.5rem;
-					right: 1rem;
-				}
-				.home-page main {
-					padding: 1.25rem;
-				}
-			}
-			.terminal-window {
-				font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace;
-				font-size: 0.85rem;
-				line-height: 1.5;
-				background: #1a1d29;
-				border-radius: 10px;
-				overflow-x: auto;
-				overflow-y: hidden;
-				box-shadow: var(--box-shadow), 0 0 0 1px rgba(123, 158, 255, 0.15);
-				max-width: 100%;
-				min-width: 0;
-			}
-			.terminal-titlebar {
-				display: flex;
-				align-items: center;
-				gap: 0.75rem;
-				padding: 0.5rem 0.75rem;
-				background: #252836;
-				border-bottom: 1px solid rgba(0, 0, 0, 0.3);
-				cursor: text;
-			}
-			.terminal-dots {
-				display: flex;
-				gap: 6px;
-			}
-			.terminal-dots .dot {
-				width: 10px;
-				height: 10px;
-				border-radius: 50%;
-			}
-			.terminal-dots .dot.red { background: #ff5f56; }
-			.terminal-dots .dot.yellow { background: #ffbd2e; }
-			.terminal-dots .dot.green { background: #27c93f; }
-			.terminal-title {
-				color: rgba(210, 215, 235, 0.7);
-				font-size: 0.75rem;
-			}
-			.terminal-body {
-				display: block !important;
-				padding: 0.75rem 1rem;
-				min-height: 210px;
-				overflow-y: auto;
-				cursor: text;
-			}
-			.terminal-output {
-				margin-bottom: 0.5rem;
-			}
-			.terminal-output .term-line {
-				margin-bottom: 0.25rem;
-				word-break: break-word;
-			}
-			.terminal-output .term-line code {
-				background: rgba(123, 158, 255, 0.2);
-				padding: 1px 4px;
-				border-radius: 3px;
-			}
-			.term-prompt {
-				color: var(--accent);
-				margin-right: 0.5rem;
-			}
-			/* Apply prompt color to dynamically appended lines (Astro scoping doesn't apply to innerHTML) */
-			.terminal-output :global(.term-prompt) {
-				color: var(--accent);
-				margin-right: 0.5rem;
-			}
-			.term-prompt-short {
-				display: none;
-			}
-			.terminal-input-line {
-				display: flex;
-				align-items: center;
-				flex-wrap: wrap;
-				gap: 0;
-			}
-			.terminal-input-wrap {
-				display: inline-flex;
-				align-items: center;
-				flex: 1;
-				min-width: 0;
-				position: relative;
-			}
-			.terminal-input-val {
-				white-space: pre-wrap;
-				word-break: break-all;
-				font: inherit;
-				color: rgb(var(--gray-dark));
-			}
-			.terminal-input {
-				position: absolute;
-				left: 0;
-				top: 0;
-				width: 100%;
-				height: 100%;
-				color: transparent;
-				background: transparent;
-				caret-color: transparent;
-				border: none;
-				outline: none;
-				font: inherit;
-				padding: 0;
-				margin: 0;
-				z-index: 2;
-			}
-			.terminal-input::placeholder {
-				color: rgba(210, 215, 235, 0.4);
-			}
-			.term-cursor {
-				display: inline-block;
-				width: 8px;
-				height: 1.1em;
-				background: var(--accent);
-				animation: blink 1s step-end infinite;
-				vertical-align: text-bottom;
-			}
-			@keyframes blink {
-				50% { opacity: 0; }
-			}
-			.terminal-output .term-response {
-				color: rgb(var(--gray));
-				white-space: pre-wrap;
-			}
-			.terminal-output .term-response a {
-				color: inherit;
-				text-decoration: underline;
-			}
-			.terminal-output .term-response a:hover {
-				color: var(--accent);
-			}
-
-			@media (max-width: 640px) {
-				.home-page {
-					overflow-x: hidden;
-				}
-				.home-page main {
-					width: 100%;
-					max-width: 100%;
-					padding: 1rem;
-					margin: 0.5rem 0;
-					overflow-x: hidden;
-				}
-				.terminal-section {
-					margin-top: 1.5rem;
-				}
-				.terminal-window {
-					font-size: 0.75rem;
-					border-radius: 8px;
-					max-width: 100%;
-				}
-				.terminal-titlebar {
-					padding: 0.4rem 0.6rem;
-				}
-				.terminal-title {
-					max-width: 60%;
-					overflow: hidden;
-					text-overflow: ellipsis;
-					white-space: nowrap;
-				}
-				.terminal-body {
-					padding: 0.5rem 0.75rem;
-					min-height: 180px;
-					max-width: 100%;
-					overflow-x: auto;
 				}
 				.terminal-output {
 					max-height: 240px;
@@ -509,7 +379,6 @@
 					min-width: 0;
 				}
 			}
-
 			</style>
 
 		<script is:inline>
