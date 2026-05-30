@@ -25,7 +25,7 @@ export const projects: Project[] = [
     image: '/img/projects/ai-chat.webp',
     liveUrl: 'https://llm.christran.io',
     featured: false,
-    order: 3,
+    order: 5,
   },
   {
     slug: 'ai-image-gen',
@@ -64,7 +64,7 @@ export const projects: Project[] = [
     image: '/img/projects/chat.webp',
     liveUrl: 'https://chat.christran.io',
     featured: false,
-    order: 5,
+    order: 6,
   },
   {
     slug: 'todo',
@@ -77,7 +77,7 @@ export const projects: Project[] = [
     image: '/img/projects/todo.webp',
     liveUrl: 'https://synx.christran.io',
     featured: false,
-    order: 6,
+    order: 3,
   },
   {
     slug: 'f1-wiki',
