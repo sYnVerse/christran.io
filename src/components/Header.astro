@@ -21,7 +21,7 @@ import LoaderOverlay from './LoaderOverlay.astro';
 			</span>
 		</button>
 
-		<div id="nav-menu" class="nav-menu" aria-hidden="true">
+		<div id="nav-menu" class="nav-menu">
 			<div class="internal-links">
 				<HeaderLink href="/">Home</HeaderLink>
 				<HeaderLink href="/blog">Blog</HeaderLink>
@@ -54,6 +54,20 @@ import LoaderOverlay from './LoaderOverlay.astro';
 	const btn = document.getElementById('hamburger-btn');
 	const menu = document.getElementById('nav-menu');
 	if (btn && menu) {
+		const updateAria = () => {
+			const isMobile = window.innerWidth <= 720;
+			if (isMobile) {
+				const isOpen = btn.getAttribute('aria-expanded') === 'true';
+				menu.setAttribute('aria-hidden', String(!isOpen));
+			} else {
+				menu.removeAttribute('aria-hidden');
+			}
+		};
+
+		// Run immediately and on resize
+		updateAria();
+		window.addEventListener('resize', updateAria);
+
 		btn.addEventListener('click', () => {
 			const isOpen = btn.getAttribute('aria-expanded') === 'true';
 			btn.setAttribute('aria-expanded', String(!isOpen));
@@ -174,6 +188,9 @@ import LoaderOverlay from './LoaderOverlay.astro';
 		header {
 			background: var(--background);
 		}
+		.nav-menu {
+			visibility: visible !important;
+		}
 	}
 	.nav-menu {
 		display: flex;
@@ -236,12 +253,15 @@ import LoaderOverlay from './LoaderOverlay.astro';
 			width: 100%;
 			grid-template-rows: 0fr;
 			overflow: hidden;
-			transition: grid-template-rows 0.35s ease-out;
+			transition: grid-template-rows 0.35s ease-out, visibility 0.35s step-end;
 			pointer-events: none;
+			visibility: hidden;
 		}
 		.nav-menu--open {
 			grid-template-rows: 1fr;
 			pointer-events: auto;
+			visibility: visible;
+			transition: grid-template-rows 0.35s ease-out, visibility 0.35s step-start;
 			/* Dark panel to match site theme */
 			background: var(--background);
 			border-radius: 0.5em;
