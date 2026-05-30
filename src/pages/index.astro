@@ -329,13 +329,25 @@ const featured = getFeaturedProjects();
 				let viewportHeight = window.innerHeight;
 				let wrapperHeight = wrapper.offsetHeight;
 				let scrollRange = wrapperHeight - viewportHeight;
+				let translateMultiplier = 1;
 
 				const handleResize = () => {
 					viewportHeight = window.innerHeight;
 					wrapperHeight = wrapper.offsetHeight;
 					scrollRange = wrapperHeight - viewportHeight;
+					
+					const width = window.innerWidth;
+					if (width <= 480) {
+						translateMultiplier = 0.25; // 25% translation on small mobile
+					} else if (width <= 768) {
+						translateMultiplier = 0.5;  // 50% translation on tablet/medium mobile
+					} else {
+						translateMultiplier = 1;    // 100% translation on desktop
+					}
 				};
 
+				// Run immediately to calculate on load
+				handleResize();
 				window.addEventListener('resize', handleResize, { passive: true });
 
 				const handleScroll = () => {
@@ -360,21 +372,21 @@ const featured = getFeaturedProjects();
 					const opacity1 = 1;
 					let translate1 = 0;
 					if (!prefersReducedMotion) {
-						translate1 = p * -80; // Moves left
+						translate1 = p * -80 * translateMultiplier; // Moves left
 					}
 
 					// Line 2: Security (Fades in between p=0.15 and p=0.50)
 					const opacity2 = Math.min(1, Math.max(0, (p - 0.15) / 0.35));
 					let translate2 = 0;
 					if (!prefersReducedMotion) {
-						translate2 = Math.max(0, p - 0.15) * 80; // Moves right
+						translate2 = Math.max(0, p - 0.15) * 80 * translateMultiplier; // Moves right
 					}
 
 					// Line 3: Automation (Fades in between p=0.45 and p=0.80)
 					const opacity3 = Math.min(1, Math.max(0, (p - 0.45) / 0.35));
 					let translate3 = 0;
 					if (!prefersReducedMotion) {
-						translate3 = Math.max(0, p - 0.45) * -120; // Moves left
+						translate3 = Math.max(0, p - 0.45) * -120 * translateMultiplier; // Moves left
 					}
 
 					// Set layout properties
