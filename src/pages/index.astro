@@ -51,31 +51,170 @@ const featured = getFeaturedProjects();
 				min-height: 100vh;
 				position: relative;
 			}
-			.home-page h1 {
-				font-size: clamp(1.5rem, 7.8vw, 3.3rem);
-				line-height: 1.15;
-				margin-bottom: 1.5rem;
+			/* Custom header styling on homepage for fixed glassmorphic layout */
+			.home-page :global(header) {
+				position: fixed;
+				top: 0;
+				left: 0;
+				right: 0;
+				z-index: 10;
+				background: rgba(11, 16, 33, 0.4) !important;
+				backdrop-filter: blur(16px);
+				border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+				transition: background-color 0.3s ease, border-color 0.3s ease;
 			}
 			.home-page::before {
 				content: '';
 				position: fixed;
-				inset: 0;
+				inset: -40px; /* Prevents edge gaps during background translations */
 				background-image: url('/img/network-bg.webp');
 				background-size: cover;
 				background-position: center;
 				image-rendering: -webkit-optimize-contrast;
 				image-rendering: crisp-edges;
 				z-index: -1;
+				will-change: transform;
+				transform: translateY(var(--bg-translate, 0px)) scale(var(--bg-scale, 1));
+				transition: transform 0.1s cubic-bezier(0.25, 1, 0.5, 1);
 			}
+			/* Full Screen Hero Section */
+			.hero-section {
+				height: 100vh;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+				position: relative;
+				overflow: hidden;
+				padding: 2rem;
+				box-sizing: border-box;
+			}
+			.hero-content {
+				width: 100%;
+				max-width: 800px;
+				margin: auto 0;
+			}
+			.tagline-parallax {
+				font-size: clamp(2rem, 9vw, 4.6rem);
+				line-height: 1.1;
+				margin-bottom: 0;
+				font-weight: 800;
+				letter-spacing: -0.03em;
+				display: flex;
+				flex-direction: column;
+				gap: 0.25rem;
+				overflow: visible; /* Avoid clipping text scale and glow */
+			}
+			.tagline-line {
+				display: block;
+				will-change: transform, opacity;
+				transition: transform 0.12s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.12s cubic-bezier(0.25, 1, 0.5, 1);
+				transform: translateX(var(--translate, 0px));
+				opacity: var(--opacity, 1);
+				cursor: default;
+			}
+			.line-1 {
+				--translate: var(--translate-1, 0px);
+				--opacity: var(--opacity-1, 1);
+				background: linear-gradient(135deg, #FFFFFF 30%, var(--accent) 100%);
+				-webkit-background-clip: text;
+				-webkit-text-fill-color: transparent;
+				background-clip: text;
+			}
+			.line-2 {
+				--translate: var(--translate-2, 0px);
+				--opacity: var(--opacity-2, 1);
+				color: #FFFFFF;
+				text-shadow: 0 0 40px rgba(255, 255, 255, 0.1);
+				padding-left: 2rem;
+			}
+			.line-3 {
+				--translate: var(--translate-3, 0px);
+				--opacity: var(--opacity-3, 1);
+				background: linear-gradient(135deg, var(--accent) 0%, #A5C0FF 100%);
+				-webkit-background-clip: text;
+				-webkit-text-fill-color: transparent;
+				background-clip: text;
+				padding-left: 4rem;
+			}
+			.tagline-line:hover {
+				filter: drop-shadow(0 0 12px rgba(123, 158, 255, 0.6));
+				transform: translateX(var(--translate, 0px)) scale(1.02);
+				transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1), filter 0.2s ease;
+			}
+			@media (prefers-reduced-motion: reduce) {
+				.tagline-line {
+					transform: none !important;
+					transition: none !important;
+					will-change: auto;
+				}
+			}
+			/* Scroll indicator */
+			.scroll-indicator {
+				position: absolute;
+				bottom: 3.5rem;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				gap: 0.6rem;
+				opacity: var(--scroll-indicator-opacity, 1);
+				transition: opacity 0.2s ease, transform 0.2s ease;
+				transform: translateY(calc((1 - var(--scroll-indicator-opacity, 1)) * 10px));
+				pointer-events: none;
+			}
+			.scroll-text {
+				font-size: 0.75rem;
+				text-transform: uppercase;
+				letter-spacing: 0.25em;
+				color: var(--accent);
+				font-weight: 600;
+				opacity: 0.8;
+			}
+			.mouse-icon {
+				width: 22px;
+				height: 36px;
+				border: 2px solid rgba(176, 186, 209, 0.4);
+				border-radius: 11px;
+				position: relative;
+			}
+			.mouse-wheel {
+				width: 4px;
+				height: 8px;
+				background: var(--accent);
+				border-radius: 2px;
+				position: absolute;
+				top: 6px;
+				left: 50%;
+				transform: translateX(-50%);
+				animation: mouse-scroll-anim 1.6s infinite ease-in-out;
+			}
+			@keyframes mouse-scroll-anim {
+				0% {
+					top: 6px;
+					opacity: 1;
+				}
+				50% {
+					top: 18px;
+					opacity: 0;
+				}
+				100% {
+					top: 6px;
+					opacity: 1;
+				}
+			}
+
 			.home-page main {
 				position: relative;
 				background: rgba(11, 16, 33, 0.88);
-				padding: 2rem;
+				padding: 2.5rem 2rem;
 				border-radius: 12px;
-				margin: 2rem auto;
+				margin: 0 auto 4rem auto;
 				width: calc(100% - 2rem);
 				max-width: 720px;
 				box-sizing: border-box;
+				box-shadow: var(--box-shadow);
+				border: 1px solid rgba(255, 255, 255, 0.05);
+				z-index: 2;
 			}
 			/* Featured section */
 			.featured-section {
@@ -118,7 +257,7 @@ const featured = getFeaturedProjects();
 			@media (max-width: 640px) {
 				.home-page main {
 					padding: 1.25rem;
-					margin: 1rem auto;
+					margin: 1rem auto 3rem auto;
 				}
 				.featured-grid {
 					grid-template-columns: 1fr;
@@ -132,8 +271,25 @@ const featured = getFeaturedProjects();
 	</head>
 	<body class="home-page">
 		<Header />
+		
+		<div class="hero-section">
+			<div class="hero-content">
+				<h1 class="tagline-parallax" aria-label="Network Engineering, Security, Automation">
+					<span class="tagline-line line-1" aria-hidden="true">Network Engineering.</span>
+					<span class="tagline-line line-2" aria-hidden="true">Security.</span>
+					<span class="tagline-line line-3" aria-hidden="true">Automation.</span>
+				</h1>
+			</div>
+			
+			<div class="scroll-indicator" aria-hidden="true">
+				<span class="scroll-text">Scroll to explore</span>
+				<div class="mouse-icon">
+					<span class="mouse-wheel"></span>
+				</div>
+			</div>
+		</div>
+
 		<main>
-			<h1>Network Engineering.<br />Security.<br />Automation.</h1>
 			<p>
 				I’m <strong>Chris Tran</strong>, a <strong>San Francisco Bay Area Network Engineer</strong> specializing in IT infrastructure, network security, virtualization, and automation. Currently working at <strong>Auto-Chlor System</strong> and pursuing my M.S. in IT Management at <strong>WGU</strong>, I hold a B.S. in Mathematics-Computer Science from the <strong>University of California, San Diego</strong> (<strong>UCSD</strong>). I am passionate about building reliable infrastructure that just works. Explore my latest projects, read my technical deep-dives, or click the terminal icon in the bottom right to query my skills directly.
 			</p>
@@ -149,5 +305,74 @@ const featured = getFeaturedProjects();
 			</section>
 		</main>
 		<Footer />
+		
+		<script>
+			const initParallax = () => {
+				const tagline = document.querySelector('.tagline-parallax');
+				const body = document.body;
+				if (!tagline) return;
+
+				const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+				const handleScroll = () => {
+					const scrollY = window.scrollY;
+					const viewportHeight = window.innerHeight;
+
+					// 1. Background vertical scroll parallax & subtle scale
+					if (!prefersReducedMotion) {
+						const bgTranslate = scrollY * -0.15;
+						const bgScale = 1 + scrollY * 0.00015;
+						body.style.setProperty('--bg-translate', `${bgTranslate}px`);
+						body.style.setProperty('--bg-scale', `${bgScale}`);
+					}
+
+					// 2. Tagline horizontal parallax & fade out
+					const rect = tagline.getBoundingClientRect();
+					if (rect.bottom > 0 && rect.top < viewportHeight) {
+						const scrollProgress = (viewportHeight - rect.top) / (viewportHeight + rect.height);
+						const offset = scrollProgress - 0.5; // -0.5 to 0.5
+
+						if (!prefersReducedMotion) {
+							// Line 1 moves left, Line 2 right, Line 3 left
+							const translate1 = offset * -100;
+							const translate2 = offset * 70;
+							const translate3 = offset * -120;
+							tagline.style.setProperty('--translate-1', `${translate1}px`);
+							tagline.style.setProperty('--translate-2', `${translate2}px`);
+							tagline.style.setProperty('--translate-3', `${translate3}px`);
+						}
+
+						// Calculate fade multiplier as it scrolls up
+						// Tagline starts fading immediately as user scrolls
+						const fadeOutProgress = Math.max(0, 1 - scrollY / (viewportHeight * 0.5));
+						const opacity1 = Math.max(0, fadeOutProgress * (1 - Math.abs(offset) * 1.2));
+						const opacity2 = Math.max(0, fadeOutProgress * (1 - Math.abs(offset) * 1.0));
+						const opacity3 = Math.max(0, fadeOutProgress * (1 - Math.abs(offset) * 1.4));
+
+						tagline.style.setProperty('--opacity-1', `${opacity1}`);
+						tagline.style.setProperty('--opacity-2', `${opacity2}`);
+						tagline.style.setProperty('--opacity-3', `${opacity3}`);
+					}
+
+					// 3. Scroll indicator opacity fade out
+					const scrollIndicator = document.querySelector('.scroll-indicator');
+					if (scrollIndicator) {
+						const indicatorOpacity = Math.max(0, 1 - scrollY / 150);
+						scrollIndicator.style.setProperty('--scroll-indicator-opacity', `${indicatorOpacity}`);
+					}
+				};
+
+				window.addEventListener('scroll', handleScroll, { passive: true });
+				// Trigger layout position immediately
+				handleScroll();
+			};
+
+			// Initialize on mount
+			initParallax();
+
+			// Hook into Astro view transitions swap if active
+			document.addEventListener('astro:after-swap', initParallax);
+		</script>
 	</body>
+</html>
 </html>
