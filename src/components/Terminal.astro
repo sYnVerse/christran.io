@@ -389,6 +389,18 @@
 				const terminalWindow = document.getElementById('terminal-window');
 				if (!output || !input) return;
 
+				// Restore terminal output from sessionStorage if exists
+				try {
+					const savedOutput = sessionStorage.getItem('term_output');
+					if (savedOutput) {
+						output.innerHTML = savedOutput;
+						const body = output.parentElement;
+						if (body) {
+							body.scrollTop = body.scrollHeight;
+						}
+					}
+				} catch (e) {}
+
 				if (terminalWindow) {
 					terminalWindow.addEventListener('click', function () {
 						input.focus();
@@ -494,6 +506,10 @@
 					line.innerHTML = html;
 					output.appendChild(line);
 					
+					try {
+						sessionStorage.setItem('term_output', output.innerHTML);
+					} catch (e) {}
+					
 					const body = output.parentElement;
 					if (body) {
 						body.scrollTop = body.scrollHeight;
@@ -573,6 +589,9 @@
 				function handleCommandResult(cmdKey, result) {
 					if (result === '__CLEAR__') {
 						output.innerHTML = '';
+						try {
+							sessionStorage.removeItem('term_output');
+						} catch (e) {}
 						return;
 					}
 					if (String(result).indexOf('__HTML__') === 0) {
@@ -587,7 +606,13 @@
 					appendLine('<span class="term-response">' + escapeHtmlWithBreaks(result) + '</span>');
 				}
 
-				const history = [];
+				let history = [];
+				try {
+					const savedHistory = sessionStorage.getItem('term_history');
+					if (savedHistory) {
+						history = JSON.parse(savedHistory);
+					}
+				} catch (e) {}
 				let historyIndex = -1;
 
 				const autocompleteCandidates = [
@@ -687,6 +712,9 @@
 						if (cmd.trim() !== '') {
 							if (history.length === 0 || history[history.length - 1] !== cmd) {
 								history.push(cmd);
+								try {
+									sessionStorage.setItem('term_history', JSON.stringify(history));
+								} catch (e) {}
 							}
 							historyIndex = -1;
 						}
@@ -706,6 +734,9 @@
 					if (!widget || !trigger) return;
 					const isOpen = widget.classList.toggle('open');
 					trigger.setAttribute('aria-expanded', String(isOpen));
+					try {
+						sessionStorage.setItem('term_open', String(isOpen));
+					} catch (e) {}
 					if (isOpen) {
 						if (triggerIcon) triggerIcon.style.display = 'none';
 						if (closeIcon) closeIcon.style.display = 'block';
@@ -727,6 +758,22 @@
 				if (trigger) {
 					trigger.addEventListener('click', toggleTerminal);
 				}
+
+				// Restore terminal open state on page load
+				try {
+					const isOpen = sessionStorage.getItem('term_open') === 'true';
+					if (isOpen) {
+						widget.classList.add('open');
+						trigger.setAttribute('aria-expanded', 'true');
+						if (triggerIcon) triggerIcon.style.display = 'none';
+						if (closeIcon) closeIcon.style.display = 'block';
+						// Scroll to the bottom of the output
+						const body = output.parentElement;
+						if (body) {
+							body.scrollTop = body.scrollHeight;
+						}
+					}
+				} catch (e) {}
 
 				if (dotClose) {
 					dotClose.addEventListener('click', function (e) {
