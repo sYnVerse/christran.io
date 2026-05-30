@@ -37,7 +37,7 @@ export const projects: Project[] = [
     techStack: ['Cloudflare Workers', 'TypeScript', 'Workers AI'],
     image: '/img/projects/ai-image-gen.webp',
     liveUrl: 'https://illusyn.christran.io',
-    featured: false,
+    featured: true,
     order: 4,
   },
   {
@@ -76,7 +76,7 @@ export const projects: Project[] = [
     techStack: ['Cloudflare Workers', 'KV Storage', 'TypeScript'],
     image: '/img/projects/todo.webp',
     liveUrl: 'https://synx.christran.io',
-    featured: false,
+    featured: true,
     order: 3,
   },
   {
