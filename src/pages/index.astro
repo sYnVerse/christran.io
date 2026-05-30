@@ -68,6 +68,7 @@ const featured = getFeaturedProjects();
 				padding: 2rem;
 				border-radius: 12px;
 				margin: 2rem auto;
+				width: calc(100% - 2rem);
 				max-width: 720px;
 				box-sizing: border-box;
 			}
@@ -110,6 +111,10 @@ const featured = getFeaturedProjects();
 				opacity: 0.8;
 			}
 			@media (max-width: 640px) {
+				.home-page main {
+					padding: 1.25rem;
+					margin: 1rem auto;
+				}
 				.featured-grid {
 					grid-template-columns: 1fr;
 					gap: 1rem;
