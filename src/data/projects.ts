@@ -29,7 +29,7 @@ export const projects: Project[] = [
   },
   {
     slug: 'ai-image-gen',
-    title: 'Illusyn',
+    title: 'illusYn',
     description:
       'AI-powered text-to-image generation platform that transforms written descriptions into stunning visual artwork. Leverages advanced models to generate custom images from text prompts, perfect for content creators and designers.',
     category: 'app',
@@ -68,7 +68,7 @@ export const projects: Project[] = [
   },
   {
     slug: 'todo',
-    title: 'Synx',
+    title: 'sYnX',
     description:
       'A modern task management application for organizing and tracking personal and professional tasks. Features an intuitive interface, priority levels, due dates, and progress tracking to stay productive.',
     category: 'app',
