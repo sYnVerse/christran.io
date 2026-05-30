@@ -25,7 +25,10 @@ import Layout from '../../layouts/BlogPost.astro';
 			</div>
 			<table class="spec-table">
 				<tbody>
+					<tr><td class="spec-label">CPU</td><td>2x Intel Xeon E5-2637 v3 @ 3.50GHz (16 Threads)</td></tr>
 					<tr><td class="spec-label">RAM</td><td>64 GB DDR4 ECC</td></tr>
+					<tr><td class="spec-label">Storage</td><td>100 GB (93.93 GiB)</td></tr>
+					<tr><td class="spec-label">OS</td><td>Proxmox VE</td></tr>
 					<tr><td class="spec-label">Role</td><td>Virtualization & network simulation</td></tr>
 					<tr><td class="spec-label">Origin</td><td>Donated by Auto-Chlor System</td></tr>
 				</tbody>
@@ -41,11 +44,21 @@ import Layout from '../../layouts/BlogPost.astro';
 			</div>
 			<table class="spec-table">
 				<tbody>
+					<tr><td class="spec-label">CPU</td><td>2x Intel Xeon Gold 6242 @ 2.80GHz (64 Threads)</td></tr>
 					<tr><td class="spec-label">RAM</td><td>512 GB DDR4 ECC</td></tr>
+					<tr><td class="spec-label">Storage</td><td>3 TB ZFS Pool (Highly Efficient)</td></tr>
+					<tr><td class="spec-label">OS</td><td>Proxmox VE</td></tr>
 					<tr><td class="spec-label">Role</td><td>Primary workload server</td></tr>
 				</tbody>
 			</table>
 		</div>
+	</div>
+
+	<div class="storage-note">
+		<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19A5.5 5.5 0 0 0 22 13.5C22 9.5 19 6.5 15 6.5c-1 0-2 .2-3 .6A8.5 8.5 0 0 0 3 14c0 3.5 2.5 6.5 6 6.5h8.5Z"/></svg>
+		<span>
+			<strong>Cloud Storage Integration:</strong> Both host servers have <code>rclone</code> configured to mount cloud storage drives directly to the filesystem. This integrates <strong>5 TB of Google Drive</strong> and <strong>6 TB of Microsoft 365 Business</strong> storage (split into 1 TB per sub-account), providing highly resilient off-site storage for backups and media.
+		</span>
 	</div>
 
 	<h2>What It Runs</h2>
@@ -83,6 +96,10 @@ import Layout from '../../layouts/BlogPost.astro';
 		<span class="tag">Ansible</span>
 		<span class="tag">VLAN</span>
 		<span class="tag">Dell PowerEdge</span>
+		<span class="tag">rclone</span>
+		<span class="tag">Google Drive</span>
+		<span class="tag">Microsoft 365</span>
+		<span class="tag">ZFS</span>
 	</div>
 
 	<div class="back-link-wrapper">
@@ -169,6 +186,26 @@ import Layout from '../../layouts/BlogPost.astro';
 	.github-teaser svg {
 		flex-shrink: 0;
 		color: var(--accent);
+	}
+
+	.storage-note {
+		display: flex;
+		align-items: flex-start;
+		gap: 0.8rem;
+		padding: 1rem 1.25rem;
+		background: rgba(123, 158, 255, 0.08);
+		border: 1px solid rgba(123, 158, 255, 0.15);
+		border-radius: 8px;
+		margin: 1.5rem 0 2rem;
+		font-size: 0.9rem;
+		color: rgb(var(--gray));
+		line-height: 1.5;
+	}
+
+	.storage-note svg {
+		flex-shrink: 0;
+		color: var(--accent);
+		margin-top: 0.15rem;
 	}
 
 	.tech-tags {
