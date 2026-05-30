@@ -77,14 +77,20 @@ const featured = getFeaturedProjects();
 				transform: translateY(var(--bg-translate, 0px)) scale(var(--bg-scale, 1));
 				transition: transform 0.1s cubic-bezier(0.25, 1, 0.5, 1);
 			}
-			/* Full Screen Hero Section */
+			/* Hero scroll pin wrapper (tracks scroll progress for sequential animation) */
+			.hero-wrapper {
+				height: 220vh; /* Pinned for 1.2 viewport heights */
+				position: relative;
+			}
+			/* Full Screen Hero Section (Sticky) */
 			.hero-section {
 				height: 100vh;
+				position: sticky;
+				top: 0;
 				display: flex;
 				flex-direction: column;
 				justify-content: center;
 				align-items: center;
-				position: relative;
 				overflow: hidden;
 				padding: 2rem;
 				box-sizing: border-box;
@@ -110,7 +116,7 @@ const featured = getFeaturedProjects();
 				will-change: transform, opacity;
 				transition: transform 0.12s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.12s cubic-bezier(0.25, 1, 0.5, 1);
 				transform: translateX(var(--translate, 0px));
-				opacity: var(--opacity, 1);
+				opacity: var(--opacity, 1); /* Safe fallback for non-JS users */
 				cursor: default;
 			}
 			.line-1 {
@@ -272,19 +278,21 @@ const featured = getFeaturedProjects();
 	<body class="home-page">
 		<Header />
 		
-		<div class="hero-section">
-			<div class="hero-content">
-				<h1 class="tagline-parallax" aria-label="Network Engineering, Security, Automation">
-					<span class="tagline-line line-1" aria-hidden="true">Network Engineering.</span>
-					<span class="tagline-line line-2" aria-hidden="true">Security.</span>
-					<span class="tagline-line line-3" aria-hidden="true">Automation.</span>
-				</h1>
-			</div>
-			
-			<div class="scroll-indicator" aria-hidden="true">
-				<span class="scroll-text">Scroll to explore</span>
-				<div class="mouse-icon">
-					<span class="mouse-wheel"></span>
+		<div class="hero-wrapper">
+			<div class="hero-section">
+				<div class="hero-content">
+					<h1 class="tagline-parallax" aria-label="Network Engineering, Security, Automation">
+						<span class="tagline-line line-1" aria-hidden="true">Network Engineering.</span>
+						<span class="tagline-line line-2" aria-hidden="true">Security.</span>
+						<span class="tagline-line line-3" aria-hidden="true">Automation.</span>
+					</h1>
+				</div>
+				
+				<div class="scroll-indicator" aria-hidden="true">
+					<span class="scroll-text">Scroll to explore</span>
+					<div class="mouse-icon">
+						<span class="mouse-wheel"></span>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -309,14 +317,20 @@ const featured = getFeaturedProjects();
 		<script>
 			const initParallax = () => {
 				const tagline = document.querySelector('.tagline-parallax');
+				const wrapper = document.querySelector('.hero-wrapper');
 				const body = document.body;
-				if (!tagline) return;
+				if (!tagline || !wrapper) return;
 
 				const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 				const handleScroll = () => {
 					const scrollY = window.scrollY;
 					const viewportHeight = window.innerHeight;
+					const wrapperHeight = wrapper.offsetHeight;
+					const scrollRange = wrapperHeight - viewportHeight;
+
+					// Calculate scroll progress (0 to 1) inside the pinned region
+					const p = Math.min(1, Math.max(0, scrollY / scrollRange));
 
 					// 1. Background vertical scroll parallax & subtle scale
 					if (!prefersReducedMotion) {
@@ -326,33 +340,36 @@ const featured = getFeaturedProjects();
 						body.style.setProperty('--bg-scale', `${bgScale}`);
 					}
 
-					// 2. Tagline horizontal parallax & fade out
-					const rect = tagline.getBoundingClientRect();
-					if (rect.bottom > 0 && rect.top < viewportHeight) {
-						const scrollProgress = (viewportHeight - rect.top) / (viewportHeight + rect.height);
-						const offset = scrollProgress - 0.5; // -0.5 to 0.5
-
-						if (!prefersReducedMotion) {
-							// Line 1 moves left, Line 2 right, Line 3 left
-							const translate1 = offset * -100;
-							const translate2 = offset * 70;
-							const translate3 = offset * -120;
-							tagline.style.setProperty('--translate-1', `${translate1}px`);
-							tagline.style.setProperty('--translate-2', `${translate2}px`);
-							tagline.style.setProperty('--translate-3', `${translate3}px`);
-						}
-
-						// Calculate fade multiplier as it scrolls up
-						// Tagline starts fading immediately as user scrolls
-						const fadeOutProgress = Math.max(0, 1 - scrollY / (viewportHeight * 0.5));
-						const opacity1 = Math.max(0, fadeOutProgress * (1 - Math.abs(offset) * 1.2));
-						const opacity2 = Math.max(0, fadeOutProgress * (1 - Math.abs(offset) * 1.0));
-						const opacity3 = Math.max(0, fadeOutProgress * (1 - Math.abs(offset) * 1.4));
-
-						tagline.style.setProperty('--opacity-1', `${opacity1}`);
-						tagline.style.setProperty('--opacity-2', `${opacity2}`);
-						tagline.style.setProperty('--opacity-3', `${opacity3}`);
+					// 2. Tagline sequential fades and translations
+					// Line 1: Network Engineering (Always visible at start)
+					const opacity1 = 1;
+					let translate1 = 0;
+					if (!prefersReducedMotion) {
+						translate1 = p * -80; // Moves left
 					}
+
+					// Line 2: Security (Fades in between p=0.15 and p=0.50)
+					const opacity2 = Math.min(1, Math.max(0, (p - 0.15) / 0.35));
+					let translate2 = 0;
+					if (!prefersReducedMotion) {
+						translate2 = Math.max(0, p - 0.15) * 80; // Moves right
+					}
+
+					// Line 3: Automation (Fades in between p=0.45 and p=0.80)
+					const opacity3 = Math.min(1, Math.max(0, (p - 0.45) / 0.35));
+					let translate3 = 0;
+					if (!prefersReducedMotion) {
+						translate3 = Math.max(0, p - 0.45) * -120; // Moves left
+					}
+
+					// Set layout properties
+					tagline.style.setProperty('--translate-1', `${translate1}px`);
+					tagline.style.setProperty('--translate-2', `${translate2}px`);
+					tagline.style.setProperty('--translate-3', `${translate3}px`);
+
+					tagline.style.setProperty('--opacity-1', `${opacity1}`);
+					tagline.style.setProperty('--opacity-2', `${opacity2}`);
+					tagline.style.setProperty('--opacity-3', `${opacity3}`);
 
 					// 3. Scroll indicator opacity fade out
 					const scrollIndicator = document.querySelector('.scroll-indicator');
@@ -374,5 +391,4 @@ const featured = getFeaturedProjects();
 			document.addEventListener('astro:after-swap', initParallax);
 		</script>
 	</body>
-</html>
 </html>
