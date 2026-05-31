@@ -1,0 +1,73 @@
+---
+import Layout from '../layouts/BlogPost.astro';
+---
+
+<Layout
+	title="Terms of Service"
+	description="Terms of Service for christran.io and associated services"
+>
+	<p><em>Last updated: May 30, 2026</em></p>
+
+	<p>
+		Welcome to <strong>christran.io</strong>. By accessing our website and using our associated web applications 
+		(including sYnX, IllusYn, and other subdomains), you agree to comply with and be bound by the following Terms of Service. 
+		If you do not agree to these terms, please do not use our services.
+	</p>
+
+	<h2>1. Acceptable Use</h2>
+	<p>
+		You agree to use our websites and applications only for lawful purposes. You must not:
+	</p>
+	<ul>
+		<li>Use the services to generate, store, or distribute harmful, illegal, or harassing content.</li>
+		<li>Attempt to bypass security measures, authentication systems, or rate-limiting protections.</li>
+		<li>Abuse, spam, or overload our hosting servers or API endpoints (such as AI image generation or LLM Chat services).</li>
+		<li>Use automated scripts, scraper bots, or bulk crawlers to interact with the API endpoints. We enforce this through Cloudflare Turnstile bot protection.</li>
+	</ul>
+
+	<h2>2. User Accounts (sYnID SSO)</h2>
+	<p>
+		Some of our applications require creating an account or logging in via our central single sign-on (SSO) service. 
+		If you register:
+	</p>
+	<ul>
+		<li>You are solely responsible for maintaining the confidentiality of your account credentials.</li>
+		<li>You must notify us immediately if you suspect any unauthorized access to your account.</li>
+		<li>We reserve the right to suspend or terminate accounts that violate these terms or engage in abusive activities.</li>
+	</ul>
+
+	<h2>3. AI Generative Services & Resource Usage</h2>
+	<p>
+		Our applications, including IllusYn and LLM Chat, harness Cloudflare Workers AI models. 
+		You acknowledge that:
+	</p>
+	<ul>
+		<li>AI-generated outputs (text, images, templates) are provided "as is". We make no warranties regarding their accuracy, completeness, or suitability for any purpose.</li>
+		<li>Outputs do not reflect our views or opinions.</li>
+		<li>We reserve the right to establish usage limits (e.g. rate limits per IP/user) to prevent server resource depletion.</li>
+	</ul>
+
+	<h2>4. Disclaimer of Warranties</h2>
+	<p>
+		Our services are provided on an "as is" and "as available" basis. We do not warrant that the services will be uninterrupted, 
+		error-free, or completely secure. To the maximum extent permitted by law, we disclaim all warranties, express or implied.
+	</p>
+
+	<h2>5. Limitation of Liability</h2>
+	<p>
+		In no event shall christran.io, its owner, or contributors be liable for any direct, indirect, incidental, special, or consequential 
+		damages arising out of or in connection with your use or inability to use our websites and applications.
+	</p>
+
+	<h2>6. Changes to These Terms</h2>
+	<p>
+		We reserve the right to modify these Terms of Service at any time. We will indicate changes by updating the "Last updated" date 
+		at the top of this page. Your continued use of the services after changes are posted constitutes acceptance of the new terms.
+	</p>
+
+	<h2>7. Contact Us</h2>
+	<p>
+		If you have any questions about these Terms of Service, please reach out to us at:
+		<a href="mailto:support@christran.io">support@christran.io</a>.
+	</p>
+</Layout>
