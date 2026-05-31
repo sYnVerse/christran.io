@@ -156,6 +156,38 @@ const featured = getFeaturedProjects();
 					will-change: auto;
 				}
 			}
+			@media (max-width: 720px) {
+				.home-page::before {
+					transform: none !important;
+					opacity: 0.35 !important;
+					will-change: auto;
+				}
+				.hero-wrapper {
+					height: auto !important;
+				}
+				.hero-section {
+					position: relative !important;
+					height: auto !important;
+					min-height: 90vh !important;
+					padding-top: 6rem !important;
+					box-sizing: border-box !important;
+				}
+				.tagline-line {
+					transform: none !important;
+					opacity: 1 !important;
+					transition: none !important;
+					will-change: auto;
+				}
+				.line-2 {
+					padding-left: 1rem !important;
+				}
+				.line-3 {
+					padding-left: 2rem !important;
+				}
+				.scroll-indicator {
+					display: none !important;
+				}
+			}
 			/* Scroll indicator */
 			.scroll-indicator {
 				position: absolute;
@@ -351,6 +383,24 @@ const featured = getFeaturedProjects();
 				window.addEventListener('resize', handleResize, { passive: true });
 
 				const handleScroll = () => {
+					const width = window.innerWidth;
+					if (width <= 720) {
+						// Reset properties for mobile so they don't override the mobile CSS styles
+						body.style.removeProperty('--bg-opacity');
+						body.style.removeProperty('--bg-translate');
+						body.style.removeProperty('--bg-scale');
+						tagline.style.removeProperty('--translate-1');
+						tagline.style.removeProperty('--translate-2');
+						tagline.style.removeProperty('--translate-3');
+						tagline.style.removeProperty('--opacity-1');
+						tagline.style.removeProperty('--opacity-2');
+						tagline.style.removeProperty('--opacity-3');
+						if (scrollIndicator) {
+							scrollIndicator.style.removeProperty('--scroll-indicator-opacity');
+						}
+						return;
+					}
+
 					const scrollY = window.scrollY;
 
 					// Calculate scroll progress (0 to 1) inside the pinned region
