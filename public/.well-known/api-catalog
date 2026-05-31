@@ -1,0 +1,37 @@
+{
+  "linkset": [
+    {
+      "anchor": "https://auth.christran.io",
+      "service-desc": [
+        {
+          "href": "https://christran.io/.well-known/oauth-authorization-server",
+          "type": "application/json"
+        }
+      ],
+      "service-doc": [
+        {
+          "href": "https://christran.io/privacy",
+          "type": "text/html"
+        }
+      ]
+    },
+    {
+      "anchor": "https://illusyn.christran.io",
+      "service-doc": [
+        {
+          "href": "https://christran.io/terms",
+          "type": "text/html"
+        }
+      ]
+    },
+    {
+      "anchor": "https://synx.christran.io",
+      "service-doc": [
+        {
+          "href": "https://christran.io/terms",
+          "type": "text/html"
+        }
+      ]
+    }
+  ]
+}

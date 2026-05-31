@@ -1,0 +1,40 @@
+{
+  "$schema": "https://schemas.agentskills.io/discovery/0.2.0/schema.json",
+  "skills": [
+    {
+      "name": "api-catalog",
+      "type": "skill-md",
+      "description": "API Catalog discovery support",
+      "url": "https://isitagentready.com/.well-known/agent-skills/api-catalog/SKILL.md",
+      "digest": "sha256:1d702680dd6b8de8362b9dab02ba355016a8daac65b18749a462b7774699db42"
+    },
+    {
+      "name": "auth-md",
+      "type": "skill-md",
+      "description": "Auth.md registration and discovery support",
+      "url": "https://isitagentready.com/.well-known/agent-skills/auth-md/SKILL.md",
+      "digest": "sha256:1794fff49d4ae401e782230c9aed1a268ce094b3200a02c5f7c98e72b21f1222"
+    },
+    {
+      "name": "agent-skills",
+      "type": "skill-md",
+      "description": "Agent Skills Discovery Index",
+      "url": "https://isitagentready.com/.well-known/agent-skills/agent-skills/SKILL.md",
+      "digest": "sha256:2cdda60ea052eb8af4ae8a4d96dc0d173151d5386ee724a4e98f93ed21adbae5"
+    },
+    {
+      "name": "link-headers",
+      "type": "skill-md",
+      "description": "Link response headers for discovery",
+      "url": "https://isitagentready.com/.well-known/agent-skills/link-headers/SKILL.md",
+      "digest": "sha256:90e89e75a88634a1f009813095fe5cf89d771c483dec3da074a108a998493d92"
+    },
+    {
+      "name": "markdown-negotiation",
+      "type": "skill-md",
+      "description": "Accept text/markdown content negotiation",
+      "url": "https://isitagentready.com/.well-known/agent-skills/markdown-negotiation/SKILL.md",
+      "digest": "sha256:a230108a9586ed530945b91d49d86163e38a6687ad1b08f60ec08e2cb99f1ed7"
+    }
+  ]
+}

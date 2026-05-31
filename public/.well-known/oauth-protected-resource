@@ -1,0 +1,8 @@
+{
+  "resource": "https://christran.io",
+  "authorization_servers": [
+    "https://auth.christran.io"
+  ],
+  "scopes_supported": ["openid", "email", "profile"],
+  "bearer_methods_supported": ["header"]
+}
