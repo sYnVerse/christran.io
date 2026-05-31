@@ -1,0 +1,54 @@
+---
+import Layout from '../layouts/BlogPost.astro';
+---
+
+<Layout
+	title="Privacy Policy"
+	description="Privacy Policy for christran.io and associated services"
+>
+	<p><em>Last updated: May 30, 2026</em></p>
+
+	<p>
+		This Privacy Policy describes how <strong>christran.io</strong> collects, uses, and discloses your personal information 
+		when you visit our site or use our associated web applications (including sYnX, IllusYn, and other subdomains).
+	</p>
+
+	<h2>1. Information We Collect</h2>
+	<p>
+		We aim to collect only the minimal amount of information necessary to provide our services:
+	</p>
+	<ul>
+		<li><strong>Account Information:</strong> If you sign in via our central single sign-on (SSO) service, we store your email address and profile identifiers to manage your sessions.</li>
+		<li><strong>Cookies:</strong> We use local browser storage and session cookies to keep you signed in across our services.</li>
+	</ul>
+
+	<h2>2. Bot Protection & Spam Prevention (Cloudflare Turnstile)</h2>
+	<p>
+		To protect our login portals, forms, and resource-heavy endpoints (such as AI image generation) from automated bot abuse, 
+		spam, and brute-force attacks, we implement <strong>Cloudflare Turnstile</strong>.
+	</p>
+	<p>
+		Turnstile operates by evaluating telemetry and behavior data from your browser (including screen characteristics, device features, and IP address) 
+		to distinguish human visitors from automated bots without tracking your personal browsing habits.
+	</p>
+	<p>
+		The collection and processing of this data is subject to Cloudflare's privacy policies. For more information, please review the 
+		<a href="https://www.cloudflare.com/en-gb/turnstile-privacy-policy/" target="_blank" rel="noopener noreferrer">Cloudflare Turnstile Privacy Policy</a>.
+	</p>
+
+	<h2>3. How We Use Your Information</h2>
+	<p>
+		Any information collected is used solely to:
+	</p>
+	<ul>
+		<li>Authenticate your user session.</li>
+		<li>Prevent abuse, fraud, and server resource depletion.</li>
+		<li>Provide the core features of the applications (e.g. saving generated images to your profile gallery).</li>
+	</ul>
+
+	<h2>4. Contact Us</h2>
+	<p>
+		If you have any questions or concerns about this Privacy Policy or our data practices, please contact us at:
+		<a href="mailto:privacy@christran.io">privacy@christran.io</a>.
+	</p>
+</Layout>

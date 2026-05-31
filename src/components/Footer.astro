@@ -5,6 +5,9 @@ import Terminal from './Terminal.astro';
 
 <footer>
 	&copy; {today.getFullYear()} Chris Tran. All rights reserved.
+	<div class="footer-links">
+		<a href="/privacy">Privacy Policy</a>
+	</div>
 	<div class="social-links">
 		<a href="https://linkedin.com/in/synchris" target="_blank">
 			<span class="sr-only">Connect with me on LinkedIn</span>
@@ -37,6 +40,18 @@ import Terminal from './Terminal.astro';
 		background: var(--background);
 		color: rgb(var(--gray));
 		text-align: center;
+	}
+	.footer-links {
+		margin-top: 0.5em;
+		font-size: 0.85em;
+	}
+	.footer-links a {
+		color: rgb(var(--gray));
+		text-decoration: none;
+	}
+	.footer-links a:hover {
+		color: var(--accent);
+		text-decoration: underline;
 	}
 	.social-links {
 		display: flex;
