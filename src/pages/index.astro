@@ -115,9 +115,9 @@ const featured = getFeaturedProjects();
 			}
 			.tagline-line {
 				display: block;
-				will-change: transform, opacity;
-				transition: transform 0.12s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.12s cubic-bezier(0.25, 1, 0.5, 1);
-				transform: translateX(var(--translate, 0px));
+				will-change: translate, opacity, scale;
+				transition: opacity 0.15s ease, scale 0.2s cubic-bezier(0.25, 1, 0.5, 1), filter 0.2s ease;
+				translate: var(--translate, 0px);
 				opacity: var(--opacity, 1); /* Safe fallback for non-JS users */
 				cursor: default;
 			}
@@ -147,12 +147,12 @@ const featured = getFeaturedProjects();
 			}
 			.tagline-line:hover {
 				filter: drop-shadow(0 0 12px rgba(123, 158, 255, 0.6));
-				transform: translateX(var(--translate, 0px)) scale(1.02);
-				transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1), filter 0.2s ease;
+				scale: 1.02;
 			}
 			@media (prefers-reduced-motion: reduce) {
 				.tagline-line {
-					transform: none !important;
+					translate: none !important;
+					scale: none !important;
 					transition: none !important;
 					will-change: auto;
 				}
@@ -174,7 +174,8 @@ const featured = getFeaturedProjects();
 					box-sizing: border-box !important;
 				}
 				.tagline-line {
-					transform: none !important;
+					translate: none !important;
+					scale: none !important;
 					opacity: 1 !important;
 					transition: none !important;
 					will-change: auto;
@@ -358,7 +359,13 @@ const featured = getFeaturedProjects();
 		<Footer />
 		
 		<script>
+			let cleanupParallax = null;
+
 			const initParallax = () => {
+				if (cleanupParallax) {
+					cleanupParallax();
+				}
+
 				const tagline = document.querySelector('.tagline-parallax');
 				const wrapper = document.querySelector('.hero-wrapper');
 				const scrollIndicator = document.querySelector('.scroll-indicator');
@@ -390,7 +397,83 @@ const featured = getFeaturedProjects();
 
 				// Run immediately to calculate on load
 				handleResize();
-				window.addEventListener('resize', handleResize, { passive: true });
+
+				let targetScrollY = window.scrollY;
+				let currentScrollY = window.scrollY;
+				let rafId = null;
+
+				const updateStyles = () => {
+					// Smooth interpolation (lerp)
+					const diff = targetScrollY - currentScrollY;
+					if (Math.abs(diff) < 0.05) {
+						currentScrollY = targetScrollY;
+					} else {
+						currentScrollY += diff * 0.15; // Smooth deceleration factor
+					}
+
+					// Calculate scroll progress (0 to 1) inside the pinned region using smoothed currentScrollY
+					const p = scrollRange > 0 ? Math.min(1, Math.max(0, currentScrollY / scrollRange)) : 0;
+
+					// Smoothly ease out progress as we reach the boundaries (cubic ease-out)
+					const pEased = 1 - Math.pow(1 - p, 3);
+
+					// 1. Background vertical scroll parallax, scale, and fade-in using eased progress
+					const bgOpacity = 0.25 + pEased * 0.35; // Fades from 0.25 to 0.60
+					body.style.setProperty('--bg-opacity', `${bgOpacity}`);
+
+					if (!prefersReducedMotion) {
+						const bgTranslate = currentScrollY * -0.15;
+						const bgScale = 1 + currentScrollY * 0.00015;
+						body.style.setProperty('--bg-translate', `${bgTranslate}px`);
+						body.style.setProperty('--bg-scale', `${bgScale}`);
+					}
+
+					// 2. Tagline sequential fades and translations
+					// Line 1: Network Engineering (Always visible at start)
+					const opacity1 = 1;
+					let translate1 = 0;
+					if (!prefersReducedMotion) {
+						translate1 = pEased * -80 * translateMultiplier; // Moves left
+					}
+
+					// Line 2: Security (Fades in between pEased=0.15 and pEased=0.50)
+					const pLine2 = Math.min(1, Math.max(0, (pEased - 0.15) / 0.35));
+					const opacity2 = pLine2;
+					let translate2 = 0;
+					if (!prefersReducedMotion) {
+						translate2 = pLine2 * 80 * translateMultiplier; // Moves right
+					}
+
+					// Line 3: Automation (Fades in between pEased=0.45 and pEased=0.80)
+					const pLine3 = Math.min(1, Math.max(0, (pEased - 0.45) / 0.35));
+					const opacity3 = pLine3;
+					let translate3 = 0;
+					if (!prefersReducedMotion) {
+						translate3 = pLine3 * -120 * translateMultiplier; // Moves left
+					}
+
+					// Set layout properties
+					tagline.style.setProperty('--translate-1', `${translate1}px`);
+					tagline.style.setProperty('--translate-2', `${translate2}px`);
+					tagline.style.setProperty('--translate-3', `${translate3}px`);
+
+					tagline.style.setProperty('--opacity-1', `${opacity1}`);
+					tagline.style.setProperty('--opacity-2', `${opacity2}`);
+					tagline.style.setProperty('--opacity-3', `${opacity3}`);
+
+					// 3. Scroll indicator opacity fade out
+					if (scrollIndicator) {
+						const indicatorOpacity = Math.max(0, 1 - currentScrollY / 150);
+						scrollIndicator.style.setProperty('--scroll-indicator-opacity', `${indicatorOpacity}`);
+					}
+
+					// Continue loop if not settled
+					if (currentScrollY !== targetScrollY) {
+						rafId = requestAnimationFrame(updateStyles);
+					} else {
+						rafId = null;
+					}
+				};
 
 				const handleScroll = () => {
 					const width = window.innerWidth;
@@ -408,64 +491,33 @@ const featured = getFeaturedProjects();
 						if (scrollIndicator) {
 							scrollIndicator.style.removeProperty('--scroll-indicator-opacity');
 						}
+						if (rafId) {
+							cancelAnimationFrame(rafId);
+							rafId = null;
+						}
 						return;
 					}
 
-					const scrollY = window.scrollY;
-
-					// Calculate scroll progress (0 to 1) inside the pinned region
-					const p = scrollRange > 0 ? Math.min(1, Math.max(0, scrollY / scrollRange)) : 0;
-
-					// 1. Background vertical scroll parallax, scale, and fade-in
-					const bgOpacity = 0.25 + p * 0.35; // Fades from 0.25 to 0.60
-					body.style.setProperty('--bg-opacity', `${bgOpacity}`);
-
-					if (!prefersReducedMotion) {
-						const bgTranslate = scrollY * -0.15;
-						const bgScale = 1 + scrollY * 0.00015;
-						body.style.setProperty('--bg-translate', `${bgTranslate}px`);
-						body.style.setProperty('--bg-scale', `${bgScale}`);
-					}
-
-					// 2. Tagline sequential fades and translations
-					// Line 1: Network Engineering (Always visible at start)
-					const opacity1 = 1;
-					let translate1 = 0;
-					if (!prefersReducedMotion) {
-						translate1 = p * -80 * translateMultiplier; // Moves left
-					}
-
-					// Line 2: Security (Fades in between p=0.15 and p=0.50)
-					const opacity2 = Math.min(1, Math.max(0, (p - 0.15) / 0.35));
-					let translate2 = 0;
-					if (!prefersReducedMotion) {
-						translate2 = Math.max(0, p - 0.15) * 80 * translateMultiplier; // Moves right
-					}
-
-					// Line 3: Automation (Fades in between p=0.45 and p=0.80)
-					const opacity3 = Math.min(1, Math.max(0, (p - 0.45) / 0.35));
-					let translate3 = 0;
-					if (!prefersReducedMotion) {
-						translate3 = Math.max(0, p - 0.45) * -120 * translateMultiplier; // Moves left
-					}
-
-					// Set layout properties
-					tagline.style.setProperty('--translate-1', `${translate1}px`);
-					tagline.style.setProperty('--translate-2', `${translate2}px`);
-					tagline.style.setProperty('--translate-3', `${translate3}px`);
-
-					tagline.style.setProperty('--opacity-1', `${opacity1}`);
-					tagline.style.setProperty('--opacity-2', `${opacity2}`);
-					tagline.style.setProperty('--opacity-3', `${opacity3}`);
-
-					// 3. Scroll indicator opacity fade out
-					if (scrollIndicator) {
-						const indicatorOpacity = Math.max(0, 1 - scrollY / 150);
-						scrollIndicator.style.setProperty('--scroll-indicator-opacity', `${indicatorOpacity}`);
+					targetScrollY = window.scrollY;
+					if (!rafId) {
+						rafId = requestAnimationFrame(updateStyles);
 					}
 				};
 
-				window.addEventListener('scroll', handleScroll, { passive: true });
+				const onScroll = handleScroll;
+				const onResize = handleResize;
+
+				window.addEventListener('scroll', onScroll, { passive: true });
+				window.addEventListener('resize', onResize, { passive: true });
+
+				cleanupParallax = () => {
+					window.removeEventListener('scroll', onScroll);
+					window.removeEventListener('resize', onResize);
+					if (rafId) {
+						cancelAnimationFrame(rafId);
+					}
+				};
+
 				// Trigger layout position immediately
 				handleScroll();
 			};
