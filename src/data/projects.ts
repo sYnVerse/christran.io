@@ -15,32 +15,6 @@ export interface Project {
 
 export const projects: Project[] = [
   {
-    slug: 'ai-chat',
-    title: 'AI Chat',
-    description:
-      'Large Language Model interface for AI-powered text generation and conversation. Provides access to advanced language models for content creation, analysis, and interactive conversations with customizable parameters.',
-    category: 'app',
-    tags: ['AI', 'Language Model', 'Text Generation'],
-    techStack: ['Cloudflare Workers', 'TypeScript', 'Workers AI'],
-    image: '/img/projects/ai-chat.webp',
-    liveUrl: 'https://llm.christran.io',
-    featured: false,
-    order: 5,
-  },
-  {
-    slug: 'ai-image-gen',
-    title: 'illusYn',
-    description:
-      'AI-powered text-to-image generation platform that transforms written descriptions into stunning visual artwork. Leverages advanced models to generate custom images from text prompts, perfect for content creators and designers.',
-    category: 'app',
-    tags: ['AI Art', 'Image Generation', 'Creative'],
-    techStack: ['Cloudflare Workers', 'TypeScript', 'Workers AI'],
-    image: '/img/projects/ai-image-gen.webp',
-    liveUrl: 'https://illusyn.christran.io',
-    featured: true,
-    order: 4,
-  },
-  {
     slug: 'homelab',
     title: 'Enterprise Home Lab',
     description:
@@ -54,17 +28,18 @@ export const projects: Project[] = [
     order: 1,
   },
   {
-    slug: 'chat',
-    title: 'Chat',
+    slug: 'synapse',
+    title: 'sYnapse',
     description:
-      'Real-time chat application for seamless communication and collaboration. Built with modern web technologies, featuring instant messaging, user authentication, and responsive design for desktop and mobile.',
+      'A unified agentic trading platform acting as a secure multi-broker gateway. Integrates with Alpaca (equities) and Tradovate (futures) API endpoints to manage account positions, place custom market/limit orders, and orchestrate autonomous strategy execution running entirely on Cloudflare Workers and Durable Objects.',
     category: 'app',
-    tags: ['Real-time Chat', 'Communication', 'WebSocket'],
-    techStack: ['Cloudflare Workers', 'Durable Objects', 'WebSocket'],
-    image: '/img/projects/chat.webp',
-    liveUrl: 'https://chat.christran.io',
-    featured: false,
-    order: 6,
+    tags: ['Algorithmic Trading', 'Finance', 'Authentication', 'Durable Objects'],
+    techStack: ['Cloudflare Workers', 'React', 'D1 Database', 'Durable Objects', 'OpenAuth.js', 'Vite'],
+    image: '/img/projects/synapse.jpeg',
+    liveUrl: 'https://synapse.christran.io',
+    sourceUrl: 'https://github.com/sYnVerse/sYnapse',
+    featured: true,
+    order: 2,
   },
   {
     slug: 'todo',
@@ -90,7 +65,60 @@ export const projects: Project[] = [
     image: '/img/projects/f1-wiki.webp',
     liveUrl: 'https://f1.fandom.com',
     featured: true,
-    order: 2,
+    order: 4,
+  },
+  {
+    slug: 'f1-fandom',
+    title: 'F1 Wiki Automator',
+    description:
+      'A Cloudflare Worker and SPA dashboard that automates Formula 1 Fandom Wiki page management. Fetches live Grand Prix results, standings, and practice times via the Jolpica F1 API, scrapes practice HTML from Formula1.com, generates formatted MediaWiki wikitext, and deploys edits automatically using bot credentials.',
+    category: 'app',
+    tags: ['Automation', 'MediaWiki', 'Cloudflare Workers', 'API Integration'],
+    techStack: ['Cloudflare Workers', 'TypeScript', 'MediaWiki API', 'Jolpica F1 API', 'KV Storage'],
+    image: '/img/projects/f1-fandom.png',
+    liveUrl: 'https://f1-wiki.christran.io',
+    sourceUrl: 'https://github.com/sYnVerse/f1-fandom',
+    featured: true,
+    order: 5,
+  },
+  {
+    slug: 'ai-image-gen',
+    title: 'illusYn',
+    description:
+      'AI-powered text-to-image generation platform that transforms written descriptions into stunning visual artwork. Leverages advanced models to generate custom images from text prompts, perfect for content creators and designers.',
+    category: 'app',
+    tags: ['AI Art', 'Image Generation', 'Creative'],
+    techStack: ['Cloudflare Workers', 'TypeScript', 'Workers AI'],
+    image: '/img/projects/ai-image-gen.webp',
+    liveUrl: 'https://illusyn.christran.io',
+    featured: true,
+    order: 6,
+  },
+  {
+    slug: 'ai-chat',
+    title: 'AI Chat',
+    description:
+      'Large Language Model interface for AI-powered text generation and conversation. Provides access to advanced language models for content creation, analysis, and interactive conversations with customizable parameters.',
+    category: 'app',
+    tags: ['AI', 'Language Model', 'Text Generation'],
+    techStack: ['Cloudflare Workers', 'TypeScript', 'Workers AI'],
+    image: '/img/projects/ai-chat.webp',
+    liveUrl: 'https://llm.christran.io',
+    featured: false,
+    order: 7,
+  },
+  {
+    slug: 'chat',
+    title: 'Chat',
+    description:
+      'Real-time chat application for seamless communication and collaboration. Built with modern web technologies, featuring instant messaging, user authentication, and responsive design for desktop and mobile.',
+    category: 'app',
+    tags: ['Real-time Chat', 'Communication', 'WebSocket'],
+    techStack: ['Cloudflare Workers', 'Durable Objects', 'WebSocket'],
+    image: '/img/projects/chat.webp',
+    liveUrl: 'https://chat.christran.io',
+    featured: false,
+    order: 8,
   },
 ];
 
