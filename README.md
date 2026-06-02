@@ -1,62 +1,105 @@
-# Astro Starter Kit: Blog
+# christran.io
 
-[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/cloudflare/templates/tree/main/astro-blog-starter-template)
+A modern personal website and blog built with **Astro**, deployed on **Cloudflare Workers**.
 
-![Astro Template Preview](https://github.com/withastro/astro/assets/2244813/ff10799f-a816-4703-b967-c78997e8323d)
+Visit the live site: [https://christran.io](https://christran.io)
 
-<!-- dash-content-start -->
+## About
 
-Create a blog with Astro and deploy it on Cloudflare Workers as a [static website](https://developers.cloudflare.com/workers/static-assets/).
+This repository contains the source code for christran.io, a personal website showcasing my work, thoughts, and projects. It's built with modern web technologies and optimized for performance.
 
-Features:
+## Tech Stack
 
-- ✅ Minimal styling (make it your own!)
-- ✅ 100/100 Lighthouse performance
-- ✅ SEO-friendly with canonical URLs and OpenGraph data
-- ✅ Sitemap support
-- ✅ RSS Feed support
-- ✅ Markdown & MDX support
+- **Framework**: [Astro](https://astro.build) (90.9%)
+- **Language**: [TypeScript](https://www.typescriptlang.org/) (6%)
+- **Styling**: [CSS](https://developer.mozilla.org/en-US/docs/Web/CSS) (2.4%)
+- **Hosting**: [Cloudflare Workers](https://workers.cloudflare.com/)
 
-<!-- dash-content-end -->
+## Features
+
+✨ Fast and performant static site  
+📝 Blog with MDX support  
+🔍 SEO optimized with sitemap and RSS feed  
+🎨 Responsive and clean design  
+⚡ Deployed on Cloudflare Workers  
+🔄 Automated deployment pipeline  
 
 ## Getting Started
 
-Outside of this repo, you can start a new project with this template using [C3](https://developers.cloudflare.com/pages/get-started/c3/) (the `create-cloudflare` CLI):
+### Prerequisites
+
+- Node.js 18+ and npm
+
+### Installation
 
 ```bash
-npm create cloudflare@latest -- --template=cloudflare/templates/astro-blog-starter-template
+# Clone the repository
+git clone https://github.com/sYnVerse/christran.io.git
+cd christran.io
+
+# Install dependencies
+npm install
 ```
 
-A live public deployment of this template is available at [https://astro-blog-starter-template.templates.workers.dev](https://astro-blog-starter-template.templates.workers.dev)
+### Development
 
-## 🚀 Project Structure
+```bash
+# Start local development server
+npm run dev
+```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+The site will be available at `http://localhost:3000` (or the port shown in your terminal).
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+### Build
 
-The `src/content/` directory contains "collections" of related Markdown and MDX documents. Use `getCollection()` to retrieve posts from `src/content/blog/`, and type-check your frontmatter using an optional schema. See [Astro's Content Collections docs](https://docs.astro.build/en/guides/content-collections/) to learn more.
+```bash
+# Build for production
+npm run build
 
-Any static assets, like images, can be placed in the `public/` directory.
+# Preview the build locally
+npm run preview
+```
 
-## 🧞 Commands
+### Deployment
 
-All commands are run from the root of the project, from a terminal:
+```bash
+# Deploy to Cloudflare Workers
+npm run deploy
+```
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-| `npm run deploy`          | Deploy your production site to Cloudflare        |
+## Project Structure
 
-## 👀 Want to learn more?
+```
+src/
+├── pages/          # Route-based pages
+├── components/     # Reusable Astro/React/Vue components
+├── content/        # Blog posts and content collections
+├── layouts/        # Layout components
+├── styles/         # Global styles
+└── utils/          # Utility functions
+```
 
-Check out [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+## Available Commands
 
-## Credit
+| Command | Action |
+| :--- | :--- |
+| `npm run dev` | Start local dev server at `http://localhost:3000` |
+| `npm run build` | Build your production site to `./dist/` |
+| `npm run preview` | Preview your build locally before deploying |
+| `npm run check` | Run type checking and validation |
+| `npm run deploy` | Deploy to Cloudflare Workers |
+| `npm run cf-typegen` | Generate Cloudflare types |
 
-This theme is based off of the lovely [Bear Blog](https://github.com/HermanMartinus/bearblog/).
+## Learning Resources
+
+- [Astro Documentation](https://docs.astro.build)
+- [Astro Discord Community](https://astro.build/chat)
+- [Cloudflare Workers Documentation](https://developers.cloudflare.com/workers/)
+
+## License
+
+This project is private. For inquiries about the code or design, please reach out.
+
+---
+
+Built with ❤️ by [sYnVerse](https://github.com/sYnVerse)
