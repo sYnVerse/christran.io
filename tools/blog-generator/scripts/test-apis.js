@@ -33,7 +33,8 @@ async function testGemini() {
   try {
     console.log('🤖 Testing Gemini API connection...');
     const genAI = new GoogleGenerativeAI(geminiKey);
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-3.5-flash' });
+
     const result = await model.generateContent('Say: "Gemini API connection successful!"');
     console.log(`✅ Gemini Response: ${result.response.text().trim()}`);
     return true;
@@ -50,13 +51,14 @@ async function testImagen() {
   }
   
   try {
-    console.log('🎨 Testing Imagen 3 Image Generation API...');
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${geminiKey}`;
+    console.log('🎨 Testing Imagen 4 Image Generation API...');
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${geminiKey}`;
     const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
+
       body: JSON.stringify({
         instances: [
           { prompt: 'A simple stylized yellow banana on a clean purple background, digital art vector style' }
@@ -95,7 +97,8 @@ async function testImagen() {
       .webp({ quality: 85 })
       .toFile(testOutputPath);
       
-    console.log(`✅ Imagen 3 successfully generated and saved test WebP image to: ${testOutputPath}`);
+    console.log(`✅ Imagen 4 successfully generated and saved test WebP image to: ${testOutputPath}`);
+
     return true;
   } catch (error) {
     console.error(`❌ Imagen API Error:`, error.message);

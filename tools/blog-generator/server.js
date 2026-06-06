@@ -61,7 +61,7 @@ function getGeminiModel() {
   }
   const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
   return genAI.getGenerativeModel({ 
-    model: "gemini-2.5-flash",
+    model: "gemini-3.5-flash",
     generationConfig: { responseMimeType: "application/json" }
   });
 }
@@ -71,8 +71,9 @@ function getGeminiTextModel() {
     throw new Error('GEMINI_API_KEY is not set in environment variables.');
   }
   const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-  return genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+  return genAI.getGenerativeModel({ model: "gemini-3.5-flash" });
 }
+
 
 // Helper to get Resend Client
 function getResend() {
@@ -245,9 +246,10 @@ async function generateImagenHeroImage(title, description, slug) {
 
   const promptText = `A professional, high-quality modern blog header illustration. Title: "${title}". Description: "${description}". Sleek vector graphic, minimalist digital art style, dark background with vibrant glowing accents of neon purple and deep cyan. No text, no words, no letters, no typography, no logos.`;
 
-  console.log(`Generating AI Hero Image using Imagen 3 for slug: ${slug}...`);
+  console.log(`Generating AI Hero Image using Imagen 4 for slug: ${slug}...`);
   try {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${process.env.GEMINI_API_KEY}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${process.env.GEMINI_API_KEY}`;
+
     const response = await retryCall(async () => {
       const res = await fetch(url, {
         method: 'POST',
@@ -293,11 +295,36 @@ async function generateImagenHeroImage(title, description, slug) {
     console.log(`✅ AI Hero Image successfully generated and saved: /img/${filename}`);
     return `/img/${filename}`;
   } catch (error) {
-    console.error('❌ Failed to generate AI Hero Image:', error);
-    // Fall back to a default image in the assets/img/ folder
-    return '/img/google-antigravity.png'; 
+    console.error('❌ Google Imagen 4 API failed:', error.message);
+    console.log('🔄 Falling back to free AI image generation via Pollinations.ai...');
+    try {
+      const fallbackUrl = `https://image.pollinations.ai/p/${encodeURIComponent(promptText)}?width=1024&height=576&nologo=true&seed=${Math.floor(Math.random() * 100000)}`;
+      
+      const response = await fetch(fallbackUrl);
+      if (!response.ok) {
+        throw new Error(`Pollinations API failed: ${response.status} ${response.statusText}`);
+      }
+      
+      const arrayBuffer = await response.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+      const filename = `${slug}.webp`;
+      const outputPath = path.join(ASSETS_IMG_PATH, filename);
+      
+      console.log(`Converting Pollinations image to optimized WebP at: ${outputPath}`);
+      await sharp(buffer)
+        .webp({ quality: 85 })
+        .toFile(outputPath);
+        
+      console.log(`✅ Free AI Hero Image successfully generated and saved: /img/${filename}`);
+      return `/img/${filename}`;
+    } catch (fallbackError) {
+      console.error('❌ Failed to generate fallback AI Hero Image:', fallbackError);
+      // Fall back to a default image in the assets/img/ folder
+      return '/img/google-antigravity.png'; 
+    }
   }
 }
+
 
 // Generate draft logic
 async function generateDraft(idea) {
