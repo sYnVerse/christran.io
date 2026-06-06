@@ -98,10 +98,12 @@ import LoaderOverlay from './LoaderOverlay.astro';
 		font-size: 1em;
 	}
 
-	h2 a,
-	h2 a.active {
+	nav h2 a,
+	nav h2 a.active {
 		text-decoration: none;
 		color: rgb(var(--black));
+		padding: 0.5em 0;
+		display: inline-block;
 	}
 	.nav {
 		display: flex;
@@ -240,7 +242,8 @@ import LoaderOverlay from './LoaderOverlay.astro';
 
 	@media (max-width: 720px) {
 		header {
-			padding-top: 0.75em;
+			padding-top: 0.5em;
+			padding-bottom: 0.5em;
 		}
 		.hamburger {
 			display: inline-flex;
