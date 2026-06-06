@@ -11,6 +11,9 @@ const isCloudflareDeployment = !!process.env.CF_PAGES || !!process.env.CF_BUILD;
 export default defineConfig({
   site: "https://christran.io",
   integrations: [mdx(), sitemap()],
+  build: {
+    inlineStylesheets: "always",
+  },
   ...(isCloudflareDeployment ? {
     adapter: cloudflare({
       prerenderEnvironment: 'node',

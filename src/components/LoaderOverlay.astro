@@ -39,7 +39,8 @@
 		try {
 			var isVisited = sessionStorage.getItem('visited');
 			var loader = document.getElementById('loader-overlay');
-			if (isVisited && loader) {
+			// Skip loader overlay completely on mobile viewport widths (<= 640px)
+			if ((isVisited || window.innerWidth <= 640) && loader) {
 				loader.style.display = 'none';
 				loader.classList.add('hide');
 			} else {
@@ -57,7 +58,7 @@
 		if (loader && !loader.classList.contains('hide')) {
 			setTimeout(function () {
 				loader.classList.add('hide');
-			}, 100);
+			}, 350);
 		}
 	});
 </script>
@@ -124,5 +125,11 @@
 		font-size: 0.9rem;
 		color: rgba(210, 215, 235, 0.8);
 		letter-spacing: 0.05em;
+	}
+
+	@media (max-width: 640px) {
+		.loader-overlay {
+			display: none !important;
+		}
 	}
 </style>

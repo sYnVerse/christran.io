@@ -1,5 +1,6 @@
 ---
 import type { Project } from '../data/projects';
+import { Image } from 'astro:assets';
 
 interface Props {
 	project: Project;
@@ -15,13 +16,18 @@ const categoryLabels: Record<string, string> = {
 };
 
 const primaryUrl = project.liveUrl || project.detailUrl || '#';
+
+// Dynamically resolve optimized images from src/assets
+const images = import.meta.glob<{ default: ImageMetadata }>('/src/assets/img/projects/*.{jpeg,jpg,png,gif,webp}');
+const imagePath = project.image ? project.image.replace(/^\/img\/projects\//, '/src/assets/img/projects/') : '';
+const hasImage = imagePath && images[imagePath];
 ---
 
 <div class:list={['project-card', { compact }]} data-category={project.category}>
 	<a href={primaryUrl} class="card-image-link" target={project.liveUrl ? '_blank' : undefined} rel={project.liveUrl ? 'noopener noreferrer' : undefined}>
 		<div class="card-image">
-			{project.image ? (
-				<img src={project.image} alt={project.title} loading="lazy" width="600" height="340" />
+			{hasImage ? (
+				<Image src={images[imagePath]()} alt={project.title} width={600} height={340} quality={80} format="webp" />
 			) : (
 				<div class="card-image-placeholder">
 					<span>{project.title[0]}</span>
