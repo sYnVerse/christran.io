@@ -13,6 +13,21 @@ const featured = getFeaturedProjects();
 <html lang="en">
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<noscript>
+			<style>
+				.hero-wrapper {
+					height: auto !important;
+				}
+				.hero-section {
+					position: relative !important;
+					height: 90vh !important;
+					min-height: 400px !important;
+				}
+				.scroll-indicator {
+					display: none !important;
+				}
+			</style>
+		</noscript>
 		<script type="application/ld+json" is:inline>
 		{
 		  "@context": "https://schema.org",
