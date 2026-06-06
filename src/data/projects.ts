@@ -96,7 +96,7 @@ export const projects: Project[] = [
     liveUrl: 'https://f1.fandom.com',
     detailUrl: '/portfolio/f1-wiki',
     featured: true,
-    order: 6,
+    order: 8,
   },
   {
     slug: 'f1-fandom',
@@ -125,7 +125,7 @@ export const projects: Project[] = [
     liveUrl: 'https://illusyn.christran.io',
     detailUrl: '/portfolio/illusyn',
     featured: true,
-    order: 8,
+    order: 6,
   },
   {
     slug: 'ai-chat',
