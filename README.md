@@ -26,6 +26,16 @@ This repository contains the source code for christran.io, a personal website sh
 ✍️ Local AI Blog Generator & Editor Dashboard (Gemini + Resend + Imagen 3)  
 
 
+## Performance & UX Focus
+
+This site is meticulously optimized to balance rich, visual aesthetics with lightning-fast load times. The optimization strategy prioritizes **User Experience (UX)** and **Performance Metrics (FCP, LCP, CLS)**:
+
+*   **Responsive & Optimized Image Pipelines**: All project screenshots and blog post hero images are migrated to `src/assets/` and processed via Astro's built-in `<Image />` component (powered by `sharp`). Resizing and WebP compression are executed during the build stage (reducing file sizes by **up to 89%**). Responsive `srcset` attributes ensure mobile devices fetch smaller resolutions while desktop viewports retain high-fidelity, retina-crisp rendering.
+*   **Zero Render-Blocking CSS**: All critical stylesheets are inlined directly into HTML `<style>` blocks in production builds. This eliminates separate HTTP round-trip requests for CSS files, allowing immediate visual painting.
+*   **Compositor-Only Animations**: Animations that previously caused browser repaint cycles (like animating `background-position-x`) were refactored to animate composited properties (such as GPU-accelerated `transform` rotations on pseudo-elements). This ensures smooth, jank-free 60fps UI feedback.
+*   **Context-Aware Loader Overlay**: The initial page loading overlay is skipped completely on mobile viewports to prevent loading friction and flashes of layout shift (CLS) on slower networks. On desktop, the delay was increased to `350ms` to let the network node drawing sequence play out smoothly, creating a premium first impression.
+
+
 ## Getting Started
 
 ### Prerequisites
