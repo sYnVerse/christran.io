@@ -4,12 +4,67 @@ const md = window.markdownit({
   linkify: true,
   typographer: true
 });
+// Elegant toast notification system
+function showToast(message, type = 'info') {
+  let container = document.getElementById('toast-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'toast-container';
+    container.className = 'toast-container';
+    document.body.appendChild(container);
+  }
+  
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  
+  let iconName = 'info';
+  if (type === 'success') iconName = 'check-circle';
+  if (type === 'warning') iconName = 'alert-triangle';
+  if (type === 'error') iconName = 'alert-circle';
+  
+  toast.innerHTML = `
+    <i data-lucide="${iconName}"></i>
+    <span>${message}</span>
+  `;
+  
+  container.appendChild(toast);
+  if (window.lucide) {
+    window.lucide.createIcons();
+  }
+  
+  setTimeout(() => toast.classList.add('show'), 10);
+  
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => toast.remove(), 300);
+  }, 4000);
+}
+
+// Override default window.alert to use the premium toast system
+window.alert = function(message) {
+  let type = 'info';
+  const msgLower = message.toLowerCase();
+  if (msgLower.includes('fail') || msgLower.includes('error') || msgLower.includes('could not') || msgLower.includes('invalid') || msgLower.includes('too large') || msgLower.includes('missing')) {
+    type = 'error';
+  } else if (msgLower.includes('warning') || msgLower.includes('caution')) {
+    type = 'warning';
+  } else if (msgLower.includes('success') || msgLower.includes('saved') || msgLower.includes('updated') || msgLower.includes('emailed') || msgLower.includes('complete') || msgLower.includes('ready')) {
+    type = 'success';
+  }
+  showToast(message, type);
+};
 
 // State
 let appConfig = null;
 let currentIdeas = [];
 let activeDraft = null;
 let savedFilename = '';
+
+// Hero Image Manager State
+let loadedPosts = { activeDraft: null, posts: [] };
+let selectedPost = null;
+let suggestedImages = [];
+let uploadedBase64 = null;
 
 // DOM Elements
 const tabBtns = document.querySelectorAll('.tab-btn');
@@ -43,6 +98,23 @@ const btnGitPublish = document.getElementById('btn-git-publish');
 const consoleLog = document.getElementById('console-log');
 const btnClearConsole = document.getElementById('btn-clear-console');
 
+// Hero Image elements
+const imagePostSelector = document.getElementById('image-post-selector');
+const imageSearchKeywords = document.getElementById('image-search-keywords');
+const btnSearchImages = document.getElementById('btn-search-images');
+const currentImagePreview = document.getElementById('current-image-preview');
+const currentImageDetails = document.getElementById('current-image-details');
+const galleryLoader = document.getElementById('gallery-loader');
+const imageSuggestionsGrid = document.getElementById('image-suggestions-grid');
+const galleryStatus = document.getElementById('gallery-status');
+const dragDropZone = document.getElementById('drag-drop-zone');
+const imageFileInput = document.getElementById('image-file-input');
+const browseFileBtn = document.getElementById('browse-file-btn');
+const uploadPreviewContainer = document.getElementById('upload-preview-container');
+const uploadImagePreview = document.getElementById('upload-image-preview');
+const uploadFileName = document.getElementById('upload-file-name');
+const btnSubmitUpload = document.getElementById('btn-submit-upload');
+
 // API Base URL (runs on the same host)
 const API_BASE = '';
 
@@ -69,6 +141,11 @@ tabBtns.forEach(btn => {
         content.classList.add('active');
       }
     });
+    
+    // Initialize image manager tab if selected
+    if (targetTab === 'image-tab') {
+      initImageManagerTab();
+    }
   });
 });
 
@@ -508,6 +585,523 @@ btnLoadDraft.addEventListener('click', loadActiveDraftFromServer);
 btnClearConsole.addEventListener('click', () => {
   consoleLog.innerText = 'Console cleared. Ready.';
 });
+
+
+/* =================================================== */
+/* HERO IMAGE MANAGER FRONTEND LOGIC */
+/* =================================================== */
+
+// Initialize the Image Manager Tab
+async function initImageManagerTab() {
+  // Clear file upload previews
+  uploadedBase64 = null;
+  uploadPreviewContainer.classList.add('hidden');
+  imageFileInput.value = '';
+  
+  // Find out if we have a draft open in the editor tab
+  let draftSlug = null;
+  if (activeDraft) {
+    draftSlug = slugInfo.getAttribute('data-slug');
+    if (!draftSlug && loadedPosts.activeDraft) {
+      draftSlug = loadedPosts.activeDraft.slug;
+    }
+  }
+  
+  await fetchPostsAndPopulateSelector(draftSlug);
+}
+
+// Fetch posts and populate selector dropdown
+async function fetchPostsAndPopulateSelector(selectSlugAfterLoad = null) {
+  try {
+    const res = await fetch(`${API_BASE}/api/posts`);
+    const data = await res.json();
+    loadedPosts = data;
+    
+    // Clear and populate selector
+    imagePostSelector.innerHTML = '<option value="">-- Select a post --</option>';
+    
+    if (data.activeDraft) {
+      const option = document.createElement('option');
+      option.value = 'active-draft';
+      option.textContent = `📝 Active Draft: ${data.activeDraft.title}`;
+      imagePostSelector.appendChild(option);
+    }
+    
+    if (data.posts && data.posts.length > 0) {
+      data.posts.forEach(post => {
+        const option = document.createElement('option');
+        option.value = post.slug;
+        option.textContent = `📄 Saved Post: ${post.title}`;
+        imagePostSelector.appendChild(option);
+      });
+    }
+    
+    // Set selection if requested
+    if (selectSlugAfterLoad) {
+      if (data.activeDraft && (selectSlugAfterLoad === 'active-draft' || data.activeDraft.slug === selectSlugAfterLoad)) {
+        imagePostSelector.value = 'active-draft';
+      } else {
+        const hasPost = data.posts.some(p => p.slug === selectSlugAfterLoad);
+        if (hasPost) {
+          imagePostSelector.value = selectSlugAfterLoad;
+        }
+      }
+    }
+    
+    // Trigger selector change event to render details
+    imagePostSelector.dispatchEvent(new Event('change'));
+  } catch (error) {
+    console.error('Error fetching posts selector:', error);
+    alert('Failed to load posts list.');
+  }
+}
+
+// Handle post selector changes
+imagePostSelector.addEventListener('change', () => {
+  const val = imagePostSelector.value;
+  
+  if (!val) {
+    selectedPost = null;
+    imageSearchKeywords.disabled = true;
+    imageSearchKeywords.value = '';
+    btnSearchImages.disabled = true;
+    
+    renderCurrentImagePreview();
+    imageSuggestionsGrid.innerHTML = '';
+    galleryStatus.textContent = 'Select a post above to load suggestions';
+    return;
+  }
+  
+  if (val === 'active-draft') {
+    selectedPost = loadedPosts.activeDraft;
+  } else {
+    selectedPost = loadedPosts.posts.find(p => p.slug === val);
+  }
+  
+  if (selectedPost) {
+    imageSearchKeywords.disabled = false;
+    btnSearchImages.disabled = false;
+    imageSearchKeywords.value = selectedPost.tags ? selectedPost.tags.join(', ') : '';
+    
+    renderCurrentImagePreview();
+    searchImageSuggestions();
+  }
+});
+
+// Render the current hero image preview panel
+function renderCurrentImagePreview() {
+  currentImagePreview.innerHTML = '';
+  currentImageDetails.innerHTML = '';
+  
+  if (!selectedPost) {
+    currentImagePreview.innerHTML = `
+      <div class="empty-image-placeholder">
+        <i data-lucide="image"></i>
+        <p>No post selected</p>
+      </div>
+    `;
+    updateIcons();
+    return;
+  }
+  
+  const imgUrl = selectedPost.heroImage;
+  const isFallbackOrEmpty = !imgUrl || imgUrl === '/img/google-antigravity.png';
+  
+  if (isFallbackOrEmpty) {
+    currentImagePreview.innerHTML = `
+      <div class="empty-image-placeholder">
+        <i data-lucide="alert-circle"></i>
+        <p>No image generated/saved</p>
+        <span style="font-size:11px;color:var(--text-muted);">Using default placeholder</span>
+      </div>
+    `;
+  } else {
+    // Add cache buster to render newly saved images
+    const cacheBustedUrl = `${imgUrl}?t=${Date.now()}`;
+    currentImagePreview.innerHTML = `<img src="${cacheBustedUrl}" alt="Current Hero Image">`;
+  }
+  
+  currentImageDetails.innerHTML = `
+    <table>
+      <tr>
+        <td>Post:</td>
+        <td><strong>${selectedPost.title}</strong></td>
+      </tr>
+      <tr>
+        <td>Slug:</td>
+        <td><code>${selectedPost.slug}</code></td>
+      </tr>
+      <tr>
+        <td>Image Path:</td>
+        <td><code>${imgUrl || '/img/google-antigravity.png'}</code></td>
+      </tr>
+    </table>
+  `;
+  
+  updateIcons();
+}
+
+// Search image suggestions
+async function searchImageSuggestions() {
+  if (!selectedPost) return;
+  
+  galleryLoader.classList.remove('hidden');
+  imageSuggestionsGrid.classList.add('hidden');
+  galleryStatus.textContent = 'Searching stock photos...';
+  
+  try {
+    const title = selectedPost.title;
+    const keywords = imageSearchKeywords.value.trim();
+    const slug = selectedPost.slug;
+    
+    const url = `${API_BASE}/api/images/suggest?title=${encodeURIComponent(title)}&keywords=${encodeURIComponent(keywords)}&slug=${encodeURIComponent(slug)}`;
+    const res = await fetch(url);
+    const result = await res.json();
+    
+    galleryLoader.classList.add('hidden');
+    imageSuggestionsGrid.classList.remove('hidden');
+    
+    if (result.success) {
+      suggestedImages = result.suggestions;
+      galleryStatus.textContent = `Found ${result.suggestions.length} options`;
+      renderSuggestions(result.suggestions);
+    } else {
+      galleryStatus.textContent = 'Failed to load suggestions';
+      alert(`Error loading suggestions: ${result.error}`);
+    }
+  } catch (error) {
+    console.error('Error fetching suggestions:', error);
+    galleryLoader.classList.add('hidden');
+    galleryStatus.textContent = 'Error loading suggestions';
+  }
+}
+
+// Render stock suggestions grid cards
+function renderSuggestions(suggestions) {
+  imageSuggestionsGrid.innerHTML = '';
+  
+  if (!suggestions || suggestions.length === 0) {
+    imageSuggestionsGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">No suggestions returned. Try changing keywords.</div>';
+    return;
+  }
+  
+  suggestions.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'image-card-suggest';
+    
+    // Check if currently active
+    const isCurrentActive = selectedPost.heroImage && (selectedPost.heroImage === item.url || (selectedPost.heroImage.includes(selectedPost.slug) && item.source === 'Imagen 4' && !item.requires_generation));
+    if (isCurrentActive) {
+      card.classList.add('selected');
+    }
+    
+    if (item.requires_generation) {
+      card.classList.add('requires-generation');
+      card.innerHTML = `
+        <div class="generation-overlay">
+          <i data-lucide="sparkles" style="color:var(--primary); width:28px; height:28px;"></i>
+          <p>Generate high-quality vector art via Gemini Imagen 4</p>
+          <button class="btn btn-primary btn-sm" id="btn-gen-imagen" style="padding:6px 12px; font-size:11px;">
+            <i data-lucide="play" style="width:12px; height:12px;"></i> Generate Image
+          </button>
+        </div>
+        <div class="suggest-img-wrapper">
+          <img src="${item.url}" alt="Imagen 4 Placeholder">
+        </div>
+        <div class="suggest-img-details">
+          <span class="suggest-img-source">${item.source}</span>
+          <span class="suggest-img-author">${item.photographer}</span>
+        </div>
+      `;
+      
+      // Bind explicit Imagen 4 trigger
+      card.querySelector('#btn-gen-imagen').addEventListener('click', (e) => {
+        e.stopPropagation();
+        generateImagen4(card);
+      });
+    } else {
+      card.innerHTML = `
+        <div class="suggest-img-wrapper">
+          <img src="${item.url}" alt="Stock suggestion" crossorigin="anonymous">
+        </div>
+        <div class="suggest-img-details">
+          <span class="suggest-img-source">${item.source}</span>
+          <span class="suggest-img-author" title="${item.photographer}">${item.photographer}</span>
+        </div>
+      `;
+      
+      // Bind selection click
+      card.addEventListener('click', () => {
+        selectImage(item.url, item.source);
+      });
+    }
+    
+    imageSuggestionsGrid.appendChild(card);
+  });
+  
+  updateIcons();
+}
+
+// Generate Imagen 4 on-demand
+async function generateImagen4(cardElem) {
+  const overlay = cardElem.querySelector('.generation-overlay');
+  const originalOverlayHtml = overlay.innerHTML;
+  
+  overlay.innerHTML = `
+    <div class="spinner" style="width:24px; height:24px; border-width:3px;"></div>
+    <p style="font-size:11px; margin-top:4px;">Gemini is rendering your vector artwork...</p>
+  `;
+  
+  try {
+    const res = await fetch(`${API_BASE}/api/images/generate-imagen`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title: selectedPost.title,
+        description: selectedPost.description,
+        slug: selectedPost.slug
+      })
+    });
+    const result = await res.json();
+    
+    if (result.success) {
+      // Re-populate card elements with generated preview
+      overlay.remove();
+      cardElem.classList.remove('requires-generation');
+      const imgElem = cardElem.querySelector('.suggest-img-wrapper img');
+      imgElem.src = result.imageUrl;
+      
+      // Auto-select the newly generated image
+      await selectImage(result.imageUrl, 'Imagen 4', result.tempPath);
+    } else {
+      alert(`Imagen 4 generation failed: ${result.error}`);
+      overlay.innerHTML = originalOverlayHtml;
+      // Rebind trigger event
+      cardElem.querySelector('#btn-gen-imagen').addEventListener('click', (e) => {
+        e.stopPropagation();
+        generateImagen4(cardElem);
+      });
+      updateIcons();
+    }
+  } catch (error) {
+    console.error('Imagen generation request error:', error);
+    alert(`Request error: ${error.message}`);
+    overlay.innerHTML = originalOverlayHtml;
+    // Rebind trigger
+    cardElem.querySelector('#btn-gen-imagen').addEventListener('click', (e) => {
+      e.stopPropagation();
+      generateImagen4(cardElem);
+    });
+    updateIcons();
+  }
+}
+
+// Select a suggestions card (stock URL or local temp)
+async function selectImage(url, source, tempPath = null) {
+  if (!selectedPost) return;
+  
+  // Disable clicks while saving
+  const cards = document.querySelectorAll('.image-card-suggest');
+  cards.forEach(c => c.style.pointerEvents = 'none');
+  galleryStatus.textContent = 'Saving image selection...';
+  
+  try {
+    const res = await fetch(`${API_BASE}/api/images/select`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        imageUrl: url,
+        slug: selectedPost.slug,
+        source: source,
+        tempPath: tempPath
+      })
+    });
+    const result = await res.json();
+    
+    if (result.success) {
+      selectedPost.heroImage = result.heroImage;
+      
+      // Sync markdown editor if draft is open
+      updateEditorHeroImageIfActive(selectedPost.slug, result.heroImage);
+      
+      // Update UI
+      renderCurrentImagePreview();
+      searchImageSuggestions(); // reloads list and updates active highlight
+      
+      alert(`Hero Image successfully updated to: ${result.heroImage}!`);
+    } else {
+      alert(`Failed to save image selection: ${result.error}`);
+      cards.forEach(c => c.style.pointerEvents = 'auto');
+      galleryStatus.textContent = 'Selection failed';
+    }
+  } catch (error) {
+    console.error('Error selecting image:', error);
+    alert(`Error: ${error.message}`);
+    cards.forEach(c => c.style.pointerEvents = 'auto');
+    galleryStatus.textContent = 'Selection failed';
+  }
+}
+
+// Search Button Binding
+btnSearchImages.addEventListener('click', searchImageSuggestions);
+
+// Auto-search suggestions on pressing Enter in keyword input
+imageSearchKeywords.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    searchImageSuggestions();
+  }
+});
+
+
+// Drag and Drop File Handlers
+function preventDefaults(e) {
+  e.preventDefault();
+  e.stopPropagation();
+}
+
+// Setup drag and drop events
+;['dragenter', 'dragover'].forEach(eventName => {
+  dragDropZone.addEventListener(eventName, () => {
+    dragDropZone.classList.add('dragover');
+  }, false);
+});
+
+;['dragleave', 'drop'].forEach(eventName => {
+  dragDropZone.addEventListener(eventName, () => {
+    dragDropZone.classList.remove('dragover');
+  }, false);
+});
+
+// Drop handler
+dragDropZone.addEventListener('drop', (e) => {
+  preventDefaults(e);
+  
+  if (!selectedPost) {
+    alert('Please select a blog post first before dropping files.');
+    return;
+  }
+  
+  const dt = e.dataTransfer;
+  const files = dt.files;
+  if (files && files.length > 0) {
+    processUploadedFile(files[0]);
+  }
+}, false);
+
+// Dragenter / dragover handlers
+dragDropZone.addEventListener('dragenter', preventDefaults, false);
+dragDropZone.addEventListener('dragover', preventDefaults, false);
+dragDropZone.addEventListener('dragleave', preventDefaults, false);
+
+// Browse click binding
+browseFileBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  imageFileInput.click();
+});
+
+imageFileInput.addEventListener('change', () => {
+  if (imageFileInput.files && imageFileInput.files.length > 0) {
+    processUploadedFile(imageFileInput.files[0]);
+  }
+});
+
+// Process file selected/dropped
+function processUploadedFile(file) {
+  if (!file.type.startsWith('image/')) {
+    alert('Invalid file format. Please upload an image file (PNG, JPG, WEBP).');
+    return;
+  }
+  
+  if (file.size > 10 * 1024 * 1024) {
+    alert('File is too large. Maximum size allowed is 10MB.');
+    return;
+  }
+  
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    uploadedBase64 = e.target.result;
+    uploadImagePreview.src = uploadedBase64;
+    uploadFileName.textContent = file.name;
+    uploadPreviewContainer.classList.remove('hidden');
+  };
+  reader.readAsDataURL(file);
+}
+
+// Submit manually uploaded file
+btnSubmitUpload.addEventListener('click', async () => {
+  if (!uploadedBase64 || !selectedPost) return;
+  
+  btnSubmitUpload.disabled = true;
+  btnSubmitUpload.innerHTML = '<div class="spinner" style="width:12px; height:12px; border-width:2px; display:inline-block; margin-right:4px;"></div> Uploading...';
+  
+  try {
+    const res = await fetch(`${API_BASE}/api/images/upload`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        imageBase64: uploadedBase64,
+        slug: selectedPost.slug
+      })
+    });
+    const result = await res.json();
+    
+    if (result.success) {
+      selectedPost.heroImage = result.heroImage;
+      
+      // Update Markdown editor frontmatter
+      updateEditorHeroImageIfActive(selectedPost.slug, result.heroImage);
+      
+      // Re-render previews
+      renderCurrentImagePreview();
+      searchImageSuggestions(); // reload suggestions grid
+      
+      // Clear upload preview
+      uploadedBase64 = null;
+      uploadPreviewContainer.classList.add('hidden');
+      imageFileInput.value = '';
+      
+      alert(`Success! Image uploaded and saved to: ${result.heroImage}`);
+    } else {
+      alert(`Upload failed: ${result.error}`);
+    }
+  } catch (error) {
+    console.error('Error uploading file:', error);
+    alert(`Upload connection error: ${error.message}`);
+  } finally {
+    btnSubmitUpload.disabled = false;
+    btnSubmitUpload.innerHTML = '<i data-lucide="check"></i> Optimize & Set Hero Image';
+    updateIcons();
+  }
+});
+
+// Update editor text when a new hero image is selected
+function updateEditorHeroImageIfActive(slug, heroImagePath) {
+  if (activeDraft) {
+    const editorSlug = slugInfo.getAttribute('data-slug');
+    const isMatchingSlug = editorSlug === slug || slug === 'active-draft' || 
+                           (loadedPosts.activeDraft && loadedPosts.activeDraft.slug === slug);
+                           
+    if (isMatchingSlug) {
+      const match = activeDraft.match(/^---\r?\n([\s\S]+?)\r?\n---/);
+      if (match) {
+        let fm = match[1];
+        if (fm.match(/heroImage:\s*.+/)) {
+          fm = fm.replace(/heroImage:\s*.+/, `heroImage: "${heroImagePath}"`);
+        } else {
+          fm = fm.trim() + `\nheroImage: "${heroImagePath}"\n`;
+        }
+        const newContent = activeDraft.replace(/^---\r?\n([\s\S]+?)\r?\n---/, `---\n${fm}---`);
+        
+        // Update state and textarea
+        activeDraft = newContent;
+        markdownEditor.value = newContent;
+        updatePreview(newContent);
+        console.log("Synchronized hero image frontmatter with Markdown Editor.");
+      }
+    }
+  }
+}
+
 
 // App Entry Point
 window.addEventListener('DOMContentLoaded', async () => {

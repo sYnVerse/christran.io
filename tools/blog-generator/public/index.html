@@ -30,6 +30,9 @@
         <button class="tab-btn" data-tab="editor-tab" id="editor-nav-btn">
           <i data-lucide="file-text"></i> Draft Editor
         </button>
+        <button class="tab-btn" data-tab="image-tab" id="image-nav-btn">
+          <i data-lucide="image"></i> Hero Image
+        </button>
         <button class="tab-btn" data-tab="publish-tab" id="publish-nav-btn">
           <i data-lucide="git-pull-request"></i> Git Publisher
         </button>
@@ -136,6 +139,100 @@
           </button>
         </div>
         <div id="refine-loader" class="loader-line hidden"></div>
+      </div>
+    </section>
+
+    <!-- HERO IMAGE MANAGER TAB -->
+    <section id="image-tab" class="tab-content">
+      <div class="tab-header">
+        <div>
+          <h2>Hero Image Manager</h2>
+          <p>Select a blog post and choose a premium hero image from stock APIs, generate with Imagen 4, or upload your own file.</p>
+        </div>
+      </div>
+
+      <div class="image-manager-layout">
+        <!-- Sidebar: Post Selector and Info -->
+        <div class="image-sidebar">
+          <div class="manager-card">
+            <h3><i data-lucide="file-text"></i> Select Blog Post</h3>
+            <div class="form-field">
+              <label for="image-post-selector">Active Drafts & Posts</label>
+              <select id="image-post-selector">
+                <option value="">-- Select a post --</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label for="image-search-keywords">Search Keywords / Tags</label>
+              <div class="search-input-row">
+                <input type="text" id="image-search-keywords" placeholder="e.g. coding, zfs, home lab">
+                <button class="btn btn-primary" id="btn-search-images" disabled>
+                  <i data-lucide="search"></i> Search
+                </button>
+              </div>
+              <span class="input-tip">Used to query stock photos from LoremFlickr, Pexels, and Unsplash.</span>
+            </div>
+          </div>
+
+          <!-- Current Hero Image -->
+          <div class="manager-card">
+            <h3><i data-lucide="image"></i> Current Hero Image</h3>
+            <div class="current-image-container" id="current-image-preview">
+              <div class="empty-image-placeholder">
+                <i data-lucide="image"></i>
+                <p>No post selected</p>
+              </div>
+            </div>
+            <div class="current-image-details" id="current-image-details">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Main Area: Stock Gallery & Drag-and-Drop Uploader -->
+        <div class="image-main-content">
+          <!-- Gallery -->
+          <div class="manager-card gallery-card">
+            <div class="gallery-header">
+              <h3><i data-lucide="layout-grid"></i> Image Suggestions</h3>
+              <span class="gallery-subtitle" id="gallery-status">Select a post above to load suggestions</span>
+            </div>
+            
+            <div id="gallery-loader" class="loader-card hidden">
+              <div class="spinner"></div>
+              <p>Querying stock photo APIs and resolving image redirects...</p>
+            </div>
+
+            <div class="image-grid" id="image-suggestions-grid">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <!-- Drag and Drop Uploader -->
+          <div class="manager-card upload-card">
+            <h3><i data-lucide="upload-cloud"></i> Custom File Upload</h3>
+            <p class="section-desc">Drag and drop your image file here, or click browse to upload a custom picture. Saved images are automatically converted to optimized `.webp` files.</p>
+            
+            <div class="drag-drop-zone" id="drag-drop-zone">
+              <input type="file" id="image-file-input" accept="image/png, image/jpeg, image/webp" class="hidden">
+              <i data-lucide="upload-cloud" class="upload-icon"></i>
+              <p class="drop-text">Drag & Drop Image Here or <span class="browse-link" id="browse-file-btn">Browse Files</span></p>
+              <p class="file-type-info">Supports PNG, JPG, WEBP (Max 10MB)</p>
+            </div>
+
+            <div class="upload-preview-container hidden" id="upload-preview-container">
+              <div class="upload-preview-wrapper">
+                <img id="upload-image-preview" src="" alt="Upload Preview">
+              </div>
+              <div class="upload-actions">
+                <span class="upload-file-name" id="upload-file-name">filename.jpg</span>
+                <button class="btn btn-success" id="btn-submit-upload">
+                  <i data-lucide="check"></i> Optimize & Set Hero Image
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 

@@ -43,6 +43,10 @@ if (!fs.existsSync(ASSETS_IMG_PATH)) {
   fs.mkdirSync(ASSETS_IMG_PATH, { recursive: true });
 }
 
+// Serve temporary generated images
+app.use('/api/temp-images', express.static(DATA_DIR));
+
+
 
 // Initial API checks
 const hasGeminiKey = !!process.env.GEMINI_API_KEY;
@@ -465,7 +469,469 @@ async function refineDraft(currentDraft, suggestion) {
   return cleanRefined;
 }
 
+// --- Helpers for Hero Image Manager ---
+
+function parseFrontmatterContent(content) {
+  const match = content.match(/^---\r?\n([\s\S]+?)\r?\n---/);
+  if (!match) return {};
+  const fmText = match[1];
+  const result = {};
+  fmText.split('\n').forEach(line => {
+    const idx = line.indexOf(':');
+    if (idx !== -1) {
+      const key = line.slice(0, idx).trim();
+      const val = line.slice(idx + 1).trim().replace(/^['"]|['"]$/g, '');
+      if (key === 'tags') {
+        const tagMatch = val.match(/\[(.*)\]/);
+        if (tagMatch) {
+          result[key] = tagMatch[1].split(',').map(t => t.trim().replace(/['"]/g, ''));
+        } else {
+          result[key] = [];
+        }
+      } else {
+        result[key] = val;
+      }
+    }
+  });
+  return result;
+}
+
+function parseMarkdownFile(filepath) {
+  const content = fs.readFileSync(filepath, 'utf-8');
+  const slug = path.basename(filepath, path.extname(filepath));
+  const fm = parseFrontmatterContent(content);
+  return {
+    slug,
+    title: fm.title || slug,
+    heroImage: fm.heroImage || '',
+    description: fm.description || '',
+    tags: fm.tags || [],
+    filename: path.basename(filepath)
+  };
+}
+
+function updateFrontmatterHeroImage(content, heroImagePath) {
+  const match = content.match(/^---\r?\n([\s\S]+?)\r?\n---/);
+  if (match) {
+    const isCrlf = content.includes('\r\n');
+    const newline = isCrlf ? '\r\n' : '\n';
+    let fm = match[1];
+    if (fm.match(/heroImage:\s*.+/)) {
+      fm = fm.replace(/heroImage:\s*.+/, `heroImage: "${heroImagePath}"`);
+    } else {
+      fm = fm.trim() + `${newline}heroImage: "${heroImagePath}"`;
+    }
+    return content.replace(/^---\r?\n([\s\S]+?)\r?\n---/, `---${newline}${fm}${newline}---`);
+  }
+  return `---\nheroImage: "${heroImagePath}"\n---\n${content}`;
+}
+
+function updatePostHeroImage(slug, heroImagePath) {
+  // 1. Check active draft
+  const draftFile = path.join(DATA_DIR, 'active-draft.json');
+  if (fs.existsSync(draftFile)) {
+    try {
+      const draft = JSON.parse(fs.readFileSync(draftFile, 'utf-8'));
+      const draftSlug = draft.idea && draft.idea.title
+        ? draft.idea.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
+        : '';
+      if (draftSlug === slug || slug === 'active-draft') {
+        draft.content = updateFrontmatterHeroImage(draft.content, heroImagePath);
+        fs.writeFileSync(draftFile, JSON.stringify(draft, null, 2));
+        console.log(`Updated heroImage in active-draft.json to ${heroImagePath}`);
+      }
+    } catch (e) {
+      console.error('Error updating active draft image frontmatter:', e);
+    }
+  }
+
+  // 2. Check saved markdown files
+  const filename = `${slug}.md`;
+  const mdxFilename = `${slug}.mdx`;
+  const mdPath = path.join(BLOG_CONTENT_PATH, filename);
+  const mdxPath = path.join(BLOG_CONTENT_PATH, mdxFilename);
+  
+  if (fs.existsSync(mdPath)) {
+    const content = fs.readFileSync(mdPath, 'utf-8');
+    const updated = updateFrontmatterHeroImage(content, heroImagePath);
+    fs.writeFileSync(mdPath, updated, 'utf-8');
+    console.log(`Updated heroImage in ${filename} to ${heroImagePath}`);
+  } else if (fs.existsSync(mdxPath)) {
+    const content = fs.readFileSync(mdxPath, 'utf-8');
+    const updated = updateFrontmatterHeroImage(content, heroImagePath);
+    fs.writeFileSync(mdxPath, updated, 'utf-8');
+    console.log(`Updated heroImage in ${mdxFilename} to ${heroImagePath}`);
+  }
+}
+
 // --- Endpoints ---
+
+// Get active draft and all saved blog posts
+app.get('/api/posts', (req, res) => {
+  try {
+    const posts = [];
+    
+    // Check if there is an active draft
+    const draftFile = path.join(DATA_DIR, 'active-draft.json');
+    let activeDraftInfo = null;
+    if (fs.existsSync(draftFile)) {
+      try {
+        const draft = JSON.parse(fs.readFileSync(draftFile, 'utf-8'));
+        if (draft && draft.content) {
+          const fm = parseFrontmatterContent(draft.content);
+          const slug = draft.idea && draft.idea.title
+            ? draft.idea.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
+            : 'active-draft';
+          activeDraftInfo = {
+            title: fm.title || (draft.idea ? draft.idea.title : 'Active Draft'),
+            slug: slug,
+            heroImage: fm.heroImage || '',
+            tags: fm.tags || (draft.idea ? draft.idea.tags : []),
+            isDraft: true
+          };
+        }
+      } catch (e) {
+        console.error('Error reading active draft:', e);
+      }
+    }
+
+    // Read saved posts from blog path
+    if (fs.existsSync(BLOG_CONTENT_PATH)) {
+      const files = fs.readdirSync(BLOG_CONTENT_PATH).filter(f => f.endsWith('.md') || f.endsWith('.mdx'));
+      for (const file of files) {
+        const filepath = path.join(BLOG_CONTENT_PATH, file);
+        const post = parseMarkdownFile(filepath);
+        posts.push({
+          ...post,
+          isDraft: false
+        });
+      }
+    }
+
+    res.json({
+      activeDraft: activeDraftInfo,
+      posts: posts
+    });
+  } catch (error) {
+    console.error('Error fetching posts list:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Fetch stock image suggestions and resolve redirects
+app.get('/api/images/suggest', async (req, res) => {
+  try {
+    const { title, keywords, slug } = req.query;
+    const searchTerms = keywords || title || 'technology';
+    
+    console.log(`Fetching suggestions for keywords: "${searchTerms}", slug: "${slug}"`);
+    
+    // Picsum Suggestions (random list page to keep it fresh)
+    async function fetchPicsumSuggestions() {
+      try {
+        const page = Math.floor(Math.random() * 15) + 1;
+        const response = await fetch(`https://picsum.photos/v2/list?page=${page}&limit=6`);
+        if (!response.ok) throw new Error(`Picsum list failed: ${response.status}`);
+        const data = await response.json();
+        return data.map(item => ({
+          id: 'picsum_' + item.id,
+          source: 'Picsum.photos',
+          url: `https://picsum.photos/id/${item.id}/1024/576`,
+          photographer: item.author
+        }));
+      } catch (e) {
+        console.warn('Picsum API request failed, using fallback random URLs:', e.message);
+        return Array.from({ length: 6 }).map((_, i) => ({
+          id: `picsum_fallback_${i}`,
+          source: 'Picsum.photos',
+          url: `https://picsum.photos/1024/576?random=${i + 1}`,
+          photographer: 'Random Photographer'
+        }));
+      }
+    }
+
+    // LoremFlickr Suggestions - follow redirect on backend to lock down the exact image
+    async function resolveLoremFlickr(terms) {
+      try {
+        const firstTerm = terms.split(',')[0].trim().toLowerCase().replace(/[^a-z0-9]+/g, '');
+        const url = `https://loremflickr.com/1024/576/${encodeURIComponent(firstTerm || 'coding')}`;
+        const response = await fetch(url, { redirect: 'follow' });
+        if (!response.ok) throw new Error(`LoremFlickr failed: ${response.status}`);
+        return [{
+          id: 'loremflickr_resolved',
+          source: 'LoremFlickr',
+          url: response.url,
+          photographer: 'LoremFlickr Contributor'
+        }];
+      } catch (e) {
+        console.warn('LoremFlickr resolution failed:', e.message);
+        return [{
+          id: 'loremflickr_fallback',
+          source: 'LoremFlickr',
+          url: `https://loremflickr.com/1024/576/${terms.split(',')[0] || 'coding'}`,
+          photographer: 'LoremFlickr Contributor'
+        }];
+      }
+    }
+
+    // Placehold.co Text Banner Suggestion
+    function getPlaceholderSuggestion(postTitle) {
+      const cleanTitle = postTitle || 'Blog Post';
+      const encoded = encodeURIComponent(cleanTitle.length > 35 ? cleanTitle.substring(0, 35) + '...' : cleanTitle);
+      return [{
+        id: 'placehold_co',
+        source: 'Placehold.co',
+        url: `https://placehold.co/1024x576/0f172a/f8fafc/webp?text=${encoded}`,
+        photographer: 'Placehold.co Generator'
+      }];
+    }
+
+    // Pexels Search
+    async function searchPexels(terms) {
+      const apiKey = process.env.PEXELS_API_KEY;
+      if (!apiKey) return [];
+      try {
+        const query = terms.split(',')[0].trim();
+        const url = `https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=6&orientation=landscape`;
+        const response = await fetch(url, {
+          headers: { Authorization: apiKey }
+        });
+        if (!response.ok) throw new Error(`Pexels API error: ${response.status}`);
+        const data = await response.json();
+        return (data.photos || []).map(p => ({
+          id: 'pexels_' + p.id,
+          source: 'Pexels',
+          url: p.src.large2x || p.src.large,
+          photographer: p.photographer
+        }));
+      } catch (e) {
+        console.error('Pexels API query failed:', e.message);
+        return [];
+      }
+    }
+
+    // Unsplash Search
+    async function searchUnsplash(terms) {
+      const accessKey = process.env.UNSPLASH_ACCESS_KEY;
+      if (!accessKey) return [];
+      try {
+        const query = terms.split(',')[0].trim();
+        const url = `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=6&orientation=landscape`;
+        const response = await fetch(url, {
+          headers: { Authorization: `Client-ID ${accessKey}` }
+        });
+        if (!response.ok) throw new Error(`Unsplash API error: ${response.status}`);
+        const data = await response.json();
+        return (data.results || []).map(p => ({
+          id: 'unsplash_' + p.id,
+          source: 'Unsplash',
+          url: p.urls.regular || p.urls.full,
+          photographer: p.user.name
+        }));
+      } catch (e) {
+        console.error('Unsplash API query failed:', e.message);
+        return [];
+      }
+    }
+
+    // Run searches in parallel
+    const [picsumRes, loremRes, placeholdRes, pexelsRes, unsplashRes] = await Promise.allSettled([
+      fetchPicsumSuggestions(),
+      resolveLoremFlickr(searchTerms),
+      Promise.resolve(getPlaceholderSuggestion(title)),
+      searchPexels(searchTerms),
+      searchUnsplash(searchTerms)
+    ]);
+
+    const suggestions = [];
+
+    if (picsumRes.status === 'fulfilled') suggestions.push(...picsumRes.value);
+    if (loremRes.status === 'fulfilled') suggestions.push(...loremRes.value);
+    if (placeholdRes.status === 'fulfilled') suggestions.push(...placeholdRes.value);
+    if (pexelsRes.status === 'fulfilled') suggestions.push(...pexelsRes.value);
+    if (unsplashRes.status === 'fulfilled') suggestions.push(...unsplashRes.value);
+
+    // Include Google Imagen 4 generator card
+    suggestions.push({
+      id: 'imagen_4_option',
+      source: 'Imagen 4',
+      requires_generation: true,
+      url: '/img/google-antigravity.png',
+      photographer: 'Google Imagen AI'
+    });
+
+    res.json({
+      success: true,
+      suggestions
+    });
+  } catch (error) {
+    console.error('Error fetching image suggestions:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Explicitly generate a preview image with Google's Imagen 4
+app.post('/api/images/generate-imagen', async (req, res) => {
+  try {
+    const { title, description, slug } = req.body;
+    if (!title || !slug) {
+      return res.status(400).json({ success: false, error: 'Missing title or slug.' });
+    }
+
+    if (!process.env.GEMINI_API_KEY) {
+      return res.status(400).json({ success: false, error: 'GEMINI_API_KEY is not set in environment variables.' });
+    }
+
+    const promptText = `A professional, high-quality modern blog header illustration. Title: "${title}". Description: "${description || ''}". Sleek vector graphic, minimalist digital art style, dark background with vibrant glowing accents of neon purple and deep cyan. No text, no words, no letters, no typography, no logos.`;
+
+    console.log(`Generating AI Hero Image using Imagen 4 for slug: ${slug}...`);
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${process.env.GEMINI_API_KEY}`;
+
+    const response = await retryCall(async () => {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          instances: [{ prompt: promptText }],
+          parameters: {
+            sampleCount: 1,
+            aspectRatio: '16:9',
+            outputMimeType: 'image/jpeg'
+          }
+        })
+      });
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(`Imagen API error: ${res.status} ${res.statusText} - ${errorText}`);
+      }
+      return res;
+    });
+
+    const data = await response.json();
+    if (!data.predictions || data.predictions.length === 0 || !data.predictions[0].bytesBase64Encoded) {
+      throw new Error('Invalid response payload from Imagen API: predictions empty or missing base64.');
+    }
+
+    const base64Bytes = data.predictions[0].bytesBase64Encoded;
+    const buffer = Buffer.from(base64Bytes, 'base64');
+    
+    // Save to temp image in DATA_DIR
+    const tempFilename = `temp-${slug}-${Date.now()}.webp`;
+    const tempOutputPath = path.join(DATA_DIR, tempFilename);
+
+    await sharp(buffer)
+      .webp({ quality: 85 })
+      .toFile(tempOutputPath);
+
+    console.log(`✅ Imagen 4 temporary image saved: ${tempOutputPath}`);
+
+    res.json({
+      success: true,
+      imageUrl: `/api/temp-images/${tempFilename}`,
+      tempPath: tempFilename
+    });
+  } catch (error) {
+    console.error('❌ Google Imagen 4 API failed:', error.message);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Save selected image (remote stock URL or local temp file) to the blog assets path
+app.post('/api/images/select', async (req, res) => {
+  try {
+    const { imageUrl, slug, source, tempPath } = req.body;
+    if (!imageUrl || !slug) {
+      return res.status(400).json({ success: false, error: 'Missing imageUrl or slug.' });
+    }
+
+    const filename = `${slug}.webp`;
+    const finalOutputPath = path.join(ASSETS_IMG_PATH, filename);
+
+    console.log(`Saving selected hero image from source: "${source}" for slug: "${slug}"`);
+
+    if (source === 'Imagen 4' && tempPath) {
+      const fullTempPath = path.join(DATA_DIR, tempPath);
+      if (fs.existsSync(fullTempPath)) {
+        fs.copyFileSync(fullTempPath, finalOutputPath);
+        console.log(`✅ Copied temp image to ${finalOutputPath}`);
+      } else {
+        throw new Error(`Temporary image file not found at: ${fullTempPath}`);
+      }
+    } else {
+      if (imageUrl.startsWith('/api/temp-images/')) {
+        const localTempName = imageUrl.replace('/api/temp-images/', '');
+        const fullTempPath = path.join(DATA_DIR, localTempName);
+        if (fs.existsSync(fullTempPath)) {
+          fs.copyFileSync(fullTempPath, finalOutputPath);
+          console.log(`✅ Copied relative temp image to ${finalOutputPath}`);
+        } else {
+          throw new Error(`Temporary image file not found: ${localTempName}`);
+        }
+      } else {
+        console.log(`Downloading remote image URL: ${imageUrl}`);
+        const response = await fetch(imageUrl);
+        if (!response.ok) {
+          throw new Error(`Failed to download remote image: ${response.status} ${response.statusText}`);
+        }
+        const arrayBuffer = await response.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+
+        await sharp(buffer)
+          .webp({ quality: 85 })
+          .toFile(finalOutputPath);
+        
+        console.log(`✅ Saved and WebP-optimized remote image to: ${finalOutputPath}`);
+      }
+    }
+
+    const heroImageFrontmatterPath = `/img/${filename}`;
+    updatePostHeroImage(slug, heroImageFrontmatterPath);
+
+    res.json({
+      success: true,
+      heroImage: heroImageFrontmatterPath
+    });
+  } catch (error) {
+    console.error('Error selecting image:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Handle drag-and-drop manual image uploading (Base64)
+app.post('/api/images/upload', async (req, res) => {
+  try {
+    const { imageBase64, slug } = req.body;
+    if (!imageBase64 || !slug) {
+      return res.status(400).json({ success: false, error: 'Missing imageBase64 or slug.' });
+    }
+
+    console.log(`Processing uploaded image for slug: ${slug}...`);
+    const base64Data = imageBase64.replace(/^data:image\/\w+;base64,/, "");
+    const buffer = Buffer.from(base64Data, 'base64');
+
+    const filename = `${slug}.webp`;
+    const outputPath = path.join(ASSETS_IMG_PATH, filename);
+
+    await sharp(buffer)
+      .webp({ quality: 85 })
+      .toFile(outputPath);
+
+    console.log(`✅ Successfully saved uploaded WebP image: ${outputPath}`);
+
+    const heroImageFrontmatterPath = `/img/${filename}`;
+    updatePostHeroImage(slug, heroImageFrontmatterPath);
+
+    res.json({
+      success: true,
+      heroImage: heroImageFrontmatterPath
+    });
+  } catch (error) {
+    console.error('Error uploading image:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 
 // Get active config status
 app.get('/api/config', (req, res) => {
