@@ -1,56 +1,397 @@
 ---
-import Layout from '../layouts/BlogPost.astro';
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { Image } from 'astro:assets';
+import profileImg from '../assets/img/profile.png';
 ---
 
-<Layout
-	title="About Me"
-	description="Network Engineer specializing in IT infrastructure and support"
->
-	<p>
-		Hi, I'm Chris Tran, a Network Engineer at Auto-Chlor System. I joined the company in 2022 and was recently promoted to this 
-		role after demonstrating exceptional skill, initiative, and teamwork as a Junior Network Engineer. Recognized for my consistent 
-		growth and dedication to the team's success, I bring over 5 years of IT expertise and a background in team leadership, specializing 
-		in network administration, design, and deployment.
-	</p>
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead
+			title="About Me | Chris Tran"
+			description="Network Engineer specializing in IT infrastructure, security, and automation."
+		/>
+		<style>
+			.about-page {
+				min-height: calc(100vh - 200px);
+				padding: 2rem 1rem;
+				box-sizing: border-box;
+			}
+			.about-container {
+				max-width: 960px;
+				margin: 0 auto;
+			}
+			.about-title-section {
+				margin-bottom: 2.5rem;
+				text-align: left;
+			}
+			.about-title-section h1 {
+				font-size: 2.5rem;
+				margin-bottom: 0.5rem;
+				background: linear-gradient(135deg, #FFFFFF 30%, var(--accent) 100%);
+				-webkit-background-clip: text;
+				-webkit-text-fill-color: transparent;
+				background-clip: text;
+			}
+			.subtitle {
+				font-size: 1.1rem;
+				color: rgb(var(--gray));
+				margin: 0;
+			}
+			.about-grid {
+				display: grid;
+				grid-template-columns: 280px 1fr;
+				gap: 2rem;
+				align-items: start;
+			}
+			/* Sidebar Styles */
+			.about-sidebar {
+				display: flex;
+				flex-direction: column;
+				gap: 1.5rem;
+			}
+			.profile-card {
+				background: rgba(30, 35, 50, 0.45);
+				backdrop-filter: blur(12px);
+				-webkit-backdrop-filter: blur(12px);
+				border: 1px solid rgba(123, 158, 255, 0.12);
+				border-radius: 12px;
+				padding: 1.25rem;
+				text-align: center;
+				box-shadow: var(--box-shadow);
+				transition: border-color 0.3s ease;
+			}
+			.profile-card:hover {
+				border-color: rgba(123, 158, 255, 0.3);
+			}
+			.profile-image-container {
+				position: relative;
+				width: 160px;
+				height: 160px;
+				margin: 0 auto 1rem;
+				border-radius: 50%;
+				padding: 4px;
+				background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+				box-shadow: 0 0 20px rgba(123, 158, 255, 0.2);
+			}
+			.profile-image-container :global(img) {
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+				border-radius: 50%;
+				display: block;
+				background: #1e2332;
+			}
+			.profile-name {
+				font-size: 1.25rem;
+				font-weight: 700;
+				color: rgb(var(--black));
+				margin: 0 0 0.25rem 0;
+			}
+			.profile-title {
+				font-size: 0.85rem;
+				color: var(--accent);
+				font-weight: 500;
+				margin: 0 0 1rem 0;
+			}
+			.quick-meta {
+				text-align: left;
+				border-top: 1px solid rgba(123, 158, 255, 0.12);
+				padding-top: 1rem;
+				font-size: 0.85rem;
+				display: flex;
+				flex-direction: column;
+				gap: 0.75rem;
+			}
+			.meta-item {
+				display: flex;
+				align-items: flex-start;
+				gap: 0.6rem;
+				color: rgb(var(--gray-dark));
+			}
+			.meta-icon {
+				color: var(--accent);
+				flex-shrink: 0;
+				margin-top: 0.1rem;
+			}
+			.meta-label {
+				font-weight: 600;
+				color: rgb(var(--gray));
+				display: block;
+				font-size: 0.75rem;
+				text-transform: uppercase;
+				letter-spacing: 0.05em;
+			}
+			/* Sidebar Buttons */
+			.connect-buttons {
+				display: flex;
+				flex-direction: column;
+				gap: 0.75rem;
+			}
+			.btn-connect {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				gap: 0.5rem;
+				padding: 0.65rem;
+				background: rgba(123, 158, 255, 0.1);
+				border: 1px solid rgba(123, 158, 255, 0.2);
+				border-radius: 8px;
+				color: var(--accent);
+				font-size: 0.9rem;
+				font-weight: 500;
+				text-decoration: none;
+				transition: all 0.25s ease;
+			}
+			.btn-connect:hover {
+				background: rgba(123, 158, 255, 0.2);
+				border-color: var(--accent);
+				color: #FFF;
+				transform: translateY(-1px);
+			}
+			.btn-primary-connect {
+				background: var(--accent);
+				color: #0B1021;
+				border: none;
+			}
+			.btn-primary-connect:hover {
+				background: #9bb3ff;
+				color: #0B1021;
+				transform: translateY(-1px);
+				box-shadow: 0 0 15px rgba(123, 158, 255, 0.3);
+			}
 
-	<p>
-		In my current role, I serve as a central point of escalation for technical issues, handling everything from end-user support 
-		to complex network operations. My technical skillset includes Microsoft Windows AD, PowerShell, Bash, TCP/IP, VPN, and FORTINET 
-		equipment. I also manage mobile devices using Samsung Knox MDM, deploy virtual machines and physical host servers, and lead 
-		project management initiatives. My experience includes providing 24/7 on-call support and collaborating with senior engineers 
-		on system architecture.
-	</p>
+			/* Narrative Styles */
+			.about-content {
+				background: rgba(11, 16, 33, 0.88);
+				border-radius: 12px;
+				padding: 2rem;
+				box-shadow: var(--box-shadow);
+				border: 1px solid rgba(255, 255, 255, 0.05);
+				line-height: 1.8;
+			}
+			.about-content h2 {
+				font-size: 1.5rem;
+				color: rgb(var(--black));
+				margin: 1.75rem 0 0.75rem;
+				position: relative;
+				padding-bottom: 0.5rem;
+			}
+			.about-content h2:first-of-type {
+				margin-top: 0;
+			}
+			.about-content h2::after {
+				content: '';
+				position: absolute;
+				bottom: 0;
+				left: 0;
+				width: 2.5rem;
+				height: 2px;
+				background: var(--accent);
+				border-radius: 1px;
+			}
+			.about-content p {
+				margin-bottom: 1.25rem;
+				font-size: 0.95rem;
+			}
+			.about-content ul {
+				padding-left: 1.25rem;
+				margin-bottom: 1.5rem;
+			}
+			.about-content li {
+				margin-bottom: 0.5rem;
+				font-size: 0.95rem;
+			}
 
-	<p>
-		My educational background includes pursuing an M.S. in Information Technology Management at Western Governors 
-		University (expected 2027), building upon my B.S. in Mathematics-Computer Science from UC San Diego. I hold several 
-		certifications including CompTIA A+, ITIL 4 Foundation, and Google IT Support, demonstrating my commitment to continuous learning.
-	</p>
+			/* Tech Badges */
+			.tech-bagde-container {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.5rem;
+				margin-top: 1rem;
+			}
+			.badge {
+				padding: 0.15rem 0.55rem;
+				background: rgba(123, 158, 255, 0.08);
+				border: 1px solid rgba(123, 158, 255, 0.15);
+				border-radius: 4px;
+				font-size: 0.8rem;
+				color: rgb(var(--gray-dark));
+			}
 
-	<p>
-		Throughout my career at organizations like Microsoft, Santa Clara County, and Amazon, I've developed a reputation for being 
-		detail-oriented and adaptable. I am passionate about building systems that are not only functional—but scalable, secure, and 
-		human-friendly—and implementing innovative solutions to enhance operational efficiency.
-	</p>
+			/* Responsive Design */
+			@media (max-width: 800px) {
+				.about-grid {
+					grid-template-columns: 1fr;
+					gap: 1.5rem;
+				}
+				.about-sidebar {
+					flex-direction: column;
+				}
+				.profile-card {
+					display: flex;
+					flex-direction: row;
+					align-items: center;
+					text-align: left;
+					gap: 1.5rem;
+				}
+				.profile-image-container {
+					margin: 0;
+					flex-shrink: 0;
+				}
+				.profile-text {
+					flex-grow: 1;
+				}
+				.quick-meta {
+					border-top: none;
+					border-left: 1px solid rgba(123, 158, 255, 0.12);
+					padding-top: 0;
+					padding-left: 1.5rem;
+					margin-top: 0;
+				}
+				.profile-title {
+					margin-bottom: 0;
+				}
+				.connect-buttons {
+					flex-direction: row;
+				}
+				.btn-connect {
+					flex: 1;
+				}
+			}
+			@media (max-width: 600px) {
+				.profile-card {
+					flex-direction: column;
+					text-align: center;
+				}
+				.profile-image-container {
+					margin: 0 auto;
+				}
+				.quick-meta {
+					border-left: none;
+					border-top: 1px solid rgba(123, 158, 255, 0.12);
+					padding-left: 0;
+					padding-top: 1rem;
+					width: 100%;
+				}
+				.connect-buttons {
+					flex-direction: column;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main class="about-page">
+			<div class="about-container">
+				<div class="about-title-section">
+					<h1>About Me</h1>
+					<p class="subtitle">Systems, packets, and the logical architecture that connects them.</p>
+				</div>
 
-	<div class="contact-section">
-		<h2>Get in Touch</h2>
-		<p>
-			I'm always open to discussing new opportunities and networking with fellow IT professionals. 
-			Feel free to reach out through my social links or email me at <a href="mailto:career@christran.io">career@christran.io</a>
-		</p>
-	</div>
-</Layout>
+				<div class="about-grid">
+					<!-- Sidebar -->
+					<aside class="about-sidebar">
+						<div class="profile-card">
+							<div class="profile-image-container">
+								<Image src={profileImg} alt="Chris Tran" width={160} height={160} quality={90} format="webp" />
+							</div>
+							<div class="profile-text">
+								<h2 class="profile-name">Chris Tran</h2>
+								<p class="profile-title">Network Engineer</p>
+								
+								<div class="quick-meta">
+									<div class="meta-item">
+										<span class="meta-icon" aria-hidden="true">📍</span>
+										<div>
+											<span class="meta-label">Location</span>
+											<span>San Francisco Bay Area</span>
+										</div>
+									</div>
+									<div class="meta-item">
+										<span class="meta-icon" aria-hidden="true">🎓</span>
+										<div>
+											<span class="meta-label">Education</span>
+											<span>B.S. Math-CS (UCSD)<br/>M.S. IT Management (WGU)</span>
+										</div>
+									</div>
+									<div class="meta-item">
+										<span class="meta-icon" aria-hidden="true">🛡️</span>
+										<div>
+											<span class="meta-label">Certifications</span>
+											<span>CompTIA A+, ITIL 4, Google IT Support</span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
 
-<style>
-	.contact-section {
-		margin-top: 3rem;
-		padding: 1.5rem;
-		background: rgba(var(--gray-light), 0.1);
-		border-radius: 8px;
-	}
-	.contact-section h2 {
-		margin-top: 0;
-		font-size: 1.5em;
-	}
-</style>
+						<div class="connect-buttons">
+							<a href="mailto:career@christran.io" class="btn-connect btn-primary-connect">
+								<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+								Email Me
+							</a>
+							<a href="https://linkedin.com/in/synchris" target="_blank" rel="noopener noreferrer" class="btn-connect">
+								<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+								LinkedIn
+							</a>
+							<a href="https://github.com/sYnVerse" target="_blank" rel="noopener noreferrer" class="btn-connect">
+								<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+								GitHub
+							</a>
+						</div>
+					</aside>
+
+					<!-- Narrative Content -->
+					<article class="about-content">
+						<h2>The Packets & The Logic</h2>
+						<p>
+							I’ve always believed that the best networks are the ones you never notice. They are the invisible arteries of modern business—quietly routing data, securing systems, and enabling seamless collaboration. 
+						</p>
+						<p>
+							My approach to systems and network engineering is heavily shaped by my background in <strong>Mathematics and Computer Science</strong> at UC San Diego. Instead of looking at systems purely as physical hardware or disjointed configuration files, I see them as graphs, algorithms, and logical flow systems. This mathematical lens helps me model complex traffic routing, predict bottleneck behaviors, and approach security hardening with structural rigor.
+						</p>
+
+						<h2>From Support to Infrastructure</h2>
+						<p>
+							Throughout my career, I've had the privilege of working in environments ranging from municipal services to tech giants, including <strong>Microsoft</strong>, <strong>Amazon</strong>, and <strong>Santa Clara County</strong>. These experiences instilled in me an appreciation for operational discipline, strict SLA management, and the sheer scale required for robust systems.
+						</p>
+						<p>
+							Currently, I serve as a <strong>Network Engineer at Auto-Chlor System</strong>, where I was promoted from a Junior Network Engineer role after demonstrating a strong drive for systems design and proactive automation. Today, I handle central escalations, deploy physical host servers, manage virtualized infrastructure, configure <strong>Fortinet</strong> secure networking gear, and lead project initiatives.
+						</p>
+
+						<h2>Automation & The Enterprise Homelab</h2>
+						<p>
+							To me, a manual task repeated more than three times is a bug. I actively write <strong>PowerShell</strong>, <strong>Python</strong>, and <strong>Bash</strong> scripts to automate configurations, monitor device health, and handle fleet device operations (such as managing enterprise mobile devices via <strong>Samsung Knox Suite</strong>, which combines Knox Mobile Enrollment for provisioning and Knox Manage for MDM).
+						</p>
+						<p>
+							This passion for building and tweaking doesn’t stop when I log off. In my spare time, I design and run an <a href="/portfolio/homelab">Enterprise Home Lab</a> consisting of Dell PowerEdge servers. It serves as my dedicated playground for virtualization (running <strong>Proxmox VE</strong> and <strong>Hyper-V</strong>), containerization (using <strong>Docker</strong>), pfSense firewalls, VLAN configurations, and automated ZFS storage arrays. I am currently focusing on expanding my homelab to test application orchestration using <strong>Kubernetes</strong>.
+						</p>
+
+						<h2>Strategic Growth</h2>
+						<p>
+							Technology is only half the equation; the other half is understanding how it serves organizational goals. To bridge the gap between technical design and business strategy, I am pursuing my <strong>M.S. in Information Technology Management</strong> at Western Governors University (expected 2027). I want to ensure that every server I deploy or firewall I configure is aligned with governance, risk management, and overall business value.
+						</p>
+
+						<h2>Core Toolkit</h2>
+						<div class="tech-bagde-container">
+							<span class="badge">Fortinet Equipment</span>
+							<span class="badge">pfSense & Firewalls</span>
+							<span class="badge">TCP/IP & Routing Protocols</span>
+							<span class="badge">VPN / SD-WAN</span>
+							<span class="badge">Proxmox VE & Hyper-V</span>
+							<span class="badge">Docker Containerization</span>
+							<span class="badge">Active Directory / Entra ID</span>
+							<span class="badge">PowerShell, Python & Bash</span>
+							<span class="badge">Samsung Knox Suite (KME/Knox Manage)</span>
+							<span class="badge">Dell PowerEdge & ZFS</span>
+						</div>
+					</article>
+				</div>
+			</div>
+		</main>
+		<Footer />
+	</body>
+</html>
