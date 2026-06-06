@@ -10,13 +10,13 @@ type Props = CollectionEntry<'blog'>['data'];
 
 const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 
-// Dynamically resolve optimized blog hero images from src/assets
-const images = import.meta.glob<{ default: ImageMetadata }>('/src/assets/img/*.{jpeg,jpg,png,gif,webp}');
-const imagePath = heroImage ? heroImage.replace(/^\/img\//, '/src/assets/img/') : '';
+// Dynamically resolve optimized blog hero images from src/assets/img/blog/
+const images = import.meta.glob<{ default: ImageMetadata }>('/src/assets/img/blog/*.{jpeg,jpg,png,gif,webp}');
+const imagePath = heroImage ? heroImage.replace(/^\/img\//, '/src/assets/img/blog/') : '';
 const hasImage = imagePath && images[imagePath];
 
 if (imagePath && !hasImage) {
-	throw new Error(`Blog post hero image "${imagePath}" not found in "src/assets/img/".`);
+	throw new Error(`Blog post hero image "${imagePath}" not found in "src/assets/img/blog/".`);
 }
 ---
 

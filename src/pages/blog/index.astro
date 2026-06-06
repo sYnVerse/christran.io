@@ -11,8 +11,8 @@ const posts = (await getCollection('blog')).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
 
-// Dynamically resolve optimized blog hero images from src/assets
-const images = import.meta.glob<{ default: ImageMetadata }>('/src/assets/img/*.{jpeg,jpg,png,gif,webp}');
+// Dynamically resolve optimized blog hero images from src/assets/img/blog/
+const images = import.meta.glob<{ default: ImageMetadata }>('/src/assets/img/blog/*.{jpeg,jpg,png,gif,webp}');
 ---
 
 <!doctype html>
@@ -96,7 +96,7 @@ const images = import.meta.glob<{ default: ImageMetadata }>('/src/assets/img/*.{
 				<ul>
 					{
 						posts.map((post) => {
-							const imagePath = post.data.heroImage ? post.data.heroImage.replace(/^\/img\//, '/src/assets/img/') : '';
+							const imagePath = post.data.heroImage ? post.data.heroImage.replace(/^\/img\//, '/src/assets/img/blog/') : '';
 							const hasImage = imagePath && images[imagePath];
 							return (
 								<li>

@@ -29,7 +29,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Configuration
 const PORT = process.env.PORT || 5000;
 const BLOG_CONTENT_PATH = path.resolve(__dirname, process.env.BLOG_CONTENT_PATH || '../../src/content/blog');
-const ASSETS_IMG_PATH = path.resolve(__dirname, process.env.ASSETS_IMG_PATH || '../../src/assets/img');
+const ASSETS_IMG_PATH = path.resolve(__dirname, process.env.ASSETS_IMG_PATH || '../../src/assets/img/blog');
 const DATA_DIR = path.join(__dirname, 'data');
 
 // Ensure directories exist
