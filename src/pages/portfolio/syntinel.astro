@@ -1,0 +1,222 @@
+---
+import Layout from '../../layouts/BlogPost.astro';
+---
+
+<Layout
+	title="sYntinel"
+	description="Real-time 3D globe outage visualizer showing global service health at a glance."
+>
+	<p>
+		<strong>sYntinel</strong> is a real-time monitoring dashboard featuring an interactive 3D WebGL globe. It aggregates status information from major infrastructure providers and displays them as geographically positioned, color-coded telemetry columns. This visual cockpit allows administrators to identify global service disruptions and regional connectivity issues instantly.
+	</p>
+
+	<h2>Technical Stack</h2>
+
+	<div class="specs-grid">
+		<div class="spec-card">
+			<div class="spec-header">
+				<span class="spec-icon">
+					<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/></svg>
+				</span>
+				<h3>Visualization & UI</h3>
+			</div>
+			<table class="spec-table">
+				<tbody>
+					<tr><td class="spec-label">Framework</td><td>Angular 19</td></tr>
+					<tr><td class="spec-label">3D Engine</td><td>Three.js & globe.gl</td></tr>
+					<tr><td class="spec-label">Styling</td><td>Vanilla CSS (Glassmorphism & animations)</td></tr>
+					<tr><td class="spec-label">Fonts</td><td>Outfit, JetBrains Mono</td></tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="spec-card">
+			<div class="spec-header">
+				<span class="spec-icon">
+					<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+				</span>
+				<h3>Backend & API</h3>
+			</div>
+			<table class="spec-table">
+				<tbody>
+					<tr><td class="spec-label">Runtime</td><td>Cloudflare Workers (Edge Workers API)</td></tr>
+					<tr><td class="spec-label">Data APIs</td><td>Pingdom API & StatusGator API</td></tr>
+					<tr><td class="spec-label">Failover</td><td>Built-in service status simulation engine</td></tr>
+					<tr><td class="spec-label">Bundler</td><td>Angular CLI</td></tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<div class="lab-note">
+		<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+		<span>
+			<strong>Simulation Failover Engine:</strong> If API tokens for Pingdom or StatusGator are not configured, the Cloudflare Worker seamlessly falls back to generating simulated outages so the visualizer remains functional for testing and demonstrations.
+		</span>
+	</div>
+
+	<h2>Core Features</h2>
+	<ul>
+		<li><strong>Interactive 3D Globe</strong> — Color-coded columns show service status at a glance:
+			<ul>
+				<li><span style="color: #ff5f56; font-weight: bold;">Down</span> — Red columns, high altitude</li>
+				<li><span style="color: #ffbd2e; font-weight: bold;">Degraded</span> — Orange columns, medium altitude</li>
+				<li><span style="color: #27c93f; font-weight: bold;">Operational</span> — Green columns, low altitude</li>
+			</ul>
+		</li>
+		<li><strong>System Monitor Dashboard</strong> — Includes radar pulse status indicators, 24-hour uptime timelines, latency metrics, and a live incident log feed.</li>
+		<li><strong>Outage Disaster Simulator</strong> — Admins can trigger simulated disaster scenarios to test visualization grids, including:
+			<ul>
+				<li><em>Solar Flare</em> (Global collapse of all monitored services)</li>
+				<li><em>DNS Backbone Collapsed</em> (Widespread degraded status)</li>
+				<li><em>AWS Cloud Core Outage</em> (Regional outage targeting North American/European zones)</li>
+			</ul>
+		</li>
+		<li><strong>Focus Mode</strong> — Hides sidebar controls and expands the system monitor dashboard into a full-screen, distraction-free environment ideal for server room displays.</li>
+	</ul>
+
+	<h2>Credits & Context</h2>
+	<p>
+		This project is a fork based on the original real-time globe visualization concept by <a href="https://github.com/cppshane" target="_blank" rel="noopener noreferrer">cppshane</a> (via the open-source <a href="https://github.com/cppshane/lucent" target="_blank" rel="noopener noreferrer">lucent</a> repository). It has been adapted and expanded to run on Cloudflare Workers and integrate with sYnVerse branding conventions.
+	</p>
+
+	<div class="tech-tags">
+		<span class="tag">Angular 19</span>
+		<span class="tag">Three.js</span>
+		<span class="tag">globe.gl</span>
+		<span class="tag">Cloudflare Workers</span>
+		<span class="tag">TypeScript</span>
+		<span class="tag">Pingdom API</span>
+		<span class="tag">StatusGator API</span>
+		<span class="tag">WebGL</span>
+	</div>
+
+	<div class="back-link-wrapper">
+		<a href="/portfolio" class="back-link">← Back to Portfolio</a>
+	</div>
+</Layout>
+
+<style>
+	.specs-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+		gap: 1.25rem;
+		margin: 1.5rem 0 2rem;
+	}
+
+	.spec-card {
+		padding: 1.25rem;
+		background: rgba(30, 35, 50, 0.5);
+		backdrop-filter: blur(8px);
+		-webkit-backdrop-filter: blur(8px);
+		border: 1px solid rgba(123, 158, 255, 0.12);
+		border-radius: 10px;
+		transition: border-color 0.3s ease;
+	}
+
+	.spec-card:hover {
+		border-color: rgba(123, 158, 255, 0.3);
+	}
+
+	.spec-header {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		margin-bottom: 1rem;
+	}
+
+	.spec-icon {
+		color: var(--accent);
+		display: flex;
+		align-items: center;
+		flex-shrink: 0;
+	}
+
+	.spec-header h3 {
+		margin: 0;
+		font-size: 1rem;
+		color: rgb(var(--black));
+	}
+
+	.spec-table {
+		width: 100%;
+		border-collapse: collapse;
+	}
+
+	.spec-table td {
+		padding: 0.4rem 0;
+		font-size: 0.88rem;
+		border-bottom: 1px solid rgba(123, 158, 255, 0.08);
+	}
+
+	.spec-table tr:last-child td {
+		border-bottom: none;
+	}
+
+	.spec-label {
+		color: rgb(var(--gray));
+		font-weight: 600;
+		width: 5rem;
+	}
+
+	.lab-note {
+		display: flex;
+		align-items: flex-start;
+		gap: 0.8rem;
+		padding: 1rem 1.25rem;
+		background: rgba(123, 158, 255, 0.08);
+		border: 1px solid rgba(123, 158, 255, 0.15);
+		border-radius: 8px;
+		margin: 1rem 0 1.5rem;
+		font-size: 0.9rem;
+		color: rgb(var(--gray));
+		line-height: 1.5;
+	}
+
+	.lab-note svg {
+		flex-shrink: 0;
+		color: var(--accent);
+		margin-top: 0.15rem;
+	}
+
+	.tech-tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		margin: 2rem 0;
+	}
+
+	.tag {
+		padding: 0.2rem 0.65rem;
+		background: rgba(123, 158, 255, 0.12);
+		border: 1px solid rgba(123, 158, 255, 0.2);
+		border-radius: 4px;
+		font-size: 0.78rem;
+		font-weight: 500;
+		color: var(--accent);
+	}
+
+	.back-link-wrapper {
+		margin-top: 2.5rem;
+		padding-top: 1.5rem;
+		border-top: 1px solid rgba(var(--gray-light), 0.3);
+	}
+
+	.back-link {
+		color: var(--accent);
+		text-decoration: none;
+		font-size: 0.9rem;
+		font-weight: 500;
+		transition: opacity 0.2s ease;
+	}
+
+	.back-link:hover {
+		opacity: 0.8;
+	}
+
+	@media (max-width: 720px) {
+		.specs-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>
