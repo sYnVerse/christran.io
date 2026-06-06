@@ -62,7 +62,22 @@ async function getExistingPostsContext() {
   }
 }
 
+// Helper to retry async operations (like API requests) with exponential backoff
+async function retryCall(fn, retries = 3, delayMs = 2000) {
+  try {
+    return await fn();
+  } catch (error) {
+    if (retries <= 0) {
+      throw error;
+    }
+    console.warn(`API call failed (503/429/FetchError). Retrying in ${delayMs}ms... (Remaining retries: ${retries}). Error: ${error.message}`);
+    await new Promise(resolve => setTimeout(resolve, delayMs));
+    return retryCall(fn, retries - 1, delayMs * 2);
+  }
+}
+
 async function run() {
+
   console.log('Starting daily blog ideas generation task...');
   
   try {
@@ -105,9 +120,9 @@ async function run() {
     }
     Do not return any other text, markdown formatting, or HTML wrap outside the JSON object itself. Make sure the JSON is perfectly valid.`;
 
-    console.log('Calling Gemini API...');
-    const result = await model.generateContent(prompt);
+    const result = await retryCall(() => model.generateContent(prompt));
     const text = result.response.text();
+
     
     const cleanJsonText = text.replace(/^```json\s*/i, '').replace(/```\s*$/, '').trim();
     const parsedData = JSON.parse(cleanJsonText);

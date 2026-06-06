@@ -82,8 +82,23 @@ function getResend() {
   return new Resend(process.env.RESEND_API_KEY);
 }
 
+// Helper to retry async operations (like API requests) with exponential backoff
+async function retryCall(fn, retries = 3, delayMs = 2000) {
+  try {
+    return await fn();
+  } catch (error) {
+    if (retries <= 0) {
+      throw error;
+    }
+    console.warn(`API call failed (503/429/FetchError). Retrying in ${delayMs}ms... (Remaining retries: ${retries}). Error: ${error.message}`);
+    await new Promise(resolve => setTimeout(resolve, delayMs));
+    return retryCall(fn, retries - 1, delayMs * 2);
+  }
+}
+
 // Read existing blog posts metadata for context
 async function getExistingPostsContext() {
+
   try {
     if (!fs.existsSync(BLOG_CONTENT_PATH)) {
       return [];
@@ -154,8 +169,9 @@ async function generateBlogIdeas() {
   }
   Do not return any other text, markdown formatting, or HTML wrap outside the JSON object itself. Make sure the JSON is perfectly valid.`;
 
-  const result = await model.generateContent(prompt);
+  const result = await retryCall(() => model.generateContent(prompt));
   const text = result.response.text();
+
   
   // Clean JSON response (in case Gemini wraps it in ```json ... ```)
   const cleanJsonText = text.replace(/^```json\s*/i, '').replace(/```\s*$/, '').trim();
@@ -232,27 +248,31 @@ async function generateImagenHeroImage(title, description, slug) {
   console.log(`Generating AI Hero Image using Imagen 3 for slug: ${slug}...`);
   try {
     const url = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${process.env.GEMINI_API_KEY}`;
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        instances: [
-          { prompt: promptText }
-        ],
-        parameters: {
-          sampleCount: 1,
-          aspectRatio: '16:9',
-          outputMimeType: 'image/jpeg'
-        }
-      })
+    const response = await retryCall(async () => {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          instances: [
+            { prompt: promptText }
+          ],
+          parameters: {
+            sampleCount: 1,
+            aspectRatio: '16:9',
+            outputMimeType: 'image/jpeg'
+          }
+        })
+      });
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(`Imagen API error: ${res.status} ${res.statusText} - ${errorText}`);
+      }
+      return res;
     });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Imagen API error: ${response.status} ${response.statusText} - ${errorText}`);
-    }
 
     const data = await response.json();
     if (!data.predictions || data.predictions.length === 0 || !data.predictions[0].bytesBase64Encoded) {
@@ -318,8 +338,9 @@ async function generateDraft(idea) {
   
   Return only the complete Markdown content, including the YAML frontmatter. Do not wrap the entire output in a markdown block (e.g. do not wrap the frontmatter and content in \`\`\`markdown ... \`\`\`). Just output raw markdown text.`;
 
-  const result = await model.generateContent(prompt);
+  const result = await retryCall(() => model.generateContent(prompt));
   const draftText = result.response.text();
+
   
   // Clean draft text (remove leading/trailing markdown blocks if the LLM added them)
   let cleanDraft = draftText.trim();
@@ -387,8 +408,9 @@ async function refineDraft(currentDraft, suggestion) {
   
   Return only the complete updated Markdown content. Do not wrap the output in a markdown block (e.g. do not wrap the frontmatter and content in \`\`\`markdown ... \`\`\`). Just output raw markdown text.`;
 
-  const result = await model.generateContent(prompt);
+  const result = await retryCall(() => model.generateContent(prompt));
   const refinedText = result.response.text();
+
   
   let cleanRefined = refinedText.trim();
   if (cleanRefined.startsWith('```markdown')) {
