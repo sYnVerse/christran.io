@@ -29,3 +29,8 @@ pnpm-debug.log*
 
 # GPG Security Key
 pgp-key-private.txt
+
+# blog generator tool configuration and data cache
+tools/blog-generator/.env
+tools/blog-generator/data/
+

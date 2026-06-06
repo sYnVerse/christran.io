@@ -1,0 +1,20 @@
+{
+  "name": "blog-generator-tool",
+  "version": "1.0.0",
+  "description": "Daily blog idea generator, Resend notifier, and draft edit dashboard for christran.io",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "test-apis": "node scripts/test-apis.js",
+    "send-ideas": "node scripts/send-ideas.js"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.21.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "node-cron": "^3.0.3",
+    "resend": "^3.2.0"
+  }
+}

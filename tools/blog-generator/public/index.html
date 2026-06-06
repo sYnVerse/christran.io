@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog Post Generator & Admin Dashboard</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+  <!-- Markdown parser CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/13.0.1/markdown-it.min.js"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <!-- Header / Navigation -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand">
+        <div class="logo-pulse"></div>
+        <h1>christran.io <span class="badge">Blog Creator</span></h1>
+      </div>
+      <nav class="tab-nav">
+        <button class="tab-btn active" data-tab="ideas-tab">
+          <i data-lucide="lightbulb"></i> Ideas Generator
+        </button>
+        <button class="tab-btn" data-tab="editor-tab" id="editor-nav-btn">
+          <i data-lucide="file-text"></i> Draft Editor
+        </button>
+        <button class="tab-btn" data-tab="publish-tab" id="publish-nav-btn">
+          <i data-lucide="git-pull-request"></i> Git Publisher
+        </button>
+      </nav>
+      <div class="status-indicator" id="config-status">
+        <span class="status-dot"></span> Checking API Status...
+      </div>
+    </div>
+  </header>
+
+  <main class="app-content">
+    <!-- Configuration Check Warning -->
+    <div id="api-warning" class="alert-banner hidden">
+      <i data-lucide="alert-triangle"></i>
+      <div>
+        <strong>Configuration Action Required:</strong> Some API keys are missing in your <code>.env</code> file. Check your configuration to enable all features.
+      </div>
+    </div>
+
+    <!-- IDEAS GENERATOR TAB -->
+    <section id="ideas-tab" class="tab-content active">
+      <div class="tab-header">
+        <div>
+          <h2>Blog Topic Ideas</h2>
+          <p>Generate personalized blog ideas matching your style, or send them to your email.</p>
+        </div>
+        <div class="btn-group">
+          <button class="btn btn-secondary" id="btn-email-ideas" disabled>
+            <i data-lucide="mail"></i> Email Current Ideas
+          </button>
+          <button class="btn btn-primary" id="btn-generate-ideas">
+            <i data-lucide="sparkles"></i> Generate New Ideas
+          </button>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div id="ideas-loader" class="loader-card hidden">
+        <div class="spinner"></div>
+        <p>Analyzing existing articles and brainstorming ideas...</p>
+      </div>
+
+      <!-- Ideas Grid -->
+      <div class="ideas-grid" id="ideas-container">
+        <!-- Ideas dynamically generated -->
+        <div class="empty-state">
+          <i data-lucide="lightbulb" class="huge-icon"></i>
+          <h3>No ideas loaded</h3>
+          <p>Click "Generate New Ideas" to run Gemini and generate a personalized list of topics based on your site's history.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- DRAFT EDITOR TAB -->
+    <section id="editor-tab" class="tab-content">
+      <div class="tab-header">
+        <div>
+          <h2 id="active-post-title">No Draft Loaded</h2>
+          <p>Write, refine with AI, and review your draft before publishing.</p>
+        </div>
+        <div class="btn-group">
+          <button class="btn btn-secondary" id="btn-load-draft">
+            <i data-lucide="refresh-cw"></i> Load Saved Draft
+          </button>
+          <button class="btn btn-success" id="btn-save-draft" disabled>
+            <i data-lucide="save"></i> Save Draft File
+          </button>
+        </div>
+      </div>
+
+      <div class="editor-layout">
+        <!-- Editor Left (Markdown Source) -->
+        <div class="editor-pane source-pane">
+          <div class="pane-header">
+            <span><i data-lucide="edit-3"></i> Markdown Source</span>
+            <span class="file-info" id="slug-info">slug: none</span>
+          </div>
+          <textarea id="markdown-editor" placeholder="Draft markdown content will appear here..." disabled></textarea>
+        </div>
+
+        <!-- Editor Right (Preview) -->
+        <div class="editor-pane preview-pane">
+          <div class="pane-header">
+            <span><i data-lucide="eye"></i> Live Preview</span>
+          </div>
+          <div class="preview-content" id="html-preview">
+            <div class="empty-preview">
+              <p>Select an idea from the Ideas Generator to write a draft, or click "Load Saved Draft" if you have a draft in progress.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Refinement Chat Box -->
+      <div class="refinement-section">
+        <div class="refinement-header">
+          <h3><i data-lucide="wand-2"></i> Suggest Edits & Refine Draft with Gemini</h3>
+          <span class="tip">Describe what to add, delete, or rewrite (e.g. "add a section about Hardware 4", "change the tone to be more humorous")</span>
+        </div>
+        <div class="refinement-input-row">
+          <input type="text" id="refine-prompt" placeholder="Ask AI to refine the draft..." disabled>
+          <button class="btn btn-primary" id="btn-refine-draft" disabled>
+            <i data-lucide="send"></i> Apply Suggestions
+          </button>
+        </div>
+        <div id="refine-loader" class="loader-line hidden"></div>
+      </div>
+    </section>
+
+    <!-- GIT PUBLISHER TAB -->
+    <section id="publish-tab" class="tab-content">
+      <div class="tab-header">
+        <div>
+          <h2>Commit & Publish to GitHub</h2>
+          <p>Commit your new blog post directly to your Git repository and push it online.</p>
+        </div>
+      </div>
+
+      <div class="publish-layout">
+        <!-- Publish Form Card -->
+        <div class="publish-card">
+          <div class="publish-field">
+            <label for="commit-filename">Target Blog File</label>
+            <input type="text" id="commit-filename" readonly placeholder="No saved blog post detected">
+            <span class="input-tip">This file will be staged and committed to git.</span>
+          </div>
+          <div class="publish-field">
+            <label for="commit-message">Commit Message</label>
+            <input type="text" id="commit-message" placeholder="e.g. feat(blog): add post about FSD subscriptions" disabled>
+            <span class="input-tip">Keep it brief and descriptive.</span>
+          </div>
+          <button class="btn btn-success btn-large" id="btn-git-publish" disabled>
+            <i data-lucide="github"></i> Stage, Commit & Push Post
+          </button>
+        </div>
+
+        <!-- Git Output Console -->
+        <div class="console-card">
+          <div class="console-header">
+            <span><i data-lucide="terminal"></i> Git Action Log</span>
+            <button class="btn btn-icon-only" id="btn-clear-console" title="Clear Logs">
+              <i data-lucide="trash-2"></i>
+            </button>
+          </div>
+          <pre id="console-log">Console ready. Waiting for git action...</pre>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <p>Powered by Google Gemini AI & Resend API. Written for christran.io.</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
