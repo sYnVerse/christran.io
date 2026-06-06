@@ -1,0 +1,206 @@
+---
+import Layout from '../../layouts/BlogPost.astro';
+---
+
+<Layout
+	title="F1 Wiki Automator"
+	description="Cloudflare Worker and Python automation dashboard to synchronize live F1 standings, timings, and career templates."
+>
+	<p>
+		<strong>F1 Wiki Automator</strong> is a comprehensive automation pipeline that keeps the Formula 1 Wiki on Fandom updated with real-time race data. By pulling from open F1 telemetry endpoints and parsing session times, it formats, compiles, and deploys MediaWiki wikitext templates automatically at the conclusion of every Grand Prix weekend session.
+	</p>
+
+	<h2>System Architecture</h2>
+
+	<div class="specs-grid">
+		<div class="spec-card">
+			<div class="spec-header">
+				<span class="spec-icon">
+					<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+				</span>
+				<h3>Compute & Scripting</h3>
+			</div>
+			<table class="spec-table">
+				<tbody>
+					<tr><td class="spec-label">Core Runtime</td><td>Cloudflare Workers (TypeScript)</td></tr>
+					<tr><td class="spec-label">Local Automation</td><td>Python (requests, beautifulsoup4)</td></tr>
+					<tr><td class="spec-label">APIs Ingested</td><td>Jolpica F1 API (Ergast clone) & Formula1.com scraping</td></tr>
+					<tr><td class="spec-label">Outbound API</td><td>MediaWiki Bot API & Resend API (Mailing)</td></tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="spec-card">
+			<div class="spec-header">
+				<span class="spec-icon">
+					<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"/></svg>
+				</span>
+				<h3>Data & Security</h3>
+			</div>
+			<table class="spec-table">
+				<tbody>
+					<tr><td class="spec-label">Cache Storage</td><td>Cloudflare KV (Rate-limit buffering)</td></tr>
+					<tr><td class="spec-label">Cron Tasks</td><td>Wrangler Triggers (30-min polling intervals)</td></tr>
+					<tr><td class="spec-label">Access Shield</td><td>Cloudflare Turnstile CAPTCHA (on manual overrides)</td></tr>
+					<tr><td class="spec-label">Credentials</td><td>Wrangler Secrets (Bot accounts & tokens)</td></tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<div class="lab-note">
+		<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+		<span>
+			<strong>Automated Cron Synchronizer:</strong> Cloudflare Worker cron triggers poll the Jolpica API periodically during race weekends. Once a qualifying or race session status switches to concluded, the worker compiles the results into a custom wikitext table format and pushes it directly to Fandom.
+		</span>
+	</div>
+
+	<h2>Core Features</h2>
+	<ul>
+		<li><strong>21 Career Stats Templates</strong> — Computes cumulative stats (Championships, Wins, Podiums, Poles, Entries, Laps Led, etc.) by blending historical baselines with active season results.</li>
+		<li><strong>Practice Timing Scraping</strong> — Scrapes raw practice tables from Formula1.com and formats the complex time gaps and sector splits into clean MediaWiki markup.</li>
+		<li><strong>Smart Caching</strong> — Stores session payloads inside Cloudflare KV to prevent redundant external API calls and stay within free tier rate limits.</li>
+		<li><strong>Admin Operations Reports</strong> — Integrates with Resend to email a daily digest detailing bot attempts, edits made, API quotas, and failures (at 6 AM PST).</li>
+		<li><strong>Turnstile Integration</strong> — Protects the web dashboard's manually triggered updates using a Turnstile validation check.</li>
+	</ul>
+
+	<div class="tech-tags">
+		<span class="tag">Cloudflare Workers</span>
+		<span class="tag">TypeScript</span>
+		<span class="tag">Python</span>
+		<span class="tag">MediaWiki API</span>
+		<span class="tag">Jolpica F1 API</span>
+		<span class="tag">Workers KV</span>
+		<span class="tag">Resend API</span>
+		<span class="tag">Cloudflare Turnstile</span>
+	</div>
+
+	<div class="back-link-wrapper">
+		<a href="/portfolio" class="back-link">← Back to Portfolio</a>
+	</div>
+</Layout>
+
+<style>
+	.specs-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+		gap: 1.25rem;
+		margin: 1.5rem 0 2rem;
+	}
+
+	.spec-card {
+		padding: 1.25rem;
+		background: rgba(30, 35, 50, 0.5);
+		backdrop-filter: blur(8px);
+		-webkit-backdrop-filter: blur(8px);
+		border: 1px solid rgba(123, 158, 255, 0.12);
+		border-radius: 10px;
+		transition: border-color 0.3s ease;
+	}
+
+	.spec-card:hover {
+		border-color: rgba(123, 158, 255, 0.3);
+	}
+
+	.spec-header {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		margin-bottom: 1rem;
+	}
+
+	.spec-icon {
+		color: var(--accent);
+		display: flex;
+		align-items: center;
+		flex-shrink: 0;
+	}
+
+	.spec-header h3 {
+		margin: 0;
+		font-size: 1rem;
+		color: rgb(var(--black));
+	}
+
+	.spec-table {
+		width: 100%;
+		border-collapse: collapse;
+	}
+
+	.spec-table td {
+		padding: 0.4rem 0;
+		font-size: 0.88rem;
+		border-bottom: 1px solid rgba(123, 158, 255, 0.08);
+	}
+
+	.spec-table tr:last-child td {
+		border-bottom: none;
+	}
+
+	.spec-label {
+		color: rgb(var(--gray));
+		font-weight: 600;
+		width: 5rem;
+	}
+
+	.lab-note {
+		display: flex;
+		align-items: flex-start;
+		gap: 0.8rem;
+		padding: 1rem 1.25rem;
+		background: rgba(123, 158, 255, 0.08);
+		border: 1px solid rgba(123, 158, 255, 0.15);
+		border-radius: 8px;
+		margin: 1rem 0 1.5rem;
+		font-size: 0.9rem;
+		color: rgb(var(--gray));
+		line-height: 1.5;
+	}
+
+	.lab-note svg {
+		flex-shrink: 0;
+		color: var(--accent);
+		margin-top: 0.15rem;
+	}
+
+	.tech-tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		margin: 2rem 0;
+	}
+
+	.tag {
+		padding: 0.2rem 0.65rem;
+		background: rgba(123, 158, 255, 0.12);
+		border: 1px solid rgba(123, 158, 255, 0.2);
+		border-radius: 4px;
+		font-size: 0.78rem;
+		font-weight: 500;
+		color: var(--accent);
+	}
+
+	.back-link-wrapper {
+		margin-top: 2.5rem;
+		padding-top: 1.5rem;
+		border-top: 1px solid rgba(var(--gray-light), 0.3);
+	}
+
+	.back-link {
+		color: var(--accent);
+		text-decoration: none;
+		font-size: 0.9rem;
+		font-weight: 500;
+		transition: opacity 0.2s ease;
+	}
+
+	.back-link:hover {
+		opacity: 0.8;
+	}
+
+	@media (max-width: 720px) {
+		.specs-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>
