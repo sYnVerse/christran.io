@@ -187,7 +187,8 @@ async function sendIdeasEmail(ideas) {
     </div>
   `).join('');
 
-  const dashboardUrl = `http://localhost:${PORT}`;
+  const dashboardUrl = 'https://blog.christran.io';
+
   
   const htmlContent = `
     <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #334155;">
@@ -284,8 +285,9 @@ async function sendDraftEmail(title, draftContent) {
       </div>
       
       <div style="margin-top: 30px; text-align: center;">
-        <a href="http://localhost:${PORT}" style="background-color: #6366f1; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Open Dashboard to Edit & Commit</a>
+        <a href="https://blog.christran.io" style="background-color: #6366f1; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Open Dashboard to Edit & Commit</a>
       </div>
+
     </div>
   `;
 
