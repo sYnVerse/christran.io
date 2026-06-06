@@ -249,9 +249,11 @@
         <!-- Publish Form Card -->
         <div class="publish-card">
           <div class="publish-field">
-            <label for="commit-filename">Target Blog File</label>
-            <input type="text" id="commit-filename" readonly placeholder="No saved blog post detected">
-            <span class="input-tip">This file will be staged and committed to git.</span>
+            <label for="commit-filename-select">Target Blog File</label>
+            <select id="commit-filename-select">
+              <option value="">-- Select a post to publish --</option>
+            </select>
+            <span class="input-tip">This file (and its associated WebP hero image) will be staged and committed to git.</span>
           </div>
           <div class="publish-field">
             <label for="commit-message">Commit Message</label>

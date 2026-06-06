@@ -92,7 +92,7 @@ const refineLoader = document.getElementById('refine-loader');
 
 // Publish elements
 const publishNavBtn = document.getElementById('publish-nav-btn');
-const commitFilename = document.getElementById('commit-filename');
+const commitFilenameSelect = document.getElementById('commit-filename-select');
 const commitMessage = document.getElementById('commit-message');
 const btnGitPublish = document.getElementById('btn-git-publish');
 const consoleLog = document.getElementById('console-log');
@@ -145,6 +145,11 @@ tabBtns.forEach(btn => {
     // Initialize image manager tab if selected
     if (targetTab === 'image-tab') {
       initImageManagerTab();
+    }
+    
+    // Initialize git publisher tab if selected
+    if (targetTab === 'publish-tab') {
+      initGitPublisherTab();
     }
   });
 });
@@ -519,13 +524,7 @@ btnSaveDraft.addEventListener('click', async () => {
       savedFilename = result.filename;
       alert(`Successfully saved draft to: src/content/blog/${result.filename}!`);
       
-      // Update publish tab state
-      commitFilename.value = result.filename;
-      commitMessage.value = `feat(blog): add post about ${activePostTitle.innerText}`;
-      commitMessage.disabled = false;
-      btnGitPublish.disabled = false;
-      
-      // Open publish tab
+      // Open publish tab (will initialize dropdown selection and enable inputs)
       navigateToTab('publish-tab');
     } else {
       alert(`Failed to save draft file: ${result.error}`);
@@ -1110,6 +1109,94 @@ function updateEditorHeroImageIfActive(slug, heroImagePath) {
     }
   }
 }
+
+/* =================================================== */
+/* GIT PUBLISHER TAB FRONTEND LOGIC */
+/* =================================================== */
+
+async function initGitPublisherTab() {
+  try {
+    const res = await fetch(`${API_BASE}/api/posts`);
+    const data = await res.json();
+    loadedPosts = data;
+    
+    // Clear and populate selector
+    commitFilenameSelect.innerHTML = '<option value="">-- Select a post to publish --</option>';
+    
+    if (data.activeDraft) {
+      const option = document.createElement('option');
+      option.value = `${data.activeDraft.slug}.md`;
+      option.textContent = `📝 Active Draft: ${data.activeDraft.title}`;
+      commitFilenameSelect.appendChild(option);
+    }
+    
+    if (data.posts && data.posts.length > 0) {
+      data.posts.forEach(post => {
+        const option = document.createElement('option');
+        option.value = post.filename;
+        option.textContent = `📄 Saved Post: ${post.title}`;
+        commitFilenameSelect.appendChild(option);
+      });
+    }
+    
+    // Determine default selection
+    let defaultFileSelection = '';
+    
+    if (savedFilename) {
+      defaultFileSelection = savedFilename;
+    } else if (selectedPost) {
+      defaultFileSelection = `${selectedPost.slug}.md`;
+    } else if (data.activeDraft) {
+      defaultFileSelection = `${data.activeDraft.slug}.md`;
+    }
+    
+    // Check if the calculated selection exists in the options
+    if (defaultFileSelection) {
+      const hasOption = Array.from(commitFilenameSelect.options).some(o => o.value === defaultFileSelection);
+      if (hasOption) {
+        commitFilenameSelect.value = defaultFileSelection;
+      }
+    }
+    
+    // Trigger selector change event
+    commitFilenameSelect.dispatchEvent(new Event('change'));
+  } catch (error) {
+    console.error('Error fetching git publisher posts:', error);
+    alert('Failed to load posts list for Git Publisher.');
+  }
+}
+
+// Handle Git Publisher dropdown selection change
+commitFilenameSelect.addEventListener('change', () => {
+  const val = commitFilenameSelect.value;
+  
+  if (!val) {
+    savedFilename = '';
+    commitMessage.value = '';
+    commitMessage.disabled = true;
+    btnGitPublish.disabled = true;
+    return;
+  }
+  
+  savedFilename = val;
+  commitMessage.disabled = false;
+  btnGitPublish.disabled = false;
+  
+  // Find title of the selected post to generate a default commit message
+  let postTitle = 'new post';
+  const cleanSlug = val.replace(/\.mdx?$/, '');
+  
+  if (loadedPosts.activeDraft && loadedPosts.activeDraft.slug === cleanSlug) {
+    postTitle = loadedPosts.activeDraft.title;
+  } else {
+    const post = loadedPosts.posts.find(p => p.slug === cleanSlug);
+    if (post) {
+      postTitle = post.title;
+    }
+  }
+  
+  commitMessage.value = `feat(blog): add/update post about ${postTitle}`;
+});
 
 
 // App Entry Point
