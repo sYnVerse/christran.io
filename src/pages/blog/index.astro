@@ -5,10 +5,14 @@ import Footer from '../../components/Footer.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
 import { getCollection } from 'astro:content';
 import FormattedDate from '../../components/FormattedDate.astro';
+import { Image } from 'astro:assets';
 
 const posts = (await getCollection('blog')).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
+
+// Dynamically resolve optimized blog hero images from src/assets
+const images = import.meta.glob<{ default: ImageMetadata }>('/src/assets/img/*.{jpeg,jpg,png,gif,webp}');
 ---
 
 <!doctype html>
@@ -91,17 +95,25 @@ const posts = (await getCollection('blog')).sort(
 			<section>
 				<ul>
 					{
-						posts.map((post) => (
-							<li>
-								<a href={`/blog/${post.id}/`}>
-									<img width={720} height={360} src={post.data.heroImage} alt="" />
-									<h4 class="title">{post.data.title}</h4>
-									<p class="date">
-										<FormattedDate date={post.data.pubDate} />
-									</p>
-								</a>
-							</li>
-						))
+						posts.map((post) => {
+							const imagePath = post.data.heroImage ? post.data.heroImage.replace(/^\/img\//, '/src/assets/img/') : '';
+							const hasImage = imagePath && images[imagePath];
+							return (
+								<li>
+									<a href={`/blog/${post.id}/`}>
+										{hasImage ? (
+											<Image width={720} height={360} src={images[imagePath]()} alt="" quality={80} format="webp" />
+										) : (
+											<img width={720} height={360} src={post.data.heroImage} alt="" />
+										)}
+										<h4 class="title">{post.data.title}</h4>
+										<p class="date">
+											<FormattedDate date={post.data.pubDate} />
+										</p>
+									</a>
+								</li>
+							);
+						})
 					}
 				</ul>
 			</section>
