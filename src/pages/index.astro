@@ -67,7 +67,7 @@ const featured = getFeaturedProjects();
 				content: '';
 				position: fixed;
 				inset: -40px; /* Prevents edge gaps during background translations */
-				background-image: url('/img/network-bg.webp');
+				background-image: url('../assets/img/network-bg.webp');
 				background-size: cover;
 				background-position: center;
 				image-rendering: -webkit-optimize-contrast;
@@ -81,19 +81,19 @@ const featured = getFeaturedProjects();
 			/* Widescreen Laptops/Desktops (16:9 / 16:10) */
 			@media (min-aspect-ratio: 1.2/1) {
 				.home-page::before {
-					background-image: url('/img/network-bg-desktop.webp');
+					background-image: url('../assets/img/network-bg-desktop.webp');
 				}
 			}
 			/* Ultrawide Monitors (21:9 / 32:9) */
 			@media (min-aspect-ratio: 2/1) {
 				.home-page::before {
-					background-image: url('/img/network-bg-ultrawide.webp');
+					background-image: url('../assets/img/network-bg-ultrawide.webp');
 				}
 			}
 			/* Mobile Portrait Screens */
 			@media (max-width: 768px) and (orientation: portrait) {
 				.home-page::before {
-					background-image: url('/img/network-bg-mobile.webp');
+					background-image: url('../assets/img/network-bg-mobile.webp');
 				}
 			}
 			/* Hero scroll pin wrapper (tracks scroll progress for sequential animation) */
