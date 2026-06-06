@@ -40,7 +40,7 @@ const images = import.meta.glob<{ default: ImageMetadata }>('/src/assets/img/blo
 			}
 			ul li:first-child {
 				width: 100%;
-				margin-bottom: 1rem;
+				margin-bottom: 2rem;
 				text-align: center;
 			}
 			ul li:first-child img {
@@ -52,6 +52,22 @@ const images = import.meta.glob<{ default: ImageMetadata }>('/src/assets/img/blo
 			ul li img {
 				margin-bottom: 0.5rem;
 				border-radius: 12px;
+			}
+			@media (min-width: 720px) {
+				ul li:first-child a {
+					display: flex;
+					flex-direction: row;
+					align-items: center;
+					gap: 2rem;
+					text-align: left;
+				}
+				ul li:first-child img {
+					width: calc(50% - 1rem);
+					margin-bottom: 0;
+				}
+				ul li:first-child .content {
+					width: calc(50% - 1rem);
+				}
 			}
 			ul li a {
 				display: block;
@@ -106,10 +122,12 @@ const images = import.meta.glob<{ default: ImageMetadata }>('/src/assets/img/blo
 										) : (
 											<img width={720} height={360} src={post.data.heroImage} alt="" />
 										)}
-										<h4 class="title">{post.data.title}</h4>
-										<p class="date">
-											<FormattedDate date={post.data.pubDate} />
-										</p>
+										<div class="content">
+											<h4 class="title">{post.data.title}</h4>
+											<p class="date">
+												<FormattedDate date={post.data.pubDate} />
+											</p>
+										</div>
 									</a>
 								</li>
 							);
