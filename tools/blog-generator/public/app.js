@@ -1043,6 +1043,15 @@ btnSubmitUpload.addEventListener('click', async () => {
         slug: selectedPost.slug
       })
     });
+    
+    if (!res.ok) {
+      let errorMsg = `Server error: ${res.status} ${res.statusText}`;
+      if (res.status === 413) {
+        errorMsg = 'Upload failed: Image file is too large for the server configuration (max 50MB).';
+      }
+      throw new Error(errorMsg);
+    }
+    
     const result = await res.json();
     
     if (result.success) {
