@@ -102,9 +102,38 @@ async function testImagen() {
     return true;
   } catch (error) {
     console.error(`❌ Imagen API Error:`, error.message);
-    return false;
+    console.log('🔄 Falling back to free high-quality stock photo via LoremFlickr...');
+    try {
+      const fallbackUrl = 'https://loremflickr.com/1024/576/technology,coding,hardware,minimalist';
+      
+      const response = await fetch(fallbackUrl);
+      if (!response.ok) {
+        throw new Error(`LoremFlickr API failed: ${response.status} ${response.statusText}`);
+      }
+      
+      const arrayBuffer = await response.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+      
+      const dataFolder = path.join(__dirname, '../data');
+      if (!fs.existsSync(dataFolder)) {
+        fs.mkdirSync(dataFolder, { recursive: true });
+      }
+      const testOutputPath = path.join(dataFolder, 'test-image.webp');
+      
+      await sharp(buffer)
+        .webp({ quality: 85 })
+        .toFile(testOutputPath);
+        
+      console.log(`✅ Free Hero Image successfully fetched and saved test WebP to: ${testOutputPath}`);
+      return true;
+    } catch (fallbackError) {
+      console.error(`❌ Fallback Image API Error:`, fallbackError.message);
+      return false;
+    }
   }
+
 }
+
 
 async function testResend() {
   if (!resendKey) {

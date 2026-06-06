@@ -296,13 +296,13 @@ async function generateImagenHeroImage(title, description, slug) {
     return `/img/${filename}`;
   } catch (error) {
     console.error('❌ Google Imagen 4 API failed:', error.message);
-    console.log('🔄 Falling back to free AI image generation via Pollinations.ai...');
+    console.log('🔄 Falling back to free high-quality stock photo via LoremFlickr...');
     try {
-      const fallbackUrl = `https://image.pollinations.ai/p/${encodeURIComponent(promptText)}?width=1024&height=576&nologo=true&seed=${Math.floor(Math.random() * 100000)}`;
+      const fallbackUrl = 'https://loremflickr.com/1024/576/technology,coding,hardware,minimalist';
       
       const response = await fetch(fallbackUrl);
       if (!response.ok) {
-        throw new Error(`Pollinations API failed: ${response.status} ${response.statusText}`);
+        throw new Error(`LoremFlickr API failed: ${response.status} ${response.statusText}`);
       }
       
       const arrayBuffer = await response.arrayBuffer();
@@ -310,20 +310,21 @@ async function generateImagenHeroImage(title, description, slug) {
       const filename = `${slug}.webp`;
       const outputPath = path.join(ASSETS_IMG_PATH, filename);
       
-      console.log(`Converting Pollinations image to optimized WebP at: ${outputPath}`);
+      console.log(`Converting fetched image to optimized WebP at: ${outputPath}`);
       await sharp(buffer)
         .webp({ quality: 85 })
         .toFile(outputPath);
         
-      console.log(`✅ Free AI Hero Image successfully generated and saved: /img/${filename}`);
+      console.log(`✅ Fallback Hero Image successfully saved: /img/${filename}`);
       return `/img/${filename}`;
     } catch (fallbackError) {
-      console.error('❌ Failed to generate fallback AI Hero Image:', fallbackError);
+      console.error('❌ Failed to generate fallback Hero Image:', fallbackError);
       // Fall back to a default image in the assets/img/ folder
       return '/img/google-antigravity.png'; 
     }
   }
 }
+
 
 
 // Generate draft logic
