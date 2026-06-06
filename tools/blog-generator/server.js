@@ -589,9 +589,10 @@ app.post('/api/git/commit', async (req, res) => {
   }
 });
 
-// Daily Cron Job (Runs every day at 9:00 AM)
+// Daily Cron Job (Runs every day at 8:00 AM)
 // Schedule syntax: minute hour day-of-month month day-of-week
-cron.schedule('0 9 * * *', async () => {
+cron.schedule('0 8 * * *', async () => {
+
   console.log('Cron Job Triggered: Generating daily blog ideas...');
   try {
     if (!hasGeminiKey || !hasResendKey || !userEmail) {
