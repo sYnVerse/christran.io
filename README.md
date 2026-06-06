@@ -74,10 +74,27 @@ npm run preview
 
 ### Deployment
 
+To deploy the site manually:
+
 ```bash
 # Deploy to Cloudflare Workers
 npm run deploy
 ```
+
+#### Conditional Git Deployments (Cloudflare Dashboard)
+
+To prevent Cloudflare from wasting build minutes and rebuilding the project when only non-frontend files (like documentation or tool configs) change, you can configure conditional commands in the Cloudflare dashboard:
+
+* **Build command**:
+  ```bash
+  git diff --quiet HEAD^ HEAD src public astro.config.mjs package.json package-lock.json || npm run build
+  ```
+* **Deploy command**:
+  ```bash
+  git diff --quiet HEAD^ HEAD src public astro.config.mjs package.json package-lock.json || npx wrangler deploy
+  ```
+
+This checks if any relevant frontend code files or configuration changes exist between the current commit and the previous one (`HEAD^`). If no changes are detected, it skips execution, saving build minutes.
 
 ## Project Structure
 
