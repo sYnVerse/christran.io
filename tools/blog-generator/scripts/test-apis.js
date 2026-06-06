@@ -3,6 +3,8 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { Resend } from 'resend';
+import fs from 'fs';
+import sharp from 'sharp';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -37,6 +39,66 @@ async function testGemini() {
     return true;
   } catch (error) {
     console.error(`❌ Gemini API Error:`, error.message);
+    return false;
+  }
+}
+
+async function testImagen() {
+  if (!geminiKey) {
+    console.error('❌ Skipping Imagen test (API key missing).');
+    return false;
+  }
+  
+  try {
+    console.log('🎨 Testing Imagen 3 Image Generation API...');
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${geminiKey}`;
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        instances: [
+          { prompt: 'A simple stylized yellow banana on a clean purple background, digital art vector style' }
+        ],
+        parameters: {
+          sampleCount: 1,
+          aspectRatio: '16:9',
+          outputMimeType: 'image/jpeg'
+        }
+      })
+    });
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Imagen API error: ${response.status} ${response.statusText} - ${errorText}`);
+    }
+    
+    const data = await response.json();
+    if (!data.predictions || data.predictions.length === 0 || !data.predictions[0].bytesBase64Encoded) {
+      throw new Error('Predictions payload empty or missing base64 bytes.');
+    }
+    
+    const base64Bytes = data.predictions[0].bytesBase64Encoded;
+    const buffer = Buffer.from(base64Bytes, 'base64');
+    
+    // Ensure data folder exists
+    const dataFolder = path.join(__dirname, '../data');
+    if (!fs.existsSync(dataFolder)) {
+      fs.mkdirSync(dataFolder, { recursive: true });
+    }
+    
+    const testOutputPath = path.join(dataFolder, 'test-image.webp');
+    
+    // Use sharp to convert to optimized WebP format
+    await sharp(buffer)
+      .webp({ quality: 85 })
+      .toFile(testOutputPath);
+      
+    console.log(`✅ Imagen 3 successfully generated and saved test WebP image to: ${testOutputPath}`);
+    return true;
+  } catch (error) {
+    console.error(`❌ Imagen API Error:`, error.message);
     return false;
   }
 }
@@ -84,10 +146,12 @@ async function testResend() {
 async function runTests() {
   const geminiOk = await testGemini();
   console.log('---------------------------------------------------');
+  const imagenOk = await testImagen();
+  console.log('---------------------------------------------------');
   const resendOk = await testResend();
   console.log('---------------------------------------------------');
   
-  if (geminiOk && resendOk) {
+  if (geminiOk && imagenOk && resendOk) {
     console.log('🎉 SUCCESS: All integrations verified and working!');
   } else {
     console.log('⚠️ WARNING: Some integrations failed. Check the error logs above.');
@@ -96,3 +160,4 @@ async function runTests() {
 }
 
 runTests();
+

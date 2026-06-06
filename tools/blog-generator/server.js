@@ -9,6 +9,7 @@ import { Resend } from 'resend';
 import cron from 'node-cron';
 import { exec } from 'child_process';
 import { promisify } from 'util';
+import sharp from 'sharp';
 
 const execPromise = promisify(exec);
 
@@ -28,12 +29,17 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Configuration
 const PORT = process.env.PORT || 5000;
 const BLOG_CONTENT_PATH = path.resolve(__dirname, process.env.BLOG_CONTENT_PATH || '../../src/content/blog');
+const ASSETS_IMG_PATH = path.resolve(__dirname, process.env.ASSETS_IMG_PATH || '../../src/assets/img');
 const DATA_DIR = path.join(__dirname, 'data');
 
-// Ensure data directory exists
+// Ensure directories exist
 if (!fs.existsSync(DATA_DIR)) {
   fs.mkdirSync(DATA_DIR, { recursive: true });
 }
+if (!fs.existsSync(ASSETS_IMG_PATH)) {
+  fs.mkdirSync(ASSETS_IMG_PATH, { recursive: true });
+}
+
 
 // Initial API checks
 const hasGeminiKey = !!process.env.GEMINI_API_KEY;
@@ -214,9 +220,74 @@ async function sendIdeasEmail(ideas) {
   });
 }
 
+// Generate a WebP hero image using Google's Imagen 3 API
+async function generateImagenHeroImage(title, description, slug) {
+  if (!process.env.GEMINI_API_KEY) {
+    console.warn('Skipping image generation: GEMINI_API_KEY missing.');
+    return '/img/google-antigravity.png'; // fallback to existing image
+  }
+
+  const promptText = `A professional, high-quality modern blog header illustration. Title: "${title}". Description: "${description}". Sleek vector graphic, minimalist digital art style, dark background with vibrant glowing accents of neon purple and deep cyan. No text, no words, no letters, no typography, no logos.`;
+
+  console.log(`Generating AI Hero Image using Imagen 3 for slug: ${slug}...`);
+  try {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${process.env.GEMINI_API_KEY}`;
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        instances: [
+          { prompt: promptText }
+        ],
+        parameters: {
+          sampleCount: 1,
+          aspectRatio: '16:9',
+          outputMimeType: 'image/jpeg'
+        }
+      })
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Imagen API error: ${response.status} ${response.statusText} - ${errorText}`);
+    }
+
+    const data = await response.json();
+    if (!data.predictions || data.predictions.length === 0 || !data.predictions[0].bytesBase64Encoded) {
+      throw new Error('Invalid response payload from Imagen API: predictions empty or missing base64 bytes.');
+    }
+
+    const base64Bytes = data.predictions[0].bytesBase64Encoded;
+    const buffer = Buffer.from(base64Bytes, 'base64');
+    const filename = `${slug}.webp`;
+    const outputPath = path.join(ASSETS_IMG_PATH, filename);
+
+    // Use sharp to convert to optimized WebP format
+    console.log(`Converting generated image to optimized WebP at: ${outputPath}`);
+    await sharp(buffer)
+      .webp({ quality: 85 })
+      .toFile(outputPath);
+
+    console.log(`✅ AI Hero Image successfully generated and saved: /img/${filename}`);
+    return `/img/${filename}`;
+  } catch (error) {
+    console.error('❌ Failed to generate AI Hero Image:', error);
+    // Fall back to a default image in the assets/img/ folder
+    return '/img/google-antigravity.png'; 
+  }
+}
+
 // Generate draft logic
 async function generateDraft(idea) {
   const model = getGeminiTextModel();
+  
+  // Generate default slug for the image filename
+  const slug = idea.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  
+  // Generate the AI hero image first
+  const heroImageUrl = await generateImagenHeroImage(idea.title, idea.description, slug);
   
   const prompt = `You are a professional technical writer and tech blogger. You are drafting a blog post for Chris Tran's personal site (christran.io).
   
@@ -240,7 +311,7 @@ async function generateDraft(idea) {
   title: "${idea.title.replace(/"/g, '\\"')}"
   author: "Chris Tran"
   pubDate: "${new Date().toISOString().split('T')[0]}"
-  heroImage: "/img/${idea.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.webp"
+  heroImage: "${heroImageUrl}"
   description: "${idea.description.replace(/"/g, '\\"')}"
   tags: ${JSON.stringify(idea.tags)}
   ---
@@ -268,6 +339,7 @@ async function generateDraft(idea) {
   
   return cleanDraft;
 }
+
 
 // Send draft email
 async function sendDraftEmail(title, draftContent) {
@@ -440,7 +512,7 @@ app.post('/api/draft/refine', async (req, res) => {
 // Save draft as markdown file in the Astro blog content path
 app.post('/api/draft/save', (req, res) => {
   try {
-    const { content, slug } = req.body;
+    let { content, slug } = req.body;
     if (!content || !slug) {
       return res.status(400).json({ success: false, error: 'Missing content or slug.' });
     }
@@ -450,7 +522,25 @@ app.post('/api/draft/save', (req, res) => {
     const filename = `${safeSlug}.md`;
     const finalPath = path.join(BLOG_CONTENT_PATH, filename);
     
+    // Check if the content contains a reference to an image file in frontmatter
+    // e.g. heroImage: "/img/some-slug.webp"
+    const matchImage = content.match(/heroImage:\s*"\/img\/([^"]+)\.webp"/);
+    if (matchImage) {
+      const oldImageSlug = matchImage[1];
+      if (oldImageSlug !== safeSlug) {
+        const oldImgPath = path.join(ASSETS_IMG_PATH, `${oldImageSlug}.webp`);
+        const newImgPath = path.join(ASSETS_IMG_PATH, `${safeSlug}.webp`);
+        if (fs.existsSync(oldImgPath)) {
+          fs.renameSync(oldImgPath, newImgPath);
+          console.log(`Renamed image from ${oldImgPath} to ${newImgPath}`);
+          // Update the frontmatter value inside the content
+          content = content.replace(`heroImage: "/img/${oldImageSlug}.webp"`, `heroImage: "/img/${safeSlug}.webp"`);
+        }
+      }
+    }
+    
     fs.writeFileSync(finalPath, content, 'utf-8');
+
     res.json({ success: true, filePath: finalPath, filename });
   } catch (error) {
     console.error('Error saving blog post file:', error);
