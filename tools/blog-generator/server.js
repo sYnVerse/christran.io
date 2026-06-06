@@ -32,6 +32,9 @@ const BLOG_CONTENT_PATH = path.resolve(__dirname, process.env.BLOG_CONTENT_PATH 
 const ASSETS_IMG_PATH = path.resolve(__dirname, process.env.ASSETS_IMG_PATH || '../../src/assets/img/blog');
 const DATA_DIR = path.join(__dirname, 'data');
 
+const REPO_ROOT = path.resolve(__dirname, '../..');
+
+
 // Ensure directories exist
 if (!fs.existsSync(DATA_DIR)) {
   fs.mkdirSync(DATA_DIR, { recursive: true });
@@ -607,21 +610,32 @@ app.post('/api/git/commit', async (req, res) => {
     }
     
     // Run git commands in sequence
-    // 1. Status check to make sure file is there
+    // 1. Resolve relative paths from repo root
     const relativeFilePath = path.join('src', 'content', 'blog', filename);
+    const imageFilename = filename.replace(/\.md$/, '.webp');
+    const relativeImagePath = path.join('src', 'assets', 'img', 'blog', imageFilename);
+
+    const fullImagePath = path.join(REPO_ROOT, relativeImagePath);
     
-    console.log(`Git workflow starting for file: ${relativeFilePath}`);
+    console.log(`Git workflow starting in ${REPO_ROOT} for file: ${relativeFilePath}`);
+    
+    // Check if the image file exists, and stage it if so
+    let gitAddCommand = `git add ${relativeFilePath}`;
+    if (fs.existsSync(fullImagePath)) {
+      console.log(`Staging associated hero image: ${relativeImagePath}`);
+      gitAddCommand += ` ${relativeImagePath}`;
+    }
     
     // git add
-    const addResult = await execPromise(`git add ${relativeFilePath}`);
+    const addResult = await execPromise(gitAddCommand, { cwd: REPO_ROOT });
     console.log('Git Add output:', addResult.stdout, addResult.stderr);
     
     // git commit
-    const commitResult = await execPromise(`git commit -m "${message.replace(/"/g, '\\"')}"`);
+    const commitResult = await execPromise(`git commit -m "${message.replace(/"/g, '\\"')}"`, { cwd: REPO_ROOT });
     console.log('Git Commit output:', commitResult.stdout, commitResult.stderr);
     
     // git push
-    const pushResult = await execPromise(`git push`);
+    const pushResult = await execPromise(`git push`, { cwd: REPO_ROOT });
     console.log('Git Push output:', pushResult.stdout, pushResult.stderr);
     
     res.json({
@@ -638,6 +652,7 @@ app.post('/api/git/commit', async (req, res) => {
     });
   }
 });
+
 
 // Daily Cron Job (Runs every day at 8:00 AM)
 // Schedule syntax: minute hour day-of-month month day-of-week
