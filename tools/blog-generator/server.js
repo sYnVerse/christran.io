@@ -142,7 +142,7 @@ async function getExistingPostsContext() {
 }
 
 // Generate blog ideas logic
-async function generateBlogIdeas() {
+async function generateBlogIdeas(keywords = '') {
   const existingPosts = await getExistingPostsContext();
   const model = getGeminiModel();
   
@@ -150,10 +150,16 @@ async function generateBlogIdeas() {
     ? `Here are some of the existing blog posts on the site for reference:\n${existingPosts.map(p => `- Title: "${p.title}"\n  Description: "${p.description}"\n  Tags: ${JSON.stringify(p.tags)}`).join('\n')}`
     : 'The blog is new and does not have any posts yet.';
 
+  let keywordInstruction = '';
+  if (keywords && keywords.trim()) {
+    keywordInstruction = `\nCRITICAL: You MUST brainstorm and generate ideas specifically based on or closely related to these custom keywords/themes: "${keywords.trim()}". Align these ideas with Chris's writing style and context.`;
+  }
+
   const prompt = `You are a blog post idea generator for Chris Tran's personal website and blog (christran.io). 
   Chris is a tech enthusiast, software engineer, and system builder who writes about technical topics, hardware, automation, software engineering, and clean code.
   
   ${contextText}
+  ${keywordInstruction}
   
   Generate exactly 3 fresh, interesting, and highly engaging blog post ideas that fit his style. For each idea, provide:
   - A short, catchy title
@@ -974,7 +980,8 @@ app.get('/api/ideas', (req, res) => {
 // Generate new ideas
 app.post('/api/ideas/generate', async (req, res) => {
   try {
-    const ideas = await generateBlogIdeas();
+    const { keywords } = req.body;
+    const ideas = await generateBlogIdeas(keywords);
     res.json({ success: true, ideas });
   } catch (error) {
     console.error('Error generating ideas:', error);

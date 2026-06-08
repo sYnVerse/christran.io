@@ -77,6 +77,8 @@ const btnGenerateIdeas = document.getElementById('btn-generate-ideas');
 const btnEmailIdeas = document.getElementById('btn-email-ideas');
 const ideasLoader = document.getElementById('ideas-loader');
 const ideasContainer = document.getElementById('ideas-container');
+const customIdeasKeywords = document.getElementById('custom-ideas-keywords');
+const btnGenerateCustomIdeas = document.getElementById('btn-generate-custom-ideas');
 
 // Editor elements
 const editorNavBtn = document.getElementById('editor-nav-btn');
@@ -434,6 +436,50 @@ btnGenerateIdeas.addEventListener('click', async () => {
     alert(`Failed to request ideas: ${error.message}`);
   } finally {
     btnGenerateIdeas.disabled = false;
+    ideasLoader.classList.add('hidden');
+    ideasContainer.classList.remove('hidden');
+  }
+});
+
+// Generate Custom Ideas Button Event
+btnGenerateCustomIdeas.addEventListener('click', async () => {
+  const keywords = customIdeasKeywords.value.trim();
+  if (!keywords) {
+    alert('Please enter some keywords or a topic you have in mind.');
+    return;
+  }
+  
+  btnGenerateCustomIdeas.disabled = true;
+  btnGenerateIdeas.disabled = true;
+  customIdeasKeywords.disabled = true;
+  ideasContainer.classList.add('hidden');
+  ideasLoader.classList.remove('hidden');
+  ideasLoader.querySelector('p').innerText = `Brainstorming ideas around: "${keywords}"...`;
+  
+  try {
+    const res = await fetch(`${API_BASE}/api/ideas/generate`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ keywords })
+    });
+    const result = await res.json();
+    if (result.success) {
+      currentIdeas = result.ideas;
+      renderIdeas(result.ideas);
+      customIdeasKeywords.value = '';
+      alert('Custom blog ideas successfully generated!');
+    } else {
+      alert(`Error generating custom ideas: ${result.error}`);
+    }
+  } catch (error) {
+    console.error('Error generating custom ideas:', error);
+    alert(`Failed to request custom ideas: ${error.message}`);
+  } finally {
+    btnGenerateCustomIdeas.disabled = false;
+    btnGenerateIdeas.disabled = false;
+    customIdeasKeywords.disabled = false;
     ideasLoader.classList.add('hidden');
     ideasContainer.classList.remove('hidden');
   }
