@@ -193,7 +193,23 @@ async function generateBlogIdeas() {
     generatedAt: new Date().toISOString()
   }));
   
-  fs.writeFileSync(path.join(DATA_DIR, 'ideas.json'), JSON.stringify(ideasWithIds, null, 2));
+  const filepath = path.join(DATA_DIR, 'ideas.json');
+  let existingIdeas = [];
+  if (fs.existsSync(filepath)) {
+    try {
+      existingIdeas = JSON.parse(fs.readFileSync(filepath, 'utf-8'));
+      if (!Array.isArray(existingIdeas)) {
+        existingIdeas = [];
+      }
+    } catch (e) {
+      existingIdeas = [];
+    }
+  }
+  
+  const allIdeas = [...ideasWithIds, ...existingIdeas];
+  const limitedIdeas = allIdeas.slice(0, 50);
+  fs.writeFileSync(filepath, JSON.stringify(limitedIdeas, null, 2));
+  
   return ideasWithIds;
 }
 
@@ -1001,6 +1017,20 @@ app.post('/api/draft/generate', async (req, res) => {
     }
     
     const draft = await generateDraft(idea);
+    
+    // Remove the selected idea from ideas.json
+    const filepath = path.join(DATA_DIR, 'ideas.json');
+    if (fs.existsSync(filepath)) {
+      try {
+        const ideas = JSON.parse(fs.readFileSync(filepath, 'utf-8'));
+        if (Array.isArray(ideas)) {
+          const updatedIdeas = ideas.filter(i => i.id !== idea.id);
+          fs.writeFileSync(filepath, JSON.stringify(updatedIdeas, null, 2));
+        }
+      } catch (err) {
+        console.error('Failed to update ideas list after draft generation:', err);
+      }
+    }
     
     // Attempt to send email in background (don't block dashboard generation)
     if (hasResendKey && userEmail) {

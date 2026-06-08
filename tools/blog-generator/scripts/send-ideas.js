@@ -135,8 +135,22 @@ async function run() {
     }));
     
     // Save ideas
-    fs.writeFileSync(path.join(DATA_DIR, 'ideas.json'), JSON.stringify(ideasWithIds, null, 2));
-    console.log(`Successfully generated 3 ideas and saved to data/ideas.json`);
+    const filepath = path.join(DATA_DIR, 'ideas.json');
+    let existingIdeas = [];
+    if (fs.existsSync(filepath)) {
+      try {
+        existingIdeas = JSON.parse(fs.readFileSync(filepath, 'utf-8'));
+        if (!Array.isArray(existingIdeas)) {
+          existingIdeas = [];
+        }
+      } catch (e) {
+        existingIdeas = [];
+      }
+    }
+    const allIdeas = [...ideasWithIds, ...existingIdeas];
+    const limitedIdeas = allIdeas.slice(0, 50);
+    fs.writeFileSync(filepath, JSON.stringify(limitedIdeas, null, 2));
+    console.log(`Successfully generated 3 ideas and appended to data/ideas.json`);
     
     // Send email
     console.log(`Sending email to ${userEmail} via Resend...`);
