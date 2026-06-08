@@ -156,7 +156,7 @@ async function run() {
       </div>
     `).join('');
 
-    const port = process.env.PORT || 5000;
+    const dashboardUrl = process.env.DASHBOARD_URL || 'http://localhost:5000';
     const htmlContent = `
       <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #334155;">
         <h2 style="color: #6366f1; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 20px;">💡 Daily Blog Post Ideas</h2>
@@ -165,7 +165,7 @@ async function run() {
         ${ideasHtml}
         
         <div style="margin-top: 30px; text-align: center;">
-          <a href="https://blog.christran.io" style="background-color: #6366f1; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Open Dashboard to Write & Publish</a>
+          <a href="${dashboardUrl}" style="background-color: #6366f1; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Open Dashboard to Write & Publish</a>
         </div>
 
         <p style="font-size: 12px; color: #94a3b8; text-align: center; margin-top: 40px; border-top: 1px solid #e2e8f0; padding-top: 20px;">

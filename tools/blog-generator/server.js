@@ -218,7 +218,7 @@ async function sendIdeasEmail(ideas) {
     </div>
   `).join('');
 
-  const dashboardUrl = 'https://blog.christran.io';
+  const dashboardUrl = process.env.DASHBOARD_URL || 'http://localhost:5000';
 
   
   const htmlContent = `
@@ -397,11 +397,11 @@ async function generateDraft(idea) {
   return cleanDraft;
 }
 
-
 // Send draft email
 async function sendDraftEmail(title, draftContent) {
   if (!userEmail) return;
   const resend = getResend();
+  const dashboardUrl = process.env.DASHBOARD_URL || 'http://localhost:5000';
   
   // Convert markdown to very basic HTML for preview in email
   const htmlContent = `
@@ -414,7 +414,7 @@ async function sendDraftEmail(title, draftContent) {
       </div>
       
       <div style="margin-top: 30px; text-align: center;">
-        <a href="https://blog.christran.io" style="background-color: #6366f1; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Open Dashboard to Edit & Commit</a>
+        <a href="${dashboardUrl}" style="background-color: #6366f1; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Open Dashboard to Edit & Commit</a>
       </div>
 
     </div>
