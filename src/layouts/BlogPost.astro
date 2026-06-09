@@ -16,7 +16,7 @@ const imagePath = heroImage ? heroImage.replace(/^\/img\//, '/src/assets/img/blo
 const hasImage = imagePath && images[imagePath];
 
 if (imagePath && !hasImage) {
-	throw new Error(`Blog post hero image "${imagePath}" not found in "src/assets/img/blog/".`);
+	console.warn(`Warning: Blog post hero image "${imagePath}" not found in "src/assets/img/blog/".`);
 }
 ---
 
