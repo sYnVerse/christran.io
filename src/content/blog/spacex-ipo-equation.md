@@ -1,11 +1,11 @@
 ---
-
 title: "The SpaceX IPO Equation: NASDAQ's New Low-Float Rules and the High-Risk Hype Cycle"
 author: "Chris Tran"
 pubDate: "2026-06-09"
 heroImage: "/img/blog/spacex-ipo-equation.png"
 description: "An engineering-minded analysis of a potential SpaceX IPO, examining how NASDAQ's recent rule modifications for low-float stocks could fast-track Starship’s capital machine into the NASDAQ-100 amidst unprecedented market hype."
 tags: ["SpaceX","IPO","NASDAQ-100","Risk Analysis","Financial Engineering"]
+---
 
 When I look at the aerospace industry, I rarely view it through the lens of pure rocketry. As engineers, we love to obsess over the specific impulse of Raptor engines, the thermal dynamics of hexagonal heat tiles, and the sheer audacity of catching a super-heavy booster with mechanical chopsticks. But behind every successful orbital insertion is an equally complex feat of financial engineering.
 
