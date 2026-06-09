@@ -84,7 +84,7 @@ async function run() {
     const existingPosts = await getExistingPostsContext();
     const genAI = new GoogleGenerativeAI(geminiKey);
     const model = genAI.getGenerativeModel({ 
-      model: "gemini-3.5-flash",
+      model: "gemini-flash-latest",
       generationConfig: { responseMimeType: "application/json" }
     });
 
@@ -94,7 +94,7 @@ async function run() {
       : 'The blog is new and does not have any posts yet.';
 
     const prompt = `You are a blog post idea generator for Chris Tran's personal website and blog (christran.io). 
-    Chris is a tech enthusiast, software engineer, and system builder who writes about technical topics, hardware, automation, software engineering, and clean code.
+    Chris is a tech enthusiast, network engineer, and system builder who writes about technical topics, hardware, automation, software engineering, and finance.
     
     ${contextText}
     
