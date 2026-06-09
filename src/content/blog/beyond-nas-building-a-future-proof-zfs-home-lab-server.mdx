@@ -7,6 +7,8 @@ description: "Explore the advantages of ZFS for home lab data integrity and perf
 tags: ["Home Lab","ZFS","Self-Hosted","Data Storage","Linux"]
 ---
 
+import ZfsEstimator from '../../components/interactive/ZfsEstimator.astro';
+
 There is a distinct point in every self-hosting journey where the pre-packaged consumer NAS starts to feel like a cage. Perhaps you ran out of drive bays, or maybe the underpowered ARM processor choked trying to transcode a 4K Plex stream while running a couple of background Docker containers. 
 
 When I reached this bottleneck, I knew I didn’t just want a slightly bigger network-attached storage box. I wanted an enterprise-grade, future-proof home lab server capable of handling compute workloads, virtual machines, and—most importantly—absolute data integrity. 
@@ -93,6 +95,8 @@ The first decision is choosing your pool layout.
 
 * **RAIDZ1/RAIDZ2 (similar to RAID 5/6):** Best for bulk media storage (movies, music, backups). It maximizes capacity but suffers from lower random write performance (IOPS).
 * **Mirrored VDEVs (similar to RAID 10):** Best for databases, virtual machines, and Docker appdata. It provides fast read/write speeds, fast "resilver" (rebuild) times, and is easily expandable by adding pairs of drives.
+
+<ZfsEstimator />
 
 Let's assume we have four 4TB drives and want a mirrored layout for high performance:
 

@@ -1,0 +1,802 @@
+---
+---
+
+<section class="zfs-estimator" aria-label="ZFS Storage Pool Estimator">
+  <div class="zfs-header">
+    <svg class="zfs-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="2" y="2" width="20" height="8" rx="2" ry="2"/>
+      <rect x="2" y="14" width="20" height="8" rx="2" ry="2"/>
+      <line x1="6" y1="6" x2="6.01" y2="6"/>
+      <line x1="6" y1="18" x2="6.01" y2="18"/>
+    </svg>
+    <h3 class="zfs-title">ZFS Storage Pool Estimator</h3>
+  </div>
+
+  <div class="zfs-controls">
+    <div class="zfs-control-group">
+      <label class="zfs-label" for="zfs-drive-count">Drives</label>
+      <div class="zfs-stepper">
+        <button class="zfs-stepper-btn" id="zfs-drive-dec" aria-label="Decrease drive count">−</button>
+        <span class="zfs-stepper-value" id="zfs-drive-count-display">8</span>
+        <button class="zfs-stepper-btn" id="zfs-drive-inc" aria-label="Increase drive count">+</button>
+      </div>
+      <input type="hidden" id="zfs-drive-count" value="8" />
+    </div>
+
+    <div class="zfs-control-group">
+      <label class="zfs-label" for="zfs-drive-size">Drive Size</label>
+      <div class="zfs-select-wrap">
+        <select id="zfs-drive-size" class="zfs-select" aria-label="Drive size">
+          <option value="2">2 TB</option>
+          <option value="4">4 TB</option>
+          <option value="8">8 TB</option>
+          <option value="12">12 TB</option>
+          <option value="16" selected>16 TB</option>
+          <option value="18">18 TB</option>
+          <option value="20">20 TB</option>
+          <option value="22">22 TB</option>
+          <option value="24">24 TB</option>
+        </select>
+        <svg class="zfs-select-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+
+    <div class="zfs-control-group zfs-control-group--raid">
+      <label class="zfs-label">RAID Level</label>
+      <div class="zfs-pill-group" role="radiogroup" aria-label="ZFS RAID level">
+        <button class="zfs-pill" data-raid="mirror" role="radio" aria-checked="false">Mirror</button>
+        <button class="zfs-pill" data-raid="raidz1" role="radio" aria-checked="false">RAIDZ1</button>
+        <button class="zfs-pill zfs-pill--active" data-raid="raidz2" role="radio" aria-checked="true">RAIDZ2</button>
+        <button class="zfs-pill" data-raid="raidz3" role="radio" aria-checked="false">RAIDZ3</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="zfs-validation" id="zfs-validation" role="alert" aria-live="polite" style="display:none;">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    <span id="zfs-validation-msg"></span>
+  </div>
+
+  <div class="zfs-capacity-bar-wrap">
+    <div class="zfs-capacity-bar" id="zfs-capacity-bar">
+      <div class="zfs-bar-usable" id="zfs-bar-usable"></div>
+      <div class="zfs-bar-parity" id="zfs-bar-parity"></div>
+    </div>
+    <div class="zfs-capacity-bar-labels">
+      <span class="zfs-bar-label zfs-bar-label--usable">
+        <span class="zfs-bar-dot zfs-bar-dot--usable"></span>Usable
+      </span>
+      <span class="zfs-bar-label zfs-bar-label--parity">
+        <span class="zfs-bar-dot zfs-bar-dot--parity"></span>Parity
+      </span>
+    </div>
+  </div>
+
+  <div class="zfs-results" id="zfs-results">
+    <div class="zfs-result-card">
+      <div class="zfs-result-label">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2"/><line x1="9" y1="2" x2="9" y2="22"/></svg>
+        Raw Capacity
+      </div>
+      <div class="zfs-result-value" id="zfs-raw-capacity">128.00</div>
+      <div class="zfs-result-unit">TB</div>
+    </div>
+
+    <div class="zfs-result-card zfs-result-card--accent">
+      <div class="zfs-result-label">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        Usable Capacity
+      </div>
+      <div class="zfs-result-value" id="zfs-usable-capacity">96.00</div>
+      <div class="zfs-result-unit">TB <span class="zfs-result-tib" id="zfs-usable-tib">(87.26 TiB)</span></div>
+    </div>
+
+    <div class="zfs-result-card">
+      <div class="zfs-result-label">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        Parity Overhead
+      </div>
+      <div class="zfs-result-value" id="zfs-parity-overhead">25.0</div>
+      <div class="zfs-result-unit">%</div>
+    </div>
+
+    <div class="zfs-result-card">
+      <div class="zfs-result-label">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Fault Tolerance
+      </div>
+      <div class="zfs-result-value" id="zfs-fault-tolerance">2</div>
+      <div class="zfs-result-unit">drive(s)</div>
+    </div>
+
+    <div class="zfs-result-card">
+      <div class="zfs-result-label">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+        Min. Drives
+      </div>
+      <div class="zfs-result-value" id="zfs-min-drives">4</div>
+      <div class="zfs-result-unit">required</div>
+    </div>
+  </div>
+
+  <noscript>
+    <div class="zfs-noscript">
+      <p class="zfs-noscript-title">ZFS RAIDZ Capacity Reference</p>
+      <p class="zfs-noscript-subtitle">Common configurations with 16 TB drives (marketing TB)</p>
+      <table class="zfs-noscript-table">
+        <thead>
+          <tr>
+            <th>RAID Level</th>
+            <th>Drives</th>
+            <th>Raw (TB)</th>
+            <th>Usable (TB)</th>
+            <th>Overhead</th>
+            <th>Tolerance</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Mirror</td><td>4</td><td>64</td><td>32</td><td>50%</td><td>1 drive</td></tr>
+          <tr><td>Mirror</td><td>8</td><td>128</td><td>64</td><td>50%</td><td>1 drive</td></tr>
+          <tr><td>RAIDZ1</td><td>4</td><td>64</td><td>48</td><td>25%</td><td>1 drive</td></tr>
+          <tr><td>RAIDZ1</td><td>8</td><td>128</td><td>112</td><td>12.5%</td><td>1 drive</td></tr>
+          <tr><td>RAIDZ2</td><td>6</td><td>96</td><td>64</td><td>33.3%</td><td>2 drives</td></tr>
+          <tr><td>RAIDZ2</td><td>8</td><td>128</td><td>96</td><td>25%</td><td>2 drives</td></tr>
+          <tr><td>RAIDZ2</td><td>12</td><td>192</td><td>160</td><td>16.7%</td><td>2 drives</td></tr>
+          <tr><td>RAIDZ3</td><td>8</td><td>128</td><td>80</td><td>37.5%</td><td>3 drives</td></tr>
+          <tr><td>RAIDZ3</td><td>12</td><td>192</td><td>144</td><td>25%</td><td>3 drives</td></tr>
+        </tbody>
+      </table>
+      <p class="zfs-noscript-note">Enable JavaScript for the interactive estimator.</p>
+    </div>
+  </noscript>
+</section>
+
+<style>
+  .zfs-estimator {
+    max-width: 100%;
+    background: rgba(11, 16, 33, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(123, 158, 255, 0.15);
+    border-radius: 12px;
+    padding: 1.75rem;
+    margin: 2rem 0;
+    font-family: "Atkinson", sans-serif;
+    color: rgb(210, 215, 235);
+  }
+
+  .zfs-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .zfs-icon {
+    color: var(--accent, #7B9EFF);
+    flex-shrink: 0;
+  }
+
+  .zfs-title {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: rgb(240, 240, 245);
+    letter-spacing: -0.01em;
+  }
+
+  /* Controls Row */
+  .zfs-controls {
+    display: flex;
+    gap: 1.25rem;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+  }
+
+  .zfs-control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex-shrink: 0;
+  }
+
+  .zfs-control-group--raid {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .zfs-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgb(176, 186, 209);
+    font-weight: 500;
+  }
+
+  /* Stepper */
+  .zfs-stepper {
+    display: flex;
+    align-items: center;
+    background: rgba(30, 35, 50, 0.7);
+    border: 1px solid rgba(123, 158, 255, 0.12);
+    border-radius: 8px;
+    overflow: hidden;
+    height: 40px;
+  }
+
+  .zfs-stepper-btn {
+    width: 36px;
+    height: 100%;
+    border: none;
+    background: transparent;
+    color: var(--accent, #7B9EFF);
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: inherit;
+  }
+
+  .zfs-stepper-btn:hover {
+    background: rgba(123, 158, 255, 0.15);
+    color: #fff;
+  }
+
+  .zfs-stepper-btn:active {
+    background: rgba(123, 158, 255, 0.25);
+  }
+
+  .zfs-stepper-value {
+    min-width: 40px;
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace;
+    color: rgb(240, 240, 245);
+    padding: 0 0.25rem;
+    border-left: 1px solid rgba(123, 158, 255, 0.1);
+    border-right: 1px solid rgba(123, 158, 255, 0.1);
+  }
+
+  /* Select */
+  .zfs-select-wrap {
+    position: relative;
+    display: inline-flex;
+  }
+
+  .zfs-select {
+    appearance: none;
+    -webkit-appearance: none;
+    background: rgba(30, 35, 50, 0.7);
+    border: 1px solid rgba(123, 158, 255, 0.12);
+    border-radius: 8px;
+    color: rgb(240, 240, 245);
+    font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace;
+    font-size: 0.9rem;
+    padding: 0.5rem 2rem 0.5rem 0.75rem;
+    height: 40px;
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    min-width: 100px;
+  }
+
+  .zfs-select:hover {
+    border-color: rgba(123, 158, 255, 0.3);
+  }
+
+  .zfs-select:focus {
+    outline: none;
+    border-color: var(--accent, #7B9EFF);
+    box-shadow: 0 0 0 2px rgba(123, 158, 255, 0.15);
+  }
+
+  .zfs-select option {
+    background: #1a1d29;
+    color: rgb(210, 215, 235);
+  }
+
+  .zfs-select-chevron {
+    position: absolute;
+    right: 0.6rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgb(176, 186, 209);
+    pointer-events: none;
+  }
+
+  /* Pill Toggle Group */
+  .zfs-pill-group {
+    display: flex;
+    gap: 0;
+    background: rgba(30, 35, 50, 0.5);
+    border-radius: 8px;
+    padding: 3px;
+    border: 1px solid rgba(123, 158, 255, 0.1);
+  }
+
+  .zfs-pill {
+    flex: 1;
+    padding: 0.45rem 0.75rem;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: rgb(176, 186, 209);
+    font-size: 0.8rem;
+    font-weight: 500;
+    font-family: "Atkinson", sans-serif;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    white-space: nowrap;
+  }
+
+  .zfs-pill:hover:not(.zfs-pill--active) {
+    color: rgb(210, 215, 235);
+    background: rgba(123, 158, 255, 0.08);
+  }
+
+  .zfs-pill--active {
+    background: linear-gradient(135deg, var(--accent, #7B9EFF), var(--accent-dark, #4B6EDF));
+    color: #fff;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(123, 158, 255, 0.3);
+  }
+
+  /* Validation Warning */
+  .zfs-validation {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1rem;
+    background: rgba(255, 180, 50, 0.08);
+    border: 1px solid rgba(255, 180, 50, 0.25);
+    border-radius: 8px;
+    color: #ffb432;
+    font-size: 0.85rem;
+    margin-bottom: 1.25rem;
+    animation: zfs-shake 0.4s ease;
+  }
+
+  @keyframes zfs-shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-4px); }
+    40% { transform: translateX(4px); }
+    60% { transform: translateX(-2px); }
+    80% { transform: translateX(2px); }
+  }
+
+  /* Capacity Bar */
+  .zfs-capacity-bar-wrap {
+    margin-bottom: 1.5rem;
+  }
+
+  .zfs-capacity-bar {
+    width: 100%;
+    height: 24px;
+    background: rgba(30, 35, 50, 0.6);
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    border: 1px solid rgba(123, 158, 255, 0.1);
+  }
+
+  .zfs-bar-usable {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent, #7B9EFF), var(--accent-dark, #4B6EDF));
+    transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    border-radius: 12px 0 0 12px;
+    position: relative;
+  }
+
+  .zfs-bar-parity {
+    height: 100%;
+    background: rgba(255, 180, 50, 0.35);
+    transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .zfs-capacity-bar-labels {
+    display: flex;
+    gap: 1.25rem;
+    margin-top: 0.5rem;
+    font-size: 0.72rem;
+    color: rgb(176, 186, 209);
+  }
+
+  .zfs-bar-label {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .zfs-bar-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .zfs-bar-dot--usable {
+    background: var(--accent, #7B9EFF);
+  }
+
+  .zfs-bar-dot--parity {
+    background: rgba(255, 180, 50, 0.6);
+  }
+
+  /* Results Grid */
+  .zfs-results {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .zfs-result-card {
+    background: rgba(30, 35, 50, 0.5);
+    border: 1px solid rgba(123, 158, 255, 0.08);
+    border-radius: 10px;
+    padding: 1rem;
+    text-align: center;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+  }
+
+  .zfs-result-card:hover {
+    border-color: rgba(123, 158, 255, 0.2);
+    transform: translateY(-1px);
+  }
+
+  .zfs-result-card--accent {
+    border-color: rgba(123, 158, 255, 0.25);
+    background: rgba(123, 158, 255, 0.06);
+    box-shadow: 0 0 20px rgba(123, 158, 255, 0.08);
+  }
+
+  .zfs-result-card--accent:hover {
+    border-color: rgba(123, 158, 255, 0.4);
+    box-shadow: 0 0 30px rgba(123, 158, 255, 0.12);
+  }
+
+  .zfs-result-card--warning {
+    border-color: rgba(255, 180, 50, 0.3) !important;
+    background: rgba(255, 180, 50, 0.04);
+  }
+
+  .zfs-result-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: rgb(176, 186, 209);
+    margin-bottom: 0.6rem;
+    font-weight: 500;
+  }
+
+  .zfs-result-label svg {
+    opacity: 0.7;
+    flex-shrink: 0;
+  }
+
+  .zfs-result-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace;
+    color: rgb(240, 240, 245);
+    line-height: 1.1;
+    margin-bottom: 0.25rem;
+    transition: color 0.3s ease;
+  }
+
+  .zfs-result-card--accent .zfs-result-value {
+    color: var(--accent, #7B9EFF);
+  }
+
+  .zfs-result-unit {
+    font-size: 0.75rem;
+    color: rgb(176, 186, 209);
+    font-weight: 400;
+  }
+
+  .zfs-result-tib {
+    color: rgba(176, 186, 209, 0.7);
+    font-size: 0.68rem;
+  }
+
+  /* Noscript Fallback */
+  .zfs-noscript {
+    padding: 0.5rem 0;
+  }
+
+  .zfs-noscript-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: rgb(240, 240, 245);
+    margin: 0 0 0.25rem;
+  }
+
+  .zfs-noscript-subtitle {
+    font-size: 0.8rem;
+    color: rgb(176, 186, 209);
+    margin: 0 0 1rem;
+  }
+
+  .zfs-noscript-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+    font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace;
+  }
+
+  .zfs-noscript-table th,
+  .zfs-noscript-table td {
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid rgba(123, 158, 255, 0.08);
+  }
+
+  .zfs-noscript-table th {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--accent, #7B9EFF);
+    font-weight: 500;
+    border-bottom-color: rgba(123, 158, 255, 0.15);
+  }
+
+  .zfs-noscript-table td {
+    color: rgb(210, 215, 235);
+  }
+
+  .zfs-noscript-table tbody tr:hover {
+    background: rgba(123, 158, 255, 0.04);
+  }
+
+  .zfs-noscript-note {
+    margin-top: 1rem;
+    font-size: 0.75rem;
+    color: rgba(176, 186, 209, 0.7);
+    font-style: italic;
+  }
+
+  /* Responsive */
+  @media (max-width: 640px) {
+    .zfs-estimator {
+      padding: 1.25rem;
+      border-radius: 10px;
+    }
+
+    .zfs-controls {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 1rem;
+    }
+
+    .zfs-control-group {
+      width: 100%;
+    }
+
+    .zfs-stepper {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .zfs-stepper-btn {
+      flex: 1;
+      max-width: 60px;
+    }
+
+    .zfs-stepper-value {
+      flex: 1;
+    }
+
+    .zfs-select {
+      width: 100%;
+    }
+
+    .zfs-select-wrap {
+      width: 100%;
+    }
+
+    .zfs-pill-group {
+      flex-wrap: wrap;
+    }
+
+    .zfs-pill {
+      flex: 1 1 40%;
+      min-width: 0;
+      text-align: center;
+    }
+
+    .zfs-results {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .zfs-result-card--accent {
+      grid-column: 1 / -1;
+    }
+
+    .zfs-result-value {
+      font-size: 1.4rem;
+    }
+
+    .zfs-title {
+      font-size: 1.05rem;
+    }
+  }
+
+  @media (max-width: 380px) {
+    .zfs-results {
+      grid-template-columns: 1fr;
+    }
+
+    .zfs-estimator {
+      padding: 1rem;
+    }
+  }
+</style>
+
+<script>
+  function initZfsEstimator() {
+    const driveCountInput = document.getElementById('zfs-drive-count') as HTMLInputElement;
+    const driveCountDisplay = document.getElementById('zfs-drive-count-display');
+    const driveDecBtn = document.getElementById('zfs-drive-dec');
+    const driveIncBtn = document.getElementById('zfs-drive-inc');
+    const driveSizeSelect = document.getElementById('zfs-drive-size') as HTMLSelectElement;
+    const pills = document.querySelectorAll('.zfs-pill');
+    const validationEl = document.getElementById('zfs-validation');
+    const validationMsg = document.getElementById('zfs-validation-msg');
+    const barUsable = document.getElementById('zfs-bar-usable');
+    const barParity = document.getElementById('zfs-bar-parity');
+    const rawCapEl = document.getElementById('zfs-raw-capacity');
+    const usableCapEl = document.getElementById('zfs-usable-capacity');
+    const usableTibEl = document.getElementById('zfs-usable-tib');
+    const parityEl = document.getElementById('zfs-parity-overhead');
+    const faultEl = document.getElementById('zfs-fault-tolerance');
+    const minDrivesEl = document.getElementById('zfs-min-drives');
+    const resultsEl = document.getElementById('zfs-results');
+
+    if (!driveCountInput || !driveCountDisplay || !driveSizeSelect || !resultsEl) return;
+
+    const TIB_FACTOR = 0.909; // 1 TB (marketing) ≈ 0.909 TiB
+
+    const raidConfig: Record<string, { minDrives: number; parityDrives: number; faultTolerance: number }> = {
+      mirror:  { minDrives: 2, parityDrives: 0, faultTolerance: 1 },
+      raidz1:  { minDrives: 3, parityDrives: 1, faultTolerance: 1 },
+      raidz2:  { minDrives: 4, parityDrives: 2, faultTolerance: 2 },
+      raidz3:  { minDrives: 5, parityDrives: 3, faultTolerance: 3 },
+    };
+
+    let selectedRaid = 'raidz2';
+
+    function getDriveCount(): number {
+      return parseInt(driveCountInput.value, 10) || 8;
+    }
+
+    function getDriveSize(): number {
+      return parseFloat(driveSizeSelect.value) || 16;
+    }
+
+    function setDriveCount(val: number) {
+      const clamped = Math.max(2, Math.min(24, val));
+      driveCountInput.value = String(clamped);
+      if (driveCountDisplay) driveCountDisplay.textContent = String(clamped);
+    }
+
+    function calculate() {
+      const count = getDriveCount();
+      const size = getDriveSize();
+      const config = raidConfig[selectedRaid];
+
+      const rawCapacity = count * size;
+      let usableCapacity: number;
+      let valid = true;
+
+      if (selectedRaid === 'mirror') {
+        usableCapacity = Math.floor(count / 2) * size;
+      } else {
+        usableCapacity = (count - config.parityDrives) * size;
+      }
+
+      // Validate minimum drives
+      if (count < config.minDrives) {
+        valid = false;
+        usableCapacity = 0;
+      }
+
+      const parityCapacity = rawCapacity - usableCapacity;
+      const overheadPct = rawCapacity > 0 ? (parityCapacity / rawCapacity) * 100 : 0;
+      const usableTib = usableCapacity * TIB_FACTOR;
+
+      // Update validation
+      if (validationEl && validationMsg) {
+        if (!valid) {
+          validationEl.style.display = 'flex';
+          validationMsg.textContent = `${selectedRaid.toUpperCase()} requires at least ${config.minDrives} drives. You have ${count}.`;
+        } else {
+          validationEl.style.display = 'none';
+        }
+      }
+
+      // Update capacity bar
+      if (barUsable && barParity) {
+        if (rawCapacity > 0 && valid) {
+          const usablePct = (usableCapacity / rawCapacity) * 100;
+          const parityPct = (parityCapacity / rawCapacity) * 100;
+          barUsable.style.width = usablePct + '%';
+          barParity.style.width = parityPct + '%';
+        } else {
+          barUsable.style.width = '0%';
+          barParity.style.width = valid ? '0%' : '100%';
+        }
+      }
+
+      // Update result values
+      if (rawCapEl) rawCapEl.textContent = rawCapacity.toFixed(2);
+      if (usableCapEl) usableCapEl.textContent = valid ? usableCapacity.toFixed(2) : '—';
+      if (usableTibEl) usableTibEl.textContent = valid ? `(${usableTib.toFixed(2)} TiB)` : '';
+      if (parityEl) parityEl.textContent = valid ? overheadPct.toFixed(1) : '—';
+      if (faultEl) faultEl.textContent = String(config.faultTolerance);
+      if (minDrivesEl) {
+        minDrivesEl.textContent = String(config.minDrives);
+        const minCard = minDrivesEl.closest('.zfs-result-card');
+        if (minCard) {
+          if (!valid) {
+            minCard.classList.add('zfs-result-card--warning');
+          } else {
+            minCard.classList.remove('zfs-result-card--warning');
+          }
+        }
+      }
+    }
+
+    // Stepper buttons
+    if (driveDecBtn) {
+      driveDecBtn.addEventListener('click', () => {
+        setDriveCount(getDriveCount() - 1);
+        calculate();
+      });
+    }
+    if (driveIncBtn) {
+      driveIncBtn.addEventListener('click', () => {
+        setDriveCount(getDriveCount() + 1);
+        calculate();
+      });
+    }
+
+    // Drive size change
+    driveSizeSelect.addEventListener('change', calculate);
+
+    // RAID pill toggle
+    pills.forEach(pill => {
+      pill.addEventListener('click', () => {
+        pills.forEach(p => {
+          p.classList.remove('zfs-pill--active');
+          p.setAttribute('aria-checked', 'false');
+        });
+        pill.classList.add('zfs-pill--active');
+        pill.setAttribute('aria-checked', 'true');
+        selectedRaid = (pill as HTMLElement).dataset.raid || 'raidz2';
+        calculate();
+      });
+    });
+
+    // Keyboard support for stepper
+    driveCountDisplay?.addEventListener('keydown', (e: KeyboardEvent) => {
+      if (e.key === 'ArrowUp') { e.preventDefault(); setDriveCount(getDriveCount() + 1); calculate(); }
+      if (e.key === 'ArrowDown') { e.preventDefault(); setDriveCount(getDriveCount() - 1); calculate(); }
+    });
+
+    // Initial calculation
+    calculate();
+  }
+
+  // Run on initial load
+  document.addEventListener('DOMContentLoaded', initZfsEstimator);
+
+  // Re-run on Astro page transitions (View Transitions)
+  document.addEventListener('astro:after-swap', initZfsEstimator);
+</script>
