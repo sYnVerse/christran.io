@@ -1,0 +1,792 @@
+---
+---
+
+<div class="ipo-simulator" id="ipo-simulator" aria-label="SpaceX IPO Simulator">
+	<div class="ipo-header">
+		<div class="ipo-header-icon">
+			<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+				<path d="M12 2L2 7l10 5 10-5-10-5z"/>
+				<path d="M2 17l10 5 10-5"/>
+				<path d="M2 12l10 5 10-5"/>
+			</svg>
+		</div>
+		<div>
+			<h3 class="ipo-title">SpaceX IPO Simulator</h3>
+			<p class="ipo-subtitle">Model the dynamics of a low-float mega-cap IPO</p>
+		</div>
+	</div>
+
+	<!-- Controls Panel -->
+	<div class="ipo-controls-panel">
+		<div class="ipo-slider-group">
+			<div class="ipo-slider-row">
+				<label class="ipo-label" for="ipo-valuation-slider">Total Company Valuation</label>
+				<span class="ipo-slider-value" id="ipo-valuation-display">$350B</span>
+			</div>
+			<input
+				type="range"
+				id="ipo-valuation-slider"
+				class="ipo-range"
+				min="100"
+				max="500"
+				value="350"
+				step="10"
+				aria-label="Company valuation in billions"
+			/>
+			<div class="ipo-range-labels">
+				<span>$100B</span>
+				<span>$300B</span>
+				<span>$500B</span>
+			</div>
+		</div>
+
+		<div class="ipo-slider-group">
+			<div class="ipo-slider-row">
+				<label class="ipo-label" for="ipo-float-slider">Public Float</label>
+				<span class="ipo-slider-value" id="ipo-float-display">5%</span>
+			</div>
+			<input
+				type="range"
+				id="ipo-float-slider"
+				class="ipo-range"
+				min="1"
+				max="20"
+				value="5"
+				step="0.5"
+				aria-label="Public float percentage"
+			/>
+			<div class="ipo-range-labels">
+				<span>1%</span>
+				<span>10%</span>
+				<span>20%</span>
+			</div>
+		</div>
+	</div>
+
+	<!-- Market Event Buttons -->
+	<div class="ipo-events-panel">
+		<span class="ipo-events-label">Market Scenario</span>
+		<div class="ipo-event-buttons">
+			<button class="ipo-event-btn ipo-event-normal active" id="ipo-btn-normal" aria-pressed="true" aria-label="Normal trading scenario">
+				<span class="ipo-event-icon">📊</span>
+				Normal Trading
+			</button>
+			<button class="ipo-event-btn ipo-event-bull" id="ipo-btn-bull" aria-pressed="false" aria-label="Bull event scenario — Starship success">
+				<span class="ipo-event-icon">🚀</span>
+				Starship Success
+			</button>
+			<button class="ipo-event-btn ipo-event-bear" id="ipo-btn-bear" aria-pressed="false" aria-label="Bear event scenario — Launch failure">
+				<span class="ipo-event-icon">💥</span>
+				Launch Failure
+			</button>
+		</div>
+	</div>
+
+	<!-- Warning Callout -->
+	<div class="ipo-warning-callout" id="ipo-warning-callout" role="alert" aria-live="polite">
+		<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+			<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+			<line x1="12" y1="9" x2="12" y2="13"/>
+			<line x1="12" y1="17" x2="12.01" y2="17"/>
+		</svg>
+		<span id="ipo-warning-text">Float below 5% — extreme volatility risk. Thin order books can cause violent price swings on minimal volume.</span>
+	</div>
+
+	<!-- Results Dashboard -->
+	<div class="ipo-results-grid" id="ipo-results-grid">
+		<div class="ipo-result-card">
+			<span class="ipo-result-label">Float Market Cap</span>
+			<span class="ipo-result-value" id="ipo-float-mcap">$17.5B</span>
+			<span class="ipo-result-unit">publicly traded value</span>
+		</div>
+		<div class="ipo-result-card">
+			<span class="ipo-result-label">Implied Share Price</span>
+			<span class="ipo-result-value" id="ipo-share-price">$350.00</span>
+			<span class="ipo-result-unit">based on 1B total shares</span>
+		</div>
+		<div class="ipo-result-card">
+			<span class="ipo-result-label">NASDAQ-100 Weight</span>
+			<span class="ipo-result-value" id="ipo-ndx-weight">0.07%</span>
+			<span class="ipo-result-unit">estimated index weight</span>
+		</div>
+		<div class="ipo-result-card">
+			<span class="ipo-result-label">Passive ETF Pressure</span>
+			<span class="ipo-result-value" id="ipo-etf-pressure">$0.25B</span>
+			<span class="ipo-result-unit">forced buying from QQQ-like funds</span>
+		</div>
+		<div class="ipo-result-card ipo-volatility-card">
+			<span class="ipo-result-label">Volatility Score</span>
+			<div class="ipo-volatility-gauge">
+				<div class="ipo-gauge-track">
+					<div class="ipo-gauge-fill" id="ipo-gauge-fill"></div>
+				</div>
+				<div class="ipo-gauge-labels">
+					<span>Low</span>
+					<span>Med</span>
+					<span>High</span>
+					<span>Extreme</span>
+				</div>
+			</div>
+			<span class="ipo-volatility-badge" id="ipo-volatility-badge">High</span>
+		</div>
+		<div class="ipo-result-card">
+			<span class="ipo-result-label">Daily Price Impact</span>
+			<span class="ipo-result-value ipo-impact-value" id="ipo-price-impact">±1.00%</span>
+			<span class="ipo-result-unit" id="ipo-impact-desc">expected daily range</span>
+		</div>
+	</div>
+
+	<noscript>
+		<div class="ipo-noscript">
+			<p class="ipo-noscript-title">SpaceX IPO Float Scenarios at $350B Valuation</p>
+			<table class="ipo-noscript-table">
+				<thead>
+					<tr>
+						<th>Metric</th>
+						<th>2% Float</th>
+						<th>5% Float</th>
+						<th>10% Float</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Float Market Cap</td>
+						<td>$7.0B</td>
+						<td>$17.5B</td>
+						<td>$35.0B</td>
+					</tr>
+					<tr>
+						<td>Share Price</td>
+						<td>$350</td>
+						<td>$350</td>
+						<td>$350</td>
+					</tr>
+					<tr>
+						<td>NDX Weight</td>
+						<td>0.03%</td>
+						<td>0.07%</td>
+						<td>0.14%</td>
+					</tr>
+					<tr>
+						<td>ETF Pressure</td>
+						<td>$0.10B</td>
+						<td>$0.25B</td>
+						<td>$0.49B</td>
+					</tr>
+					<tr>
+						<td>Volatility</td>
+						<td>Extreme</td>
+						<td>High</td>
+						<td>Medium</td>
+					</tr>
+					<tr>
+						<td>Daily Impact</td>
+						<td>±2.50%</td>
+						<td>±1.00%</td>
+						<td>±0.50%</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</noscript>
+</div>
+
+<style>
+	.ipo-simulator {
+		max-width: 100%;
+		background: rgba(11, 16, 33, 0.85);
+		backdrop-filter: blur(12px);
+		-webkit-backdrop-filter: blur(12px);
+		border: 1px solid rgba(123, 158, 255, 0.15);
+		border-radius: 16px;
+		padding: 1.75rem;
+		margin: 2rem 0;
+		font-family: "Atkinson", sans-serif;
+		color: rgb(210, 215, 235);
+	}
+
+	/* Header */
+	.ipo-header {
+		display: flex;
+		align-items: center;
+		gap: 0.875rem;
+		margin-bottom: 1.5rem;
+	}
+	.ipo-header-icon {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 48px;
+		height: 48px;
+		border-radius: 12px;
+		background: rgba(123, 158, 255, 0.1);
+		border: 1px solid rgba(123, 158, 255, 0.2);
+		flex-shrink: 0;
+	}
+	.ipo-title {
+		font-size: 1.25rem;
+		font-weight: 700;
+		color: rgb(240, 240, 245);
+		margin: 0;
+		line-height: 1.3;
+	}
+	.ipo-subtitle {
+		font-size: 0.8rem;
+		color: rgb(176, 186, 209);
+		margin: 0.15rem 0 0;
+		line-height: 1.4;
+	}
+
+	/* Controls Panel */
+	.ipo-controls-panel {
+		background: rgba(30, 35, 50, 0.5);
+		border: 1px solid rgba(123, 158, 255, 0.1);
+		border-radius: 12px;
+		padding: 1.25rem;
+		display: flex;
+		flex-direction: column;
+		gap: 1.25rem;
+		margin-bottom: 1rem;
+	}
+	.ipo-slider-group {
+		display: flex;
+		flex-direction: column;
+		gap: 0.4rem;
+	}
+	.ipo-slider-row {
+		display: flex;
+		justify-content: space-between;
+		align-items: baseline;
+	}
+	.ipo-label {
+		font-size: 0.7rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		color: rgb(176, 186, 209);
+	}
+	.ipo-slider-value {
+		font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace;
+		font-size: 0.95rem;
+		font-weight: 700;
+		color: var(--accent);
+	}
+
+	/* Range Slider */
+	.ipo-range {
+		-webkit-appearance: none;
+		appearance: none;
+		width: 100%;
+		height: 6px;
+		border-radius: 3px;
+		background: rgba(123, 158, 255, 0.15);
+		outline: none;
+		cursor: pointer;
+		transition: background 0.2s ease;
+	}
+	.ipo-range::-webkit-slider-thumb {
+		-webkit-appearance: none;
+		appearance: none;
+		width: 20px;
+		height: 20px;
+		border-radius: 50%;
+		background: var(--accent);
+		border: 2px solid rgba(11, 16, 33, 0.9);
+		box-shadow: 0 0 10px rgba(123, 158, 255, 0.4), 0 2px 6px rgba(0, 0, 0, 0.3);
+		cursor: pointer;
+		transition: transform 0.15s ease, box-shadow 0.15s ease;
+	}
+	.ipo-range::-webkit-slider-thumb:hover {
+		transform: scale(1.15);
+		box-shadow: 0 0 16px rgba(123, 158, 255, 0.6), 0 2px 8px rgba(0, 0, 0, 0.4);
+	}
+	.ipo-range::-moz-range-thumb {
+		width: 20px;
+		height: 20px;
+		border-radius: 50%;
+		background: var(--accent);
+		border: 2px solid rgba(11, 16, 33, 0.9);
+		box-shadow: 0 0 10px rgba(123, 158, 255, 0.4), 0 2px 6px rgba(0, 0, 0, 0.3);
+		cursor: pointer;
+	}
+	.ipo-range::-moz-range-track {
+		height: 6px;
+		border-radius: 3px;
+		background: rgba(123, 158, 255, 0.15);
+	}
+	.ipo-range-labels {
+		display: flex;
+		justify-content: space-between;
+		font-size: 0.65rem;
+		color: rgba(176, 186, 209, 0.6);
+		margin-top: 0.1rem;
+	}
+
+	/* Event Buttons */
+	.ipo-events-panel {
+		margin-bottom: 1rem;
+	}
+	.ipo-events-label {
+		display: block;
+		font-size: 0.7rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		color: rgb(176, 186, 209);
+		margin-bottom: 0.5rem;
+	}
+	.ipo-event-buttons {
+		display: flex;
+		gap: 0.5rem;
+		flex-wrap: wrap;
+	}
+	.ipo-event-btn {
+		flex: 1;
+		min-width: 120px;
+		padding: 0.6rem 0.75rem;
+		border-radius: 10px;
+		border: 1px solid rgba(123, 158, 255, 0.15);
+		background: rgba(30, 35, 50, 0.5);
+		color: rgb(176, 186, 209);
+		font-family: "Atkinson", sans-serif;
+		font-size: 0.78rem;
+		font-weight: 600;
+		cursor: pointer;
+		transition: all 0.3s ease;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.4rem;
+		position: relative;
+		overflow: hidden;
+	}
+	.ipo-event-icon {
+		font-size: 1rem;
+	}
+	.ipo-event-btn:hover {
+		border-color: rgba(123, 158, 255, 0.3);
+		background: rgba(30, 35, 50, 0.8);
+	}
+
+	/* Normal - Blue */
+	.ipo-event-normal.active {
+		background: linear-gradient(135deg, rgba(75, 110, 223, 0.25) 0%, rgba(123, 158, 255, 0.15) 100%);
+		border-color: rgba(123, 158, 255, 0.5);
+		color: var(--accent);
+		box-shadow: 0 0 20px rgba(123, 158, 255, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+	}
+	/* Bull - Green */
+	.ipo-event-bull.active {
+		background: linear-gradient(135deg, rgba(39, 201, 63, 0.25) 0%, rgba(52, 211, 153, 0.15) 100%);
+		border-color: rgba(52, 211, 153, 0.5);
+		color: #34d399;
+		box-shadow: 0 0 20px rgba(52, 211, 153, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+	}
+	/* Bear - Red */
+	.ipo-event-bear.active {
+		background: linear-gradient(135deg, rgba(239, 68, 68, 0.25) 0%, rgba(248, 113, 113, 0.15) 100%);
+		border-color: rgba(248, 113, 113, 0.5);
+		color: #f87171;
+		box-shadow: 0 0 20px rgba(248, 113, 113, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+	}
+
+	/* Warning Callout */
+	.ipo-warning-callout {
+		display: none;
+		align-items: flex-start;
+		gap: 0.6rem;
+		padding: 0.75rem 1rem;
+		background: rgba(251, 191, 36, 0.08);
+		border: 1px solid rgba(251, 191, 36, 0.25);
+		border-radius: 10px;
+		margin-bottom: 1rem;
+		font-size: 0.78rem;
+		color: #fbbf24;
+		line-height: 1.5;
+	}
+	.ipo-warning-callout.visible {
+		display: flex;
+	}
+	.ipo-warning-callout svg {
+		flex-shrink: 0;
+		margin-top: 0.1rem;
+	}
+
+	/* Results Grid */
+	.ipo-results-grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 0.75rem;
+	}
+	.ipo-result-card {
+		background: rgba(30, 35, 50, 0.5);
+		border: 1px solid rgba(123, 158, 255, 0.1);
+		border-radius: 12px;
+		padding: 1rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.3rem;
+		transition: border-color 0.3s ease, box-shadow 0.3s ease;
+	}
+	.ipo-result-card:hover {
+		border-color: rgba(123, 158, 255, 0.25);
+		box-shadow: 0 4px 20px rgba(123, 158, 255, 0.08);
+	}
+	.ipo-result-label {
+		font-size: 0.65rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		color: rgba(176, 186, 209, 0.8);
+	}
+	.ipo-result-value {
+		font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace;
+		font-size: 1.35rem;
+		font-weight: 700;
+		color: rgb(240, 240, 245);
+		line-height: 1.2;
+	}
+	.ipo-result-unit {
+		font-size: 0.65rem;
+		color: rgba(176, 186, 209, 0.6);
+		line-height: 1.3;
+	}
+
+	/* Volatility Gauge */
+	.ipo-volatility-card {
+		position: relative;
+	}
+	.ipo-volatility-gauge {
+		margin: 0.25rem 0 0.15rem;
+	}
+	.ipo-gauge-track {
+		width: 100%;
+		height: 8px;
+		border-radius: 4px;
+		background: linear-gradient(90deg, #34d399 0%, #fbbf24 40%, #f87171 70%, #dc2626 100%);
+		position: relative;
+		overflow: hidden;
+		opacity: 0.85;
+	}
+	.ipo-gauge-fill {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 50%;
+		height: 100%;
+		background: transparent;
+		border-right: 3px solid rgb(240, 240, 245);
+		box-shadow: 2px 0 8px rgba(0, 0, 0, 0.5);
+		transition: width 0.4s cubic-bezier(0.34, 1.45, 0.64, 1);
+	}
+	.ipo-gauge-labels {
+		display: flex;
+		justify-content: space-between;
+		font-size: 0.55rem;
+		color: rgba(176, 186, 209, 0.5);
+		margin-top: 0.2rem;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+	}
+	.ipo-volatility-badge {
+		display: inline-block;
+		align-self: flex-start;
+		padding: 0.2rem 0.6rem;
+		border-radius: 20px;
+		font-size: 0.7rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		transition: all 0.3s ease;
+	}
+	/* Badge colors set via JS */
+	.ipo-volatility-badge.vol-low {
+		background: rgba(52, 211, 153, 0.15);
+		color: #34d399;
+		border: 1px solid rgba(52, 211, 153, 0.3);
+	}
+	.ipo-volatility-badge.vol-medium {
+		background: rgba(251, 191, 36, 0.15);
+		color: #fbbf24;
+		border: 1px solid rgba(251, 191, 36, 0.3);
+	}
+	.ipo-volatility-badge.vol-high {
+		background: rgba(248, 113, 113, 0.15);
+		color: #f87171;
+		border: 1px solid rgba(248, 113, 113, 0.3);
+	}
+	.ipo-volatility-badge.vol-extreme {
+		background: rgba(220, 38, 38, 0.2);
+		color: #ef4444;
+		border: 1px solid rgba(220, 38, 38, 0.4);
+		animation: ipo-pulse-extreme 2s ease-in-out infinite;
+	}
+	@keyframes ipo-pulse-extreme {
+		0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+		50% { box-shadow: 0 0 12px 2px rgba(220, 38, 38, 0.25); }
+	}
+
+	/* Price Impact color */
+	.ipo-impact-value {
+		transition: color 0.3s ease;
+	}
+	.ipo-impact-value.impact-normal {
+		color: rgb(240, 240, 245);
+	}
+	.ipo-impact-value.impact-bull {
+		color: #34d399;
+	}
+	.ipo-impact-value.impact-bear {
+		color: #f87171;
+	}
+
+	/* Noscript Fallback */
+	.ipo-noscript {
+		padding: 1rem 0;
+	}
+	.ipo-noscript-title {
+		font-size: 0.85rem;
+		font-weight: 700;
+		color: rgb(240, 240, 245);
+		margin-bottom: 0.75rem;
+	}
+	.ipo-noscript-table {
+		width: 100%;
+		border-collapse: collapse;
+		font-size: 0.78rem;
+	}
+	.ipo-noscript-table th,
+	.ipo-noscript-table td {
+		padding: 0.5rem 0.75rem;
+		text-align: left;
+		border-bottom: 1px solid rgba(123, 158, 255, 0.1);
+	}
+	.ipo-noscript-table th {
+		font-size: 0.65rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		color: rgba(176, 186, 209, 0.8);
+	}
+	.ipo-noscript-table td {
+		font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace;
+		color: rgb(210, 215, 235);
+	}
+	.ipo-noscript-table td:first-child {
+		font-family: "Atkinson", sans-serif;
+		color: rgba(176, 186, 209, 0.8);
+		font-size: 0.72rem;
+	}
+
+	/* Responsive */
+	@media (max-width: 720px) {
+		.ipo-simulator {
+			padding: 1.25rem;
+			border-radius: 12px;
+		}
+		.ipo-results-grid {
+			grid-template-columns: repeat(2, 1fr);
+		}
+		.ipo-result-value {
+			font-size: 1.1rem;
+		}
+		.ipo-event-btn {
+			min-width: 0;
+			font-size: 0.72rem;
+			padding: 0.5rem 0.5rem;
+		}
+		.ipo-event-icon {
+			font-size: 0.85rem;
+		}
+	}
+	@media (max-width: 480px) {
+		.ipo-simulator {
+			padding: 1rem;
+		}
+		.ipo-results-grid {
+			grid-template-columns: 1fr;
+		}
+		.ipo-event-buttons {
+			flex-direction: column;
+		}
+		.ipo-event-btn {
+			min-width: 100%;
+		}
+		.ipo-header-icon {
+			width: 40px;
+			height: 40px;
+		}
+		.ipo-title {
+			font-size: 1.1rem;
+		}
+	}
+</style>
+
+<script>
+	function initIPOSimulator() {
+		const valuationSlider = document.getElementById('ipo-valuation-slider') as HTMLInputElement;
+		const floatSlider = document.getElementById('ipo-float-slider') as HTMLInputElement;
+		const valuationDisplay = document.getElementById('ipo-valuation-display');
+		const floatDisplay = document.getElementById('ipo-float-display');
+
+		const btnNormal = document.getElementById('ipo-btn-normal');
+		const btnBull = document.getElementById('ipo-btn-bull');
+		const btnBear = document.getElementById('ipo-btn-bear');
+
+		const floatMcapEl = document.getElementById('ipo-float-mcap');
+		const sharePriceEl = document.getElementById('ipo-share-price');
+		const ndxWeightEl = document.getElementById('ipo-ndx-weight');
+		const etfPressureEl = document.getElementById('ipo-etf-pressure');
+		const gaugeFill = document.getElementById('ipo-gauge-fill');
+		const volBadge = document.getElementById('ipo-volatility-badge');
+		const priceImpactEl = document.getElementById('ipo-price-impact');
+		const impactDescEl = document.getElementById('ipo-impact-desc');
+		const warningCallout = document.getElementById('ipo-warning-callout');
+
+		if (!valuationSlider || !floatSlider) return;
+
+		type Scenario = 'normal' | 'bull' | 'bear';
+		let activeScenario: Scenario = 'normal';
+
+		function setScenario(scenario: Scenario) {
+			activeScenario = scenario;
+
+			const buttons = [
+				{ el: btnNormal, key: 'normal' },
+				{ el: btnBull, key: 'bull' },
+				{ el: btnBear, key: 'bear' },
+			];
+
+			buttons.forEach((b) => {
+				if (!b.el) return;
+				if (b.key === scenario) {
+					b.el.classList.add('active');
+					b.el.setAttribute('aria-pressed', 'true');
+				} else {
+					b.el.classList.remove('active');
+					b.el.setAttribute('aria-pressed', 'false');
+				}
+			});
+
+			updateResults();
+		}
+
+		function updateResults() {
+			const valuation = parseFloat(valuationSlider.value); // in billions
+			const floatPct = parseFloat(floatSlider.value); // 1-20
+			const floatFrac = floatPct / 100;
+
+			// Update display values
+			if (valuationDisplay) valuationDisplay.textContent = `$${valuation}B`;
+			if (floatDisplay) floatDisplay.textContent = `${floatPct}%`;
+
+			// Float Market Cap
+			const floatMcap = valuation * floatFrac;
+			if (floatMcapEl) floatMcapEl.textContent = `$${floatMcap.toFixed(1)}B`;
+
+			// Implied Share Price (1B total shares)
+			const sharePrice = valuation; // valuation is in $B, and 1B shares = $valuation per share
+			if (sharePriceEl) sharePriceEl.textContent = `$${sharePrice.toFixed(2)}`;
+
+			// NDX Weight estimate
+			const ndxTotalMcap = 25000; // ~$25T in billions
+			const rawWeight = floatMcap / ndxTotalMcap;
+			const cappedWeight = Math.min(rawWeight, 0.08);
+			const weightPct = cappedWeight * 100;
+			if (ndxWeightEl) ndxWeightEl.textContent = `${weightPct.toFixed(2)}%`;
+
+			// Passive ETF buying pressure
+			const qqqAUM = 350; // ~$350B
+			const etfPressure = (cappedWeight) * qqqAUM;
+			if (etfPressureEl) etfPressureEl.textContent = `$${etfPressure.toFixed(2)}B`;
+
+			// Volatility score: (1 / floatPct) * 10
+			const volScore = (1 / floatPct) * 10;
+			// Clamp to 0-100% for gauge (score 0.5 = low, 10 = extreme)
+			// Map: score 0.5 → 5%, score 2 → 30%, score 5 → 60%, score 10 → 100%
+			const gaugePercent = Math.min(Math.max(volScore * 10, 3), 100);
+
+			if (gaugeFill) gaugeFill.style.width = `${gaugePercent}%`;
+
+			// Determine volatility level
+			let volLevel: string;
+			let volClass: string;
+			if (volScore <= 1) {
+				volLevel = 'Low';
+				volClass = 'vol-low';
+			} else if (volScore <= 2.5) {
+				volLevel = 'Medium';
+				volClass = 'vol-medium';
+			} else if (volScore <= 5) {
+				volLevel = 'High';
+				volClass = 'vol-high';
+			} else {
+				volLevel = 'Extreme';
+				volClass = 'vol-extreme';
+			}
+
+			if (volBadge) {
+				volBadge.textContent = volLevel;
+				volBadge.className = 'ipo-volatility-badge ' + volClass;
+			}
+
+			// Price impact
+			let impactText: string;
+			let impactClass: string;
+			let impactDesc: string;
+
+			if (activeScenario === 'normal') {
+				const impact = 5 / floatPct;
+				impactText = `±${impact.toFixed(2)}%`;
+				impactClass = 'impact-normal';
+				impactDesc = 'expected daily range';
+			} else if (activeScenario === 'bull') {
+				const impact = 30 / floatPct;
+				impactText = `+${impact.toFixed(1)}%`;
+				impactClass = 'impact-bull';
+				impactDesc = 'potential upside on catalyst';
+			} else {
+				const impact = 40 / floatPct;
+				impactText = `-${impact.toFixed(1)}%`;
+				impactClass = 'impact-bear';
+				impactDesc = 'potential downside on failure';
+			}
+
+			if (priceImpactEl) {
+				priceImpactEl.textContent = impactText;
+				priceImpactEl.className = 'ipo-result-value ipo-impact-value ' + impactClass;
+			}
+			if (impactDescEl) impactDescEl.textContent = impactDesc;
+
+			// Warning callout
+			if (warningCallout) {
+				if (floatPct < 5) {
+					warningCallout.classList.add('visible');
+				} else {
+					warningCallout.classList.remove('visible');
+				}
+			}
+		}
+
+		// Event listeners
+		valuationSlider.addEventListener('input', updateResults);
+		floatSlider.addEventListener('input', updateResults);
+
+		btnNormal?.addEventListener('click', () => setScenario('normal'));
+		btnBull?.addEventListener('click', () => setScenario('bull'));
+		btnBear?.addEventListener('click', () => setScenario('bear'));
+
+		// Initial calculation
+		updateResults();
+	}
+
+	// Initialize on DOM ready
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', initIPOSimulator);
+	} else {
+		initIPOSimulator();
+	}
+
+	// Re-initialize after Astro client-side navigation
+	document.addEventListener('astro:after-swap', initIPOSimulator);
+</script>
