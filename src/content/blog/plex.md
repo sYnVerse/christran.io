@@ -2,6 +2,7 @@
 title: "Reimagining Home Media: The 2025 Server and the Future of a Plex Loyalty"
 author: "Chris Tran"
 pubDate: "2025-12-15"
+updatedDate: "2026-06-09"
 heroImage: "/img/plex-jellyfin.webp"
 description: "A personal comparison between Plex and Jellyfin, exploring the sunk cost of a lifetime pass, the allure of open-source alternatives, and the automation upgrades that keep the Plex ecosystem alive."
 tags: ["Home Lab", "Plex", "Jellyfin", "Automation", "Self-Hosted"]
@@ -22,7 +23,7 @@ The problem is structural: as Plex grows larger and more corporate, it simply ca
 However, the blame for a stagnant media setup is not placed solely on the software. Influential voices in the self-hosted community suggest that the server itself is often in need of thoughtful modifications. For me, the answer wasn't to abandon ship, but to double down on "Plex v2."
 
 ### The Lifetime Factor
-I’ve been a Plex Pass lifetime user since 2020. That investment is the "pole position" of my setup—a sunk cost that makes switching to Jellyfin a non-starter. My previous build, born during the extreme boredom of the 2020 shutdowns, was a humble $5 DigitalOcean droplet designed to serve friends and family who were locked inside. It was a race against isolation, and Plex was the reliable engine that powered it.
+I’ve been a Plex Pass lifetime user since 2020. That investment is the "pole position" of my setup—a sunk cost that makes switching to Jellyfin a non-starter. My previous build, born during the extreme boredom of the 2020 shutdowns, was a humble \$5 DigitalOcean droplet designed to serve friends and family who were locked inside. It was a race against isolation, and Plex was the reliable engine that powered it.
 
 ### The Automation Upgrades
 My latest rendition, Plex v2, isn't just about storage; it's about workflow. I’ve integrated the full **Servarr stack**, transforming the server from a manual library into an automated beast. By adding **Overseerr**, I’ve given my users a "Netflix-like" interface to request content, removing the friction of text messages and manual downloads. For the discord-savvy among them, **Requestrr** adds a chatbot layer that feels almost magical.

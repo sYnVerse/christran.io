@@ -2,6 +2,7 @@
 title: "The Telemetry of Finance: Preparing SpaceX's Enterprise Software for a Public Debut"
 author: "Chris Tran"
 pubDate: "2026-06-08"
+updatedDate: "2026-06-09"
 heroImage: "/img/the-telemetry-of-finance-preparing-spacex-enterprise-software-for-a-public-debut.png"
 description: "An analytical deep dive into how SpaceX must adapt its legendary, fast-moving flight software and internal ground control systems to meet the rigorous compliance and auditing standards of an IPO."
 tags: ["SpaceX","IPO","Software Engineering","Systems Architecture","Enterprise Tech","ERP","WarpDrive"]
@@ -131,7 +132,7 @@ Conversely, the SEC demands extreme transparency. If a Starship launch fails, or
 To resolve this conflict, SpaceX's enterprise software architecture implements a zero-trust, highly segregated data pipeline:
 
 * **The Data Air-Gap:** SpaceX maintains a distinct, programmatic barrier between engineering databases containing ITAR-controlled technical telemetry and financial reporting databases. 
-* **Automated Data Sanitization:** When a material launch anomaly occurs, automated systems extract the *financial* reality (e.g., "loss of booster asset valued at $28M, payload delivery deferred") while programmatically stripping away the classified *engineering* reality (e.g., exact engine turbopump pressures or valve timing diagrams).
+* **Automated Data Sanitization:** When a material launch anomaly occurs, automated systems extract the *financial* reality (e.g., "loss of booster asset valued at \$2M, payload delivery deferred") while programmatically stripping away the classified *engineering* reality (e.g., exact engine turbopump pressures or valve timing diagrams).
 * **Role-Based Access Control (RBAC) on Financial Data:** Public auditors, investment bankers, and financial analysts require access to SpaceX's enterprise software. The security architecture ensures that an auditor looking at asset ledger lines in WarpDrive cannot pivot to look at technical CAD files or flight code repositories.
 
 ---
