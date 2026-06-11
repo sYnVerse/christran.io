@@ -12,7 +12,7 @@ When [SpaceX](https://www.spacex.com/) hits the public markets this Friday, June
 Here is a deep dive into the fundamentals, the unprecedented technical setup, and the strategy for trading the most highly anticipated IPO of the decade.
 
 ### The Fundamental Disconnect: Pricing the Future
-Looking strictly at the S-1 filings for fiscal year 2025, SpaceX generated \$18.7 billion in total revenue but operated at a net loss of \$4.9 billion. The business is divided into three distinct segments:
+Looking strictly at the [S-1 filing](https://www.sec.gov/Archives/edgar/data/1181412/000162828026036936/spaceexplorationtechnologi.htm) for fiscal year 2025, SpaceX generated \$18.7 billion in total revenue but operated at a net loss of \$4.9 billion. The business is divided into three distinct segments:
 
 * **Connectivity ([Starlink](https://www.starlink.com/)):** This is the financial backbone of the operation, generating \$11.4 billion (61% of total revenue) and turning a clear profit of \$4.42 billion. Supported by a constellation of roughly 10,000 satellites, the telecom division currently boasts 10 million active subscribers.
 * **Space:** The logistics division generated \$4 billion in revenue but operated at a loss. However, its engineering dominance has created a massive economic moat, forcing even deep-pocketed competitors like [Amazon](https://www.aboutamazon.com/) to rely on SpaceX rockets to deploy their own hardware.
