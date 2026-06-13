@@ -116,24 +116,81 @@ const latestPosts = (await getCollection('blog'))
 					background-image: url('../assets/img/network-bg-mobile.webp');
 				}
 			}
-			/* Hero scroll pin wrapper (tracks scroll progress for sequential animation) */
-			.hero-wrapper {
-				height: 220vh; /* Pinned for 1.2 viewport heights */
-				position: relative;
+			/* Scroll Journey container styles */
+			@media (min-width: 721px) {
+				.scroll-journey {
+					display: block;
+					position: relative;
+				}
+				.journey-stage {
+					position: relative;
+					height: 240vh; /* Pinned area for scrolling range */
+				}
+				.stage-tagline {
+					height: 240vh;
+				}
+				.stage-sticky {
+					position: sticky;
+					top: 0;
+					height: 100vh;
+					display: flex;
+					flex-direction: column;
+					justify-content: center;
+					align-items: center;
+					overflow: visible;
+					width: 100%;
+					box-sizing: border-box;
+					padding: 5rem 2rem 2rem 2rem; /* Safe padding to push contents below fixed header */
+				}
 			}
-			/* Full Screen Hero Section (Sticky) */
-			.hero-section {
-				height: 100vh;
-				height: 100dvh;
-				position: sticky;
-				top: 0;
-				display: flex;
-				flex-direction: column;
-				justify-content: center;
-				align-items: center;
-				overflow: hidden;
-				padding: 2rem;
-				box-sizing: border-box;
+			/* Compact layouts for shorter viewports to prevent content overflow */
+			@media (min-width: 721px) and (max-height: 768px) {
+				.journey-card {
+					padding: 1.5rem 1.5rem !important;
+					transform: scale(0.92) translateY(var(--stage-translate, 0px)) !important;
+					transform-origin: center center;
+				}
+				.featured-section {
+					margin: 0.8rem 0 !important;
+				}
+				.featured-grid, .blog-grid {
+					gap: 0.75rem !important;
+				}
+				.cta-container {
+					margin-top: 0.8rem !important;
+				}
+				.stage-sticky {
+					padding-top: 4.5rem !important;
+				}
+			}
+			@media (min-width: 721px) and (max-height: 680px) {
+				.journey-card {
+					padding: 1.25rem 1.25rem !important;
+					transform: scale(0.85) translateY(var(--stage-translate, 0px)) !important;
+					transform-origin: center center;
+				}
+				.stage-sticky {
+					padding-top: 4rem !important;
+				}
+			}
+			@media (max-width: 720px) {
+				.scroll-journey {
+					display: flex;
+					flex-direction: column;
+					gap: 2rem;
+					padding: 4.5rem 1rem 1rem 1rem;
+					box-sizing: border-box;
+				}
+				.journey-stage {
+					height: auto !important;
+					position: static !important;
+				}
+				.stage-sticky {
+					height: auto !important;
+					position: static !important;
+					display: block !important;
+					padding: 0 !important;
+				}
 			}
 			.hero-content {
 				width: 100%;
@@ -200,16 +257,6 @@ const latestPosts = (await getCollection('blog'))
 					transform: none !important;
 					opacity: 0.35 !important;
 					will-change: auto;
-				}
-				.hero-wrapper {
-					height: auto !important;
-				}
-				.hero-section {
-					position: relative !important;
-					height: auto !important;
-					min-height: 90vh !important;
-					padding-top: 4.5rem !important;
-					box-sizing: border-box !important;
 				}
 				.tagline-line {
 					translate: none !important;
@@ -291,18 +338,30 @@ const latestPosts = (await getCollection('blog'))
 				}
 			}
 
-			.home-page main {
+			.journey-card {
 				position: relative;
 				background: rgba(11, 16, 33, 0.88);
 				padding: 2.5rem 2rem;
 				border-radius: 12px;
-				margin: 0 auto 4rem auto;
+				margin: 0 auto;
 				width: calc(100% - 2rem);
 				max-width: 720px;
 				box-sizing: border-box;
 				box-shadow: var(--box-shadow);
 				border: 1px solid rgba(255, 255, 255, 0.05);
 				z-index: 2;
+				will-change: opacity, transform, filter;
+				opacity: var(--stage-opacity, 1);
+				transform: translateY(var(--stage-translate, 0px));
+				filter: blur(var(--stage-blur, 0px));
+				transition: opacity 0.1s ease-out, transform 0.1s ease-out, filter 0.1s ease-out;
+			}
+			.stage-tagline .hero-content {
+				will-change: opacity, transform, filter;
+				opacity: var(--stage-opacity, 1);
+				transform: translateY(var(--stage-translate, 0px));
+				filter: blur(var(--stage-blur, 0px));
+				transition: opacity 0.1s ease-out, transform 0.1s ease-out, filter 0.1s ease-out;
 			}
 			/* Featured section */
 			.featured-section {
@@ -336,6 +395,12 @@ const latestPosts = (await getCollection('blog'))
 				grid-template-columns: repeat(3, 1fr);
 				gap: 1rem;
 				margin-bottom: 1.5rem;
+			}
+			/* Compact homepage project and blog cards to prevent viewport clipping */
+			.featured-grid :global(.card-description),
+			.featured-grid :global(.tech-stack),
+			.blog-grid :global(.card-description) {
+				display: none;
 			}
 			.cta-container {
 				margin-top: 1.5rem;
@@ -419,9 +484,9 @@ const latestPosts = (await getCollection('blog'))
 				}
 			}
 			@media (max-width: 640px) {
-				.home-page main {
+				.journey-card {
 					padding: 1.25rem;
-					margin: 1rem auto 3rem auto;
+					margin: 0 auto 2rem auto;
 				}
 				.featured-grid {
 					grid-template-columns: 1fr;
@@ -443,54 +508,76 @@ const latestPosts = (await getCollection('blog'))
 	<body class="home-page">
 		<Header />
 		
-		<div class="hero-wrapper">
-			<div class="hero-section">
-				<div class="hero-content">
-					<h1 class="tagline-parallax" aria-label="Network Engineering, Security, Automation">
-						<span class="tagline-line line-1" aria-hidden="true">Network Engineering.</span>
-						<span class="tagline-line line-2" aria-hidden="true">Security.</span>
-						<span class="tagline-line line-3" aria-hidden="true">Automation.</span>
-					</h1>
-				</div>
-				
-				<div class="scroll-indicator" aria-hidden="true">
-					<span class="scroll-text">Scroll to explore</span>
-					<div class="mouse-icon">
-						<span class="mouse-wheel"></span>
+		<main class="scroll-journey">
+			<!-- Stage 1: Tagline -->
+			<section class="journey-stage stage-tagline">
+				<div class="stage-sticky">
+					<div class="hero-content">
+						<h1 class="tagline-parallax" aria-label="Network Engineering, Security, Automation">
+							<span class="tagline-line line-1" aria-hidden="true">Network Engineering.</span>
+							<span class="tagline-line line-2" aria-hidden="true">Security.</span>
+							<span class="tagline-line line-3" aria-hidden="true">Automation.</span>
+						</h1>
 					</div>
-				</div>
-			</div>
-		</div>
-
-		<main>
-			<p>
-				I’m <strong>Chris Tran</strong>, a <strong>San Francisco Bay Area Network Engineer</strong> specializing in IT infrastructure, network security, virtualization, and automation. Currently working at <strong>Auto-Chlor System</strong> and pursuing my M.S. in IT Management at <strong>WGU</strong>, I hold a B.S. in Mathematics-Computer Science from the <strong>University of California, San Diego</strong> (<strong>UCSD</strong>). I am passionate about building reliable infrastructure that just works. Explore my latest projects, read my technical deep-dives, or click the terminal icon in the bottom right to query my skills directly.
-			</p>
-
-			<section class="featured-section" aria-label="Featured work">
-				<h2 class="featured-heading">Featured Work</h2>
-				<div class="featured-grid">
-					{featured.map((project) => (
-						<ProjectCard project={project} compact />
-					))}
-				</div>
-				<div class="cta-container">
-					<div class="view-all-wrapper">
-						<a href="/portfolio" class="view-all-link">View all projects →</a>
+					
+					<div class="scroll-indicator" aria-hidden="true">
+						<span class="scroll-text">Scroll to explore</span>
+						<div class="mouse-icon">
+							<span class="mouse-wheel"></span>
+						</div>
 					</div>
 				</div>
 			</section>
 
-			<section class="featured-section" aria-label="Latest blog posts">
-				<h2 class="featured-heading">Latest Deep-Dives</h2>
-				<div class="blog-grid">
-					{latestPosts.map((post) => (
-						<BlogCard post={post} />
-					))}
+			<!-- Stage 2: Intro -->
+			<section class="journey-stage stage-intro">
+				<div class="stage-sticky">
+					<div class="journey-card">
+						<p>
+							I’m <strong>Chris Tran</strong>, a <strong>San Francisco Bay Area Network Engineer</strong> specializing in IT infrastructure, network security, virtualization, and automation. Currently working at <strong>Auto-Chlor System</strong> and pursuing my M.S. in IT Management at <strong>WGU</strong>, I hold a B.S. in Mathematics-Computer Science from the <strong>University of California, San Diego</strong> (<strong>UCSD</strong>). I am passionate about building reliable infrastructure that just works. Explore my latest projects, read my technical deep-dives, or click the terminal icon in the bottom right to query my skills directly.
+						</p>
+					</div>
 				</div>
-				<div class="cta-container">
-					<div class="view-all-wrapper">
-						<a href="/blog" class="view-all-link">View all posts →</a>
+			</section>
+
+			<!-- Stage 3: Featured Work -->
+			<section class="journey-stage stage-work">
+				<div class="stage-sticky">
+					<div class="journey-card">
+						<div class="featured-section" aria-label="Featured work">
+							<h2 class="featured-heading">Featured Work</h2>
+							<div class="featured-grid">
+								{featured.map((project) => (
+									<ProjectCard project={project} compact />
+								))}
+							</div>
+							<div class="cta-container">
+								<div class="view-all-wrapper">
+									<a href="/portfolio" class="view-all-link">View all projects →</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<!-- Stage 4: Latest Deep-Dives -->
+			<section class="journey-stage stage-blog">
+				<div class="stage-sticky">
+					<div class="journey-card">
+						<div class="featured-section" aria-label="Latest blog posts">
+							<h2 class="featured-heading">Latest Deep-Dives</h2>
+							<div class="blog-grid">
+								{latestPosts.map((post) => (
+									<BlogCard post={post} />
+								))}
+							</div>
+							<div class="cta-container">
+								<div class="view-all-wrapper">
+									<a href="/blog" class="view-all-link">View all posts →</a>
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 			</section>
@@ -506,24 +593,19 @@ const latestPosts = (await getCollection('blog'))
 				}
 
 				const tagline = document.querySelector('.tagline-parallax');
-				const wrapper = document.querySelector('.hero-wrapper');
+				const stages = document.querySelectorAll('.journey-stage');
 				const scrollIndicator = document.querySelector('.scroll-indicator');
 				const body = document.body;
-				if (!tagline || !wrapper) return;
+				if (!tagline || stages.length === 0) return;
 
 				const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 				// Cache layout values to prevent layout thrashing on scroll
 				let viewportHeight = window.innerHeight;
-				let wrapperHeight = wrapper.offsetHeight;
-				let scrollRange = wrapperHeight - viewportHeight;
 				let translateMultiplier = 1;
 
 				const handleResize = () => {
 					viewportHeight = window.innerHeight;
-					wrapperHeight = wrapper.offsetHeight;
-					scrollRange = wrapperHeight - viewportHeight;
-					
 					const width = window.innerWidth;
 					if (width <= 480) {
 						translateMultiplier = 0.25; // 25% translation on small mobile
@@ -550,61 +632,157 @@ const latestPosts = (await getCollection('blog'))
 						currentScrollY += diff * 0.15; // Smooth deceleration factor
 					}
 
-					// Calculate scroll progress (0 to 1) inside the pinned region using smoothed currentScrollY
-					const p = scrollRange > 0 ? Math.min(1, Math.max(0, currentScrollY / scrollRange)) : 0;
+					const isMobile = window.innerWidth <= 720;
 
-					// Smoothly ease out progress as we reach the boundaries (cubic ease-out)
-					const pEased = 1 - Math.pow(1 - p, 3);
+					// Calculate bg-opacity based on Stage 1 (index 0) progress
+					const stage1 = stages[0];
+					let bgOpacity = 0;
+					if (stage1 && !isMobile) {
+						const rect1 = stage1.getBoundingClientRect();
+						const scrollRange1 = stage1.offsetHeight - viewportHeight;
+						let p1 = 0;
+						if (scrollRange1 > 0) {
+							p1 = -rect1.top / scrollRange1;
+							p1 = Math.min(1, Math.max(0, p1));
+						}
 
-					// 1. Background vertical scroll parallax, scale, and fade-in using eased progress
-					const bgOpacity = 0.25 + pEased * 0.35; // Fades from 0.25 to 0.60
-					body.style.setProperty('--bg-opacity', `${bgOpacity}`);
+						// Background opacity fades out at the end of Stage 1 (p1 > 0.85)
+						if (p1 < 0.85) {
+							const factor = p1 / 0.85;
+							bgOpacity = 0.25 + factor * 0.15;
+						} else {
+							const factor = (p1 - 0.85) / 0.15;
+							bgOpacity = 0.40 * (1 - factor);
+						}
 
-					if (!prefersReducedMotion) {
-						const bgTranslate = currentScrollY * -0.15;
-						const bgScale = 1 + currentScrollY * 0.00015;
-						body.style.setProperty('--bg-translate', `${bgTranslate}px`);
-						body.style.setProperty('--bg-scale', `${bgScale}`);
+						body.style.setProperty('--bg-opacity', `${bgOpacity}`);
+
+						if (!prefersReducedMotion) {
+							const bgTranslate = currentScrollY * -0.15;
+							const bgScale = 1 + currentScrollY * 0.00015;
+							body.style.setProperty('--bg-translate', `${bgTranslate}px`);
+							body.style.setProperty('--bg-scale', `${bgScale}`);
+						}
 					}
 
-					// 2. Tagline sequential fades and translations
-					// Line 1: Network Engineering (Always visible at start)
-					const opacity1 = 1;
-					let translate1 = 0;
-					if (!prefersReducedMotion) {
-						translate1 = pEased * -80 * translateMultiplier; // Moves left
-					}
+					stages.forEach((stage, index) => {
+						const card = stage.querySelector('.journey-card') || stage.querySelector('.hero-content');
+						if (!card) return;
 
-					// Line 2: Security (Fades in between pEased=0.15 and pEased=0.50)
-					const pLine2 = Math.min(1, Math.max(0, (pEased - 0.15) / 0.35));
-					const opacity2 = pLine2;
-					let translate2 = 0;
-					if (!prefersReducedMotion) {
-						translate2 = pLine2 * 80 * translateMultiplier; // Moves right
-					}
+						if (isMobile) {
+							card.style.removeProperty('--stage-opacity');
+							card.style.removeProperty('--stage-translate');
+							card.style.removeProperty('--stage-blur');
+							return;
+						}
 
-					// Line 3: Automation (Fades in between pEased=0.45 and pEased=0.80)
-					const pLine3 = Math.min(1, Math.max(0, (pEased - 0.45) / 0.35));
-					const opacity3 = pLine3;
-					let translate3 = 0;
-					if (!prefersReducedMotion) {
-						translate3 = pLine3 * -120 * translateMultiplier; // Moves left
-					}
+						const rect = stage.getBoundingClientRect();
+						const stageHeight = stage.offsetHeight;
+						const scrollRange = stageHeight - viewportHeight;
+						let p = 0;
+						if (scrollRange > 0) {
+							p = -rect.top / scrollRange;
+							p = Math.min(1, Math.max(0, p));
+						}
 
-					// Set layout properties
-					tagline.style.setProperty('--translate-1', `${translate1}px`);
-					tagline.style.setProperty('--translate-2', `${translate2}px`);
-					tagline.style.setProperty('--translate-3', `${translate3}px`);
+						if (index === 0) {
+							// Stage 1 tagline sequential animations
+							const pEased = 1 - Math.pow(1 - p, 3);
+							const opacity1 = 1;
+							let translate1 = 0;
+							if (!prefersReducedMotion) {
+								translate1 = pEased * -80 * translateMultiplier;
+							}
 
-					tagline.style.setProperty('--opacity-1', `${opacity1}`);
-					tagline.style.setProperty('--opacity-2', `${opacity2}`);
-					tagline.style.setProperty('--opacity-3', `${opacity3}`);
+							const pLine2 = Math.min(1, Math.max(0, (pEased - 0.15) / 0.35));
+							const opacity2 = pLine2;
+							let translate2 = 0;
+							if (!prefersReducedMotion) {
+								translate2 = pLine2 * 80 * translateMultiplier;
+							}
 
-					// 3. Scroll indicator opacity fade out
-					if (scrollIndicator) {
-						const indicatorOpacity = Math.max(0, 1 - currentScrollY / 150);
-						scrollIndicator.style.setProperty('--scroll-indicator-opacity', `${indicatorOpacity}`);
-					}
+							const pLine3 = Math.min(1, Math.max(0, (pEased - 0.45) / 0.35));
+							const opacity3 = pLine3;
+							let translate3 = 0;
+							if (!prefersReducedMotion) {
+								translate3 = pLine3 * -120 * translateMultiplier;
+							}
+
+							if (tagline) {
+								tagline.style.setProperty('--translate-1', `${translate1}px`);
+								tagline.style.setProperty('--translate-2', `${translate2}px`);
+								tagline.style.setProperty('--translate-3', `${translate3}px`);
+
+								tagline.style.setProperty('--opacity-1', `${opacity1}`);
+								tagline.style.setProperty('--opacity-2', `${opacity2}`);
+								tagline.style.setProperty('--opacity-3', `${opacity3}`);
+							}
+
+							if (scrollIndicator) {
+								const indicatorOpacity = Math.max(0, 1 - currentScrollY / 150);
+								scrollIndicator.style.setProperty('--scroll-indicator-opacity', `${indicatorOpacity}`);
+							}
+
+							// Fade out Stage 1 content as it exits (p > 0.85)
+							let opacity = 1;
+							let translate = 0;
+							let blur = 0;
+							if (p > 0.85) {
+								const factor = (p - 0.85) / 0.15;
+								opacity = 1 - factor;
+								translate = factor * -40;
+								blur = factor * 8;
+							}
+							if (prefersReducedMotion) {
+								translate = 0;
+								blur = 0;
+							}
+							card.style.setProperty('--stage-opacity', `${opacity}`);
+							card.style.setProperty('--stage-translate', `${translate}px`);
+							card.style.setProperty('--stage-blur', `${blur}px`);
+
+						} else {
+							// Stage 2, 3, 4: Card animations
+							let opacity = 0;
+							let translate = 40;
+							let blur = 8;
+
+							if (p < 0.15) {
+								// Entering stage (fade-in, slide-up, unblur)
+								const factor = p / 0.15;
+								opacity = factor;
+								translate = 40 - (factor * 40);
+								blur = 8 - (factor * 8);
+							} else if (p >= 0.15 && p <= 0.85) {
+								// Active stage (stable)
+								opacity = 1;
+								translate = 0;
+								blur = 0;
+							} else {
+								// Exiting stage (fade-out, slide-up/away, blur)
+								const factor = (p - 0.85) / 0.15;
+								if (index === stages.length - 1) {
+									// Last stage stays active as it rolls into footer
+									opacity = 1;
+									translate = 0;
+									blur = 0;
+								} else {
+									opacity = 1 - factor;
+									translate = factor * -40;
+									blur = factor * 8;
+								}
+							}
+
+							if (prefersReducedMotion) {
+								translate = 0;
+								blur = 0;
+							}
+
+							card.style.setProperty('--stage-opacity', `${opacity}`);
+							card.style.setProperty('--stage-translate', `${translate}px`);
+							card.style.setProperty('--stage-blur', `${blur}px`);
+						}
+					});
 
 					// Continue loop if not settled
 					if (currentScrollY !== targetScrollY) {
@@ -621,12 +799,22 @@ const latestPosts = (await getCollection('blog'))
 						body.style.removeProperty('--bg-opacity');
 						body.style.removeProperty('--bg-translate');
 						body.style.removeProperty('--bg-scale');
-						tagline.style.removeProperty('--translate-1');
-						tagline.style.removeProperty('--translate-2');
-						tagline.style.removeProperty('--translate-3');
-						tagline.style.removeProperty('--opacity-1');
-						tagline.style.removeProperty('--opacity-2');
-						tagline.style.removeProperty('--opacity-3');
+						stages.forEach((stage) => {
+							const card = stage.querySelector('.journey-card') || stage.querySelector('.hero-content');
+							if (card) {
+								card.style.removeProperty('--stage-opacity');
+								card.style.removeProperty('--stage-translate');
+								card.style.removeProperty('--stage-blur');
+							}
+						});
+						if (tagline) {
+							tagline.style.removeProperty('--translate-1');
+							tagline.style.removeProperty('--translate-2');
+							tagline.style.removeProperty('--translate-3');
+							tagline.style.removeProperty('--opacity-1');
+							tagline.style.removeProperty('--opacity-2');
+							tagline.style.removeProperty('--opacity-3');
+						}
 						if (scrollIndicator) {
 							scrollIndicator.style.removeProperty('--scroll-indicator-opacity');
 						}

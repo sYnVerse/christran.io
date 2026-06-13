@@ -24,7 +24,7 @@ export const projects: Project[] = [
     techStack: ['Proxmox', 'pfSense', 'Docker', 'Ansible'],
     image: '/img/projects/homelab.webp',
     detailUrl: '/portfolio/homelab',
-    featured: true,
+    featured: false,
     order: 1,
   },
   {
@@ -38,7 +38,7 @@ export const projects: Project[] = [
     image: '/img/projects/synapse.webp',
     liveUrl: 'https://synapse.christran.io',
     detailUrl: '/portfolio/synapse',
-    featured: true,
+    featured: false,
     order: 2,
   },
   {
@@ -67,7 +67,7 @@ export const projects: Project[] = [
     image: '/img/projects/synid.webp',
     liveUrl: 'https://auth.christran.io',
     detailUrl: '/portfolio/synid',
-    featured: true,
+    featured: false,
     order: 4,
   },
   {
@@ -81,7 +81,7 @@ export const projects: Project[] = [
     image: '/img/projects/synx.webp',
     liveUrl: 'https://synx.christran.io',
     detailUrl: '/portfolio/synx',
-    featured: true,
+    featured: false,
     order: 5,
   },
   {
