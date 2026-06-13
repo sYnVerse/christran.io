@@ -1,0 +1,878 @@
+---
+---
+
+<section class="llm-calc" id="llm-calc-widget" aria-label="LLM Hardware Requirements Calculator">
+	<div class="llm-calc-panel">
+		<div class="llm-calc-header">
+			<div class="llm-calc-icon" aria-hidden="true">
+				<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+					<rect x="4" y="4" width="16" height="16" rx="2"/>
+					<rect x="9" y="9" width="6" height="6"/>
+					<line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/>
+					<line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/>
+					<line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/>
+					<line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/>
+				</svg>
+			</div>
+			<div>
+				<h3 class="llm-calc-title">LLM Hardware Calculator</h3>
+				<p class="llm-calc-subtitle">Estimate VRAM requirements for self-hosted models</p>
+			</div>
+		</div>
+
+		<!-- Model Parameters Slider -->
+		<div class="llm-calc-control-group">
+			<div class="llm-calc-label-row">
+				<label class="llm-calc-label" for="llm-param-slider">Model Size</label>
+				<span class="llm-calc-param-display" id="llm-param-display">70B</span>
+			</div>
+			<div class="llm-slider-container">
+				<input
+					type="range"
+					id="llm-param-slider"
+					class="llm-range-slider"
+					min="0"
+					max="11"
+					value="8"
+					step="1"
+					aria-label="Model parameter count"
+					aria-valuetext="70B parameters"
+				/>
+				<div class="llm-slider-ticks" aria-hidden="true">
+					<span class="llm-tick">1B</span>
+					<span class="llm-tick">3B</span>
+					<span class="llm-tick">7B</span>
+					<span class="llm-tick">8B</span>
+					<span class="llm-tick">13B</span>
+					<span class="llm-tick">14B</span>
+					<span class="llm-tick">30B</span>
+					<span class="llm-tick">34B</span>
+					<span class="llm-tick">70B</span>
+					<span class="llm-tick">72B</span>
+					<span class="llm-tick">180B</span>
+					<span class="llm-tick">405B</span>
+				</div>
+			</div>
+		</div>
+
+		<!-- Quantization & Context Controls Row -->
+		<div class="llm-calc-controls-row">
+			<!-- Quantization Selector -->
+			<div class="llm-calc-control-group llm-calc-control-flex">
+				<label class="llm-calc-label">Quantization</label>
+				<div class="llm-pill-group" role="radiogroup" aria-label="Quantization level">
+					<button class="llm-pill" data-quant="16" role="radio" aria-checked="false">FP16</button>
+					<button class="llm-pill" data-quant="8" role="radio" aria-checked="false">Q8</button>
+					<button class="llm-pill" data-quant="5" role="radio" aria-checked="false">Q5</button>
+					<button class="llm-pill active" data-quant="4" role="radio" aria-checked="true">Q4</button>
+				</div>
+			</div>
+
+			<!-- Context Length Selector -->
+			<div class="llm-calc-control-group llm-calc-control-flex">
+				<label class="llm-calc-label" for="llm-context-select">Context Length</label>
+				<div class="llm-select-wrapper">
+					<select id="llm-context-select" class="llm-select" aria-label="Context window length">
+						<option value="2048">2,048</option>
+						<option value="4096">4,096</option>
+						<option value="8192" selected>8,192</option>
+						<option value="16384">16,384</option>
+						<option value="32768">32,768</option>
+						<option value="65536">65,536</option>
+						<option value="131072">131,072</option>
+					</select>
+					<svg class="llm-select-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+				</div>
+			</div>
+		</div>
+
+		<!-- Memory Breakdown Bar -->
+		<div class="llm-calc-control-group">
+			<label class="llm-calc-label">Memory Breakdown</label>
+			<div class="llm-memory-bar-container">
+				<div class="llm-memory-bar" id="llm-memory-bar" aria-label="Memory breakdown visualization">
+					<div class="llm-bar-segment llm-bar-weights" id="llm-bar-weights" aria-label="Model weights"></div>
+					<div class="llm-bar-segment llm-bar-kv" id="llm-bar-kv" aria-label="KV cache"></div>
+					<div class="llm-bar-segment llm-bar-overhead" id="llm-bar-overhead" aria-label="Activation overhead"></div>
+				</div>
+				<div class="llm-memory-legend">
+					<span class="llm-legend-item"><span class="llm-legend-dot llm-dot-weights"></span>Weights <span class="llm-legend-value" id="llm-val-weights">0 GB</span></span>
+					<span class="llm-legend-item"><span class="llm-legend-dot llm-dot-kv"></span>KV Cache <span class="llm-legend-value" id="llm-val-kv">0 GB</span></span>
+					<span class="llm-legend-item"><span class="llm-legend-dot llm-dot-overhead"></span>Overhead <span class="llm-legend-value" id="llm-val-overhead">0 GB</span></span>
+				</div>
+			</div>
+		</div>
+
+		<!-- Total VRAM Display -->
+		<div class="llm-total-vram-card" id="llm-total-card">
+			<div class="llm-total-label">Total VRAM Required</div>
+			<div class="llm-total-value">
+				<span class="llm-total-number" id="llm-total-vram">0</span>
+				<span class="llm-total-unit">GB</span>
+			</div>
+		</div>
+
+		<!-- Hardware Recommendation -->
+		<div class="llm-hw-card" id="llm-hw-card">
+			<div class="llm-hw-icon-wrap" id="llm-hw-icon-wrap" aria-hidden="true">
+				<svg id="llm-hw-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+					<rect x="2" y="6" width="20" height="12" rx="2"/>
+					<line x1="6" y1="10" x2="6" y2="14"/>
+					<line x1="10" y1="10" x2="10" y2="14"/>
+					<line x1="14" y1="10" x2="14" y2="14"/>
+					<line x1="18" y1="10" x2="18" y2="14"/>
+				</svg>
+			</div>
+			<div class="llm-hw-info">
+				<div class="llm-hw-rec-label">Recommended Hardware</div>
+				<div class="llm-hw-name" id="llm-hw-name">RTX 3090 / 4090 (24GB)</div>
+				<div class="llm-hw-note" id="llm-hw-note">Single consumer GPU — best price/performance</div>
+			</div>
+		</div>
+	</div>
+
+	<noscript>
+		<div class="llm-calc-panel llm-noscript-panel">
+			<h3 class="llm-calc-title" style="margin-bottom: 0.25rem;">LLM Hardware Calculator</h3>
+			<p class="llm-calc-subtitle" style="margin-bottom: 1.25rem;">JavaScript is required for the interactive calculator. Here's a quick reference:</p>
+			<table class="llm-noscript-table">
+				<thead>
+					<tr>
+						<th>Model</th>
+						<th>Q4 VRAM</th>
+						<th>FP16 VRAM</th>
+						<th>Recommended GPU</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr><td>Llama 3 8B</td><td>~5.3 GB</td><td>~16.5 GB</td><td>RTX 4070 Ti (16GB)</td></tr>
+					<tr><td>Llama 3 70B</td><td>~40.3 GB</td><td>~140.7 GB</td><td>2× A100 (160GB)</td></tr>
+					<tr><td>Llama 3 405B</td><td>~227 GB</td><td>~810 GB</td><td>Multi-GPU cluster</td></tr>
+				</tbody>
+			</table>
+		</div>
+	</noscript>
+</section>
+
+<style>
+	.llm-calc {
+		max-width: 100%;
+		margin: 2rem 0;
+		font-family: "Atkinson", sans-serif;
+	}
+
+	.llm-calc-panel {
+		background: rgba(11, 16, 33, 0.85);
+		backdrop-filter: blur(12px);
+		-webkit-backdrop-filter: blur(12px);
+		border: 1px solid rgba(123, 158, 255, 0.15);
+		border-radius: 16px;
+		padding: 1.75rem;
+		box-shadow:
+			0 4px 24px rgba(0, 0, 0, 0.3),
+			0 0 0 1px rgba(123, 158, 255, 0.08),
+			inset 0 1px 0 rgba(255, 255, 255, 0.04);
+	}
+
+	/* Header */
+	.llm-calc-header {
+		display: flex;
+		align-items: center;
+		gap: 0.875rem;
+		margin-bottom: 1.75rem;
+	}
+	.llm-calc-icon {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 48px;
+		height: 48px;
+		border-radius: 12px;
+		background: linear-gradient(135deg, rgba(123, 158, 255, 0.15), rgba(75, 110, 223, 0.08));
+		border: 1px solid rgba(123, 158, 255, 0.2);
+		color: var(--accent);
+		flex-shrink: 0;
+	}
+	.llm-calc-title {
+		font-size: 1.2rem;
+		font-weight: 700;
+		color: rgb(var(--black));
+		margin: 0;
+		letter-spacing: -0.01em;
+		line-height: 1.3;
+	}
+	.llm-calc-subtitle {
+		font-size: 0.82rem;
+		color: rgb(var(--gray));
+		margin: 0.15rem 0 0 0;
+		line-height: 1.3;
+	}
+
+	/* Control Groups */
+	.llm-calc-control-group {
+		margin-bottom: 1.5rem;
+	}
+	.llm-calc-label {
+		display: block;
+		font-size: 0.68rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.1em;
+		color: rgb(var(--gray));
+		margin-bottom: 0.6rem;
+	}
+	.llm-calc-label-row {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		margin-bottom: 0.6rem;
+	}
+	.llm-calc-label-row .llm-calc-label {
+		margin-bottom: 0;
+	}
+
+	/* Parameter Display */
+	.llm-calc-param-display {
+		font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace;
+		font-size: 1.8rem;
+		font-weight: 800;
+		color: var(--accent);
+		letter-spacing: -0.03em;
+		line-height: 1;
+		text-shadow: 0 0 20px rgba(123, 158, 255, 0.3);
+		transition: transform 0.15s ease;
+	}
+
+	/* Range Slider */
+	.llm-slider-container {
+		position: relative;
+	}
+	.llm-range-slider {
+		-webkit-appearance: none;
+		appearance: none;
+		width: 100%;
+		height: 6px;
+		border-radius: 3px;
+		background: linear-gradient(90deg, rgba(123, 158, 255, 0.12), rgba(123, 158, 255, 0.25));
+		outline: none;
+		cursor: pointer;
+		margin: 0;
+	}
+	.llm-range-slider::-webkit-slider-thumb {
+		-webkit-appearance: none;
+		appearance: none;
+		width: 22px;
+		height: 22px;
+		border-radius: 50%;
+		background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+		border: 2px solid rgba(255, 255, 255, 0.25);
+		cursor: pointer;
+		box-shadow: 0 2px 8px rgba(123, 158, 255, 0.4), 0 0 0 4px rgba(123, 158, 255, 0.1);
+		transition: box-shadow 0.2s ease, transform 0.15s ease;
+	}
+	.llm-range-slider::-webkit-slider-thumb:hover {
+		box-shadow: 0 2px 12px rgba(123, 158, 255, 0.6), 0 0 0 6px rgba(123, 158, 255, 0.15);
+		transform: scale(1.1);
+	}
+	.llm-range-slider::-moz-range-thumb {
+		width: 22px;
+		height: 22px;
+		border-radius: 50%;
+		background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+		border: 2px solid rgba(255, 255, 255, 0.25);
+		cursor: pointer;
+		box-shadow: 0 2px 8px rgba(123, 158, 255, 0.4), 0 0 0 4px rgba(123, 158, 255, 0.1);
+	}
+	.llm-range-slider::-moz-range-track {
+		height: 6px;
+		border-radius: 3px;
+		background: linear-gradient(90deg, rgba(123, 158, 255, 0.12), rgba(123, 158, 255, 0.25));
+		border: none;
+	}
+
+	/* Slider Ticks */
+	.llm-slider-ticks {
+		display: flex;
+		justify-content: space-between;
+		padding: 0.4rem 0 0 0;
+	}
+	.llm-tick {
+		font-size: 0.58rem;
+		color: rgba(176, 186, 209, 0.5);
+		font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace;
+		text-align: center;
+		width: 0;
+		display: flex;
+		justify-content: center;
+		user-select: none;
+	}
+
+	/* Controls Row */
+	.llm-calc-controls-row {
+		display: flex;
+		gap: 1.5rem;
+		flex-wrap: wrap;
+	}
+	.llm-calc-control-flex {
+		flex: 1;
+		min-width: 180px;
+	}
+
+	/* Pill Toggle Group */
+	.llm-pill-group {
+		display: flex;
+		gap: 0;
+		background: rgba(30, 35, 50, 0.6);
+		border-radius: 10px;
+		padding: 3px;
+		border: 1px solid rgba(123, 158, 255, 0.1);
+	}
+	.llm-pill {
+		flex: 1;
+		padding: 0.45rem 0.75rem;
+		border: none;
+		border-radius: 8px;
+		background: transparent;
+		color: rgb(var(--gray));
+		font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace;
+		font-size: 0.75rem;
+		font-weight: 600;
+		cursor: pointer;
+		transition: all 0.25s ease;
+		white-space: nowrap;
+	}
+	.llm-pill:hover:not(.active) {
+		color: rgb(var(--gray-dark));
+		background: rgba(123, 158, 255, 0.06);
+	}
+	.llm-pill.active {
+		background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+		color: #fff;
+		box-shadow: 0 2px 8px rgba(123, 158, 255, 0.35);
+	}
+
+	/* Select Dropdown */
+	.llm-select-wrapper {
+		position: relative;
+	}
+	.llm-select {
+		width: 100%;
+		padding: 0.5rem 2rem 0.5rem 0.75rem;
+		background: rgba(30, 35, 50, 0.6);
+		border: 1px solid rgba(123, 158, 255, 0.15);
+		border-radius: 10px;
+		color: rgb(var(--gray-dark));
+		font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace;
+		font-size: 0.8rem;
+		cursor: pointer;
+		outline: none;
+		-webkit-appearance: none;
+		appearance: none;
+		transition: border-color 0.2s ease, box-shadow 0.2s ease;
+	}
+	.llm-select:hover,
+	.llm-select:focus {
+		border-color: rgba(123, 158, 255, 0.35);
+		box-shadow: 0 0 0 3px rgba(123, 158, 255, 0.08);
+	}
+	.llm-select option {
+		background: #1a1d29;
+		color: rgb(var(--gray-dark));
+	}
+	.llm-select-chevron {
+		position: absolute;
+		right: 0.65rem;
+		top: 50%;
+		transform: translateY(-50%);
+		color: rgb(var(--gray));
+		pointer-events: none;
+	}
+
+	/* Memory Breakdown Bar */
+	.llm-memory-bar-container {
+		background: rgba(30, 35, 50, 0.5);
+		border-radius: 12px;
+		padding: 1rem;
+		border: 1px solid rgba(123, 158, 255, 0.08);
+	}
+	.llm-memory-bar {
+		display: flex;
+		height: 28px;
+		border-radius: 8px;
+		overflow: hidden;
+		background: rgba(11, 16, 33, 0.6);
+		margin-bottom: 0.75rem;
+	}
+	.llm-bar-segment {
+		height: 100%;
+		transition: width 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+		min-width: 0;
+		position: relative;
+	}
+	.llm-bar-weights {
+		background: linear-gradient(135deg, #7B9EFF, #5B7EDF);
+	}
+	.llm-bar-kv {
+		background: linear-gradient(135deg, #6EE7B7, #34D399);
+	}
+	.llm-bar-overhead {
+		background: linear-gradient(135deg, #FCD34D, #F59E0B);
+	}
+
+	/* Memory Legend */
+	.llm-memory-legend {
+		display: flex;
+		gap: 1.25rem;
+		flex-wrap: wrap;
+	}
+	.llm-legend-item {
+		display: flex;
+		align-items: center;
+		gap: 0.35rem;
+		font-size: 0.72rem;
+		color: rgb(var(--gray));
+	}
+	.llm-legend-dot {
+		width: 8px;
+		height: 8px;
+		border-radius: 50%;
+		flex-shrink: 0;
+	}
+	.llm-dot-weights { background: #7B9EFF; }
+	.llm-dot-kv { background: #6EE7B7; }
+	.llm-dot-overhead { background: #FCD34D; }
+	.llm-legend-value {
+		font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace;
+		font-weight: 600;
+		color: rgb(var(--gray-dark));
+	}
+
+	/* Total VRAM Card */
+	.llm-total-vram-card {
+		text-align: center;
+		padding: 1.25rem;
+		margin-bottom: 1rem;
+		background: linear-gradient(135deg, rgba(123, 158, 255, 0.08), rgba(75, 110, 223, 0.04));
+		border: 1px solid rgba(123, 158, 255, 0.15);
+		border-radius: 14px;
+		transition: border-color 0.3s ease, box-shadow 0.3s ease;
+	}
+	.llm-total-label {
+		font-size: 0.68rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.1em;
+		color: rgb(var(--gray));
+		margin-bottom: 0.35rem;
+	}
+	.llm-total-value {
+		display: flex;
+		align-items: baseline;
+		justify-content: center;
+		gap: 0.3rem;
+	}
+	.llm-total-number {
+		font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace;
+		font-size: 3rem;
+		font-weight: 800;
+		color: rgb(var(--black));
+		line-height: 1;
+		letter-spacing: -0.03em;
+		transition: color 0.3s ease;
+	}
+	.llm-total-unit {
+		font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace;
+		font-size: 1.2rem;
+		font-weight: 600;
+		color: rgb(var(--gray));
+	}
+
+	/* Glow states for total card */
+	.llm-total-vram-card.glow-green {
+		border-color: rgba(110, 231, 183, 0.3);
+		box-shadow: 0 0 20px rgba(110, 231, 183, 0.08);
+	}
+	.llm-total-vram-card.glow-green .llm-total-number { color: #6EE7B7; }
+
+	.llm-total-vram-card.glow-yellow {
+		border-color: rgba(252, 211, 77, 0.3);
+		box-shadow: 0 0 20px rgba(252, 211, 77, 0.08);
+	}
+	.llm-total-vram-card.glow-yellow .llm-total-number { color: #FCD34D; }
+
+	.llm-total-vram-card.glow-orange {
+		border-color: rgba(251, 146, 60, 0.3);
+		box-shadow: 0 0 20px rgba(251, 146, 60, 0.08);
+	}
+	.llm-total-vram-card.glow-orange .llm-total-number { color: #FB923C; }
+
+	.llm-total-vram-card.glow-red {
+		border-color: rgba(248, 113, 113, 0.3);
+		box-shadow: 0 0 20px rgba(248, 113, 113, 0.08);
+	}
+	.llm-total-vram-card.glow-red .llm-total-number { color: #F87171; }
+
+	/* Hardware Recommendation Card */
+	.llm-hw-card {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+		padding: 1rem 1.25rem;
+		background: rgba(30, 35, 50, 0.5);
+		border: 1px solid rgba(123, 158, 255, 0.1);
+		border-radius: 12px;
+		transition: all 0.3s ease;
+	}
+	.llm-hw-card:hover {
+		border-color: rgba(123, 158, 255, 0.25);
+	}
+	.llm-hw-icon-wrap {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 52px;
+		height: 52px;
+		border-radius: 12px;
+		background: linear-gradient(135deg, rgba(123, 158, 255, 0.12), rgba(75, 110, 223, 0.06));
+		border: 1px solid rgba(123, 158, 255, 0.15);
+		color: var(--accent);
+		flex-shrink: 0;
+		transition: all 0.3s ease;
+	}
+	.llm-hw-rec-label {
+		font-size: 0.65rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.1em;
+		color: rgb(var(--gray));
+		margin-bottom: 0.2rem;
+	}
+	.llm-hw-name {
+		font-size: 1rem;
+		font-weight: 700;
+		color: rgb(var(--black));
+		line-height: 1.3;
+		transition: opacity 0.2s ease;
+	}
+	.llm-hw-note {
+		font-size: 0.72rem;
+		color: rgb(var(--gray));
+		margin-top: 0.15rem;
+		line-height: 1.3;
+	}
+
+	/* Noscript Table */
+	.llm-noscript-panel {
+		margin-top: 0;
+	}
+	.llm-noscript-table {
+		width: 100%;
+		border-collapse: collapse;
+		font-size: 0.82rem;
+	}
+	.llm-noscript-table th {
+		text-align: left;
+		font-size: 0.68rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		color: rgb(var(--gray));
+		padding: 0.5rem 0.75rem;
+		border-bottom: 1px solid rgba(123, 158, 255, 0.15);
+	}
+	.llm-noscript-table td {
+		padding: 0.6rem 0.75rem;
+		color: rgb(var(--gray-dark));
+		border-bottom: 1px solid rgba(123, 158, 255, 0.06);
+		font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace;
+		font-size: 0.78rem;
+	}
+	.llm-noscript-table td:first-child {
+		font-family: "Atkinson", sans-serif;
+		font-weight: 600;
+		color: rgb(var(--black));
+	}
+	.llm-noscript-table tr:last-child td {
+		border-bottom: none;
+	}
+
+	/* Responsive */
+	@media (max-width: 520px) {
+		.llm-calc-panel {
+			padding: 1.25rem 1rem;
+			border-radius: 12px;
+		}
+		.llm-calc-header {
+			gap: 0.65rem;
+			margin-bottom: 1.25rem;
+		}
+		.llm-calc-icon {
+			width: 40px;
+			height: 40px;
+			border-radius: 10px;
+		}
+		.llm-calc-icon svg {
+			width: 22px;
+			height: 22px;
+		}
+		.llm-calc-title {
+			font-size: 1.05rem;
+		}
+		.llm-calc-controls-row {
+			flex-direction: column;
+			gap: 0;
+		}
+		.llm-calc-control-flex {
+			min-width: 0;
+		}
+		.llm-calc-param-display {
+			font-size: 1.5rem;
+		}
+		.llm-total-number {
+			font-size: 2.5rem;
+		}
+		.llm-slider-ticks {
+			display: none;
+		}
+		.llm-memory-legend {
+			gap: 0.75rem;
+		}
+		.llm-hw-card {
+			flex-direction: column;
+			text-align: center;
+			gap: 0.65rem;
+		}
+		.llm-hw-info {
+			text-align: center;
+		}
+		.llm-noscript-table {
+			font-size: 0.72rem;
+		}
+		.llm-noscript-table th,
+		.llm-noscript-table td {
+			padding: 0.4rem 0.4rem;
+		}
+	}
+</style>
+
+<script>
+	function initLlmCalc() {
+		// Model sizes in billions
+		const MODEL_SIZES = [1, 3, 7, 8, 13, 14, 30, 34, 70, 72, 180, 405];
+
+		// DOM refs
+		const slider = document.getElementById('llm-param-slider') as HTMLInputElement;
+		const paramDisplay = document.getElementById('llm-param-display');
+		const contextSelect = document.getElementById('llm-context-select') as HTMLSelectElement;
+		const pills = document.querySelectorAll('.llm-pill[data-quant]');
+		const barWeights = document.getElementById('llm-bar-weights');
+		const barKv = document.getElementById('llm-bar-kv');
+		const barOverhead = document.getElementById('llm-bar-overhead');
+		const valWeights = document.getElementById('llm-val-weights');
+		const valKv = document.getElementById('llm-val-kv');
+		const valOverhead = document.getElementById('llm-val-overhead');
+		const totalVram = document.getElementById('llm-total-vram');
+		const totalCard = document.getElementById('llm-total-card');
+		const hwName = document.getElementById('llm-hw-name');
+		const hwNote = document.getElementById('llm-hw-note');
+		const hwIconWrap = document.getElementById('llm-hw-icon-wrap');
+
+		if (!slider || !paramDisplay || !contextSelect || !totalVram || !totalCard || !hwName || !hwNote) return;
+
+		let currentQuant = 4;
+		let animFrame: number | null = null;
+		let animatedTotal = 0;
+
+		// Get hardware recommendation
+		function getHardwareRec(totalGB: number): { name: string; note: string; tier: string } {
+			if (totalGB < 6) return {
+				name: 'RTX 3060 12GB / Arc A770 16GB',
+				note: 'Entry-level — great for small models and experimentation',
+				tier: 'green'
+			};
+			if (totalGB < 12) return {
+				name: 'RTX 4070 Ti Super (16GB)',
+				note: 'Mid-range consumer GPU — solid for 7B–13B models',
+				tier: 'green'
+			};
+			if (totalGB < 24) return {
+				name: 'RTX 3090 / RTX 4090 (24GB)',
+				note: 'Single consumer GPU — best price/performance',
+				tier: 'yellow'
+			};
+			if (totalGB < 48) return {
+				name: 'RTX 3090 × 2 / Mac Studio M2 Ultra (64GB unified)',
+				note: 'Dual GPU or Apple Silicon — for 30B+ models',
+				tier: 'orange'
+			};
+			if (totalGB < 80) return {
+				name: 'NVIDIA A100 (80GB) / H100 (80GB)',
+				note: 'Data center GPU — professional inference',
+				tier: 'orange'
+			};
+			if (totalGB < 128) return {
+				name: 'Mac Studio M4 Ultra (128GB) / A100 × 2',
+				note: 'High memory unified architecture or multi-GPU',
+				tier: 'red'
+			};
+			return {
+				name: 'Multi-GPU Cluster Required',
+				note: `${Math.ceil(totalGB / 80)}× A100 80GB or equivalent — data center deployment`,
+				tier: 'red'
+			};
+		}
+
+		// Calculate VRAM requirements
+		function calculate() {
+			const idx = parseInt(slider.value);
+			const params = MODEL_SIZES[idx];
+			const paramsBillions = params;
+			const paramsActual = params * 1e9;
+			const bits = currentQuant;
+			const contextLength = parseInt(contextSelect.value);
+
+			// Weight memory in GB
+			const weightMemGB = (paramsActual * bits) / 8 / 1e9;
+
+			// KV Cache estimation (simplified)
+			// ~2 bytes per token per parameter (scaled), simplified formula
+			const kvCacheGB = contextLength * paramsActual * 2e-9 / 1e9 * 1000;
+			// More intuitive: KV cache ≈ contextLength * numParams * 0.000000002 bytes → GB
+			// Simplified: (contextLength * params_in_billions * 2) / 1000
+			const kvCacheGBSimple = (contextLength * paramsBillions * 2) / 1000;
+
+			// Overhead (10% of weights for activations/runtime)
+			const overheadGB = weightMemGB * 0.1;
+
+			// Total
+			const totalGB = weightMemGB + kvCacheGBSimple + overheadGB;
+
+			// Update param display
+			paramDisplay.textContent = `${paramsBillions}B`;
+			slider.setAttribute('aria-valuetext', `${paramsBillions}B parameters`);
+
+			// Update bar chart
+			const maxBar = totalGB;
+			if (maxBar > 0) {
+				const wPct = (weightMemGB / maxBar) * 100;
+				const kvPct = (kvCacheGBSimple / maxBar) * 100;
+				const oPct = (overheadGB / maxBar) * 100;
+				if (barWeights) barWeights.style.width = `${wPct}%`;
+				if (barKv) barKv.style.width = `${kvPct}%`;
+				if (barOverhead) barOverhead.style.width = `${oPct}%`;
+			}
+
+			// Update legend values
+			if (valWeights) valWeights.textContent = formatGB(weightMemGB);
+			if (valKv) valKv.textContent = formatGB(kvCacheGBSimple);
+			if (valOverhead) valOverhead.textContent = formatGB(overheadGB);
+
+			// Animate total number
+			animateValue(totalGB);
+
+			// Update glow class
+			const rec = getHardwareRec(totalGB);
+			totalCard.className = 'llm-total-vram-card';
+			if (totalGB < 16) totalCard.classList.add('glow-green');
+			else if (totalGB < 48) totalCard.classList.add('glow-yellow');
+			else if (totalGB < 128) totalCard.classList.add('glow-orange');
+			else totalCard.classList.add('glow-red');
+
+			// Update hardware recommendation
+			hwName.textContent = rec.name;
+			hwNote.textContent = rec.note;
+
+			// Update icon color
+			if (hwIconWrap) {
+				const colors: Record<string, string> = {
+					green: 'rgba(110, 231, 183, 0.15)',
+					yellow: 'rgba(252, 211, 77, 0.15)',
+					orange: 'rgba(251, 146, 60, 0.15)',
+					red: 'rgba(248, 113, 113, 0.15)',
+				};
+				const borderColors: Record<string, string> = {
+					green: 'rgba(110, 231, 183, 0.25)',
+					yellow: 'rgba(252, 211, 77, 0.25)',
+					orange: 'rgba(251, 146, 60, 0.25)',
+					red: 'rgba(248, 113, 113, 0.25)',
+				};
+				hwIconWrap.style.background = `linear-gradient(135deg, ${colors[rec.tier] || colors.green}, transparent)`;
+				hwIconWrap.style.borderColor = borderColors[rec.tier] || borderColors.green;
+			}
+		}
+
+		function formatGB(gb: number): string {
+			if (gb < 0.01) return '< 0.01 GB';
+			if (gb < 1) return `${gb.toFixed(2)} GB`;
+			if (gb < 10) return `${gb.toFixed(1)} GB`;
+			return `${Math.round(gb)} GB`;
+		}
+
+		function animateValue(target: number) {
+			const start = animatedTotal;
+			const duration = 400;
+			const startTime = performance.now();
+
+			if (animFrame) cancelAnimationFrame(animFrame);
+
+			function step(now: number) {
+				const elapsed = now - startTime;
+				const progress = Math.min(elapsed / duration, 1);
+				// Ease out cubic
+				const eased = 1 - Math.pow(1 - progress, 3);
+				const current = start + (target - start) * eased;
+				animatedTotal = current;
+
+				if (totalVram) {
+					if (current < 1) totalVram.textContent = current.toFixed(2);
+					else if (current < 10) totalVram.textContent = current.toFixed(1);
+					else totalVram.textContent = Math.round(current).toString();
+				}
+
+				if (progress < 1) {
+					animFrame = requestAnimationFrame(step);
+				} else {
+					animatedTotal = target;
+				}
+			}
+			animFrame = requestAnimationFrame(step);
+		}
+
+		// Event: Slider
+		slider.addEventListener('input', () => {
+			// Pulse effect on param display
+			paramDisplay.style.transform = 'scale(1.08)';
+			setTimeout(() => { paramDisplay.style.transform = 'scale(1)'; }, 150);
+			calculate();
+		});
+
+		// Event: Quantization pills
+		pills.forEach(pill => {
+			pill.addEventListener('click', () => {
+				pills.forEach(p => {
+					p.classList.remove('active');
+					p.setAttribute('aria-checked', 'false');
+				});
+				pill.classList.add('active');
+				pill.setAttribute('aria-checked', 'true');
+				currentQuant = parseInt((pill as HTMLElement).dataset.quant || '4');
+				calculate();
+			});
+		});
+
+		// Event: Context select
+		contextSelect.addEventListener('change', calculate);
+
+		// Initial calculation
+		calculate();
+	}
+
+	// Initialize on DOM ready and on Astro page navigation
+	document.addEventListener('DOMContentLoaded', initLlmCalc);
+	document.addEventListener('astro:after-swap', initLlmCalc);
+
+	// Also init immediately if DOM is already loaded (SPA navigation)
+	if (document.readyState === 'complete' || document.readyState === 'interactive') {
+		initLlmCalc();
+	}
+</script>
