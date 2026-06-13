@@ -20,7 +20,7 @@ const categoryLabels: Record<string, string> = {
 	<head>
 		<BaseHead
 			title="Portfolio | Chris Tran"
-			description="Projects, apps, and contributions I've built — from AI-powered tools to enterprise infrastructure."
+			description="Projects and apps I've built — from AI-powered tools to enterprise infrastructure."
 		/>
 		<noscript>
 			<style>
@@ -154,6 +154,8 @@ const categoryLabels: Record<string, string> = {
 			}
 
 			.project-item {
+				display: flex;
+				flex-direction: column;
 				transition: opacity 0.3s ease, transform 0.3s ease;
 			}
 
