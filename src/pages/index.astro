@@ -827,7 +827,15 @@ const latestPosts = (await getCollection('blog'))
 					dot.addEventListener('click', () => {
 						const stageElement = stages[index];
 						if (stageElement) {
-							stageElement.scrollIntoView({ behavior: 'smooth' });
+							if (index === 0) {
+								window.scrollTo({ top: 0, behavior: 'smooth' });
+							} else {
+								const offsetTop = stageElement.offsetTop;
+								const stageHeight = stageElement.offsetHeight;
+								const scrollRange = stageHeight - viewportHeight;
+								const targetY = offsetTop + 0.35 * scrollRange;
+								window.scrollTo({ top: targetY, behavior: 'smooth' });
+							}
 						}
 					});
 				});
