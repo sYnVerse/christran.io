@@ -210,11 +210,13 @@ const hasImage = imagePath && images[imagePath];
 		gap: 0.6rem;
 		margin-top: auto;
 		padding-top: 0.5rem;
+		width: 100%;
 	}
 
 	.action-btn {
 		display: inline-flex;
 		align-items: center;
+		justify-content: center;
 		gap: 0.35rem;
 		padding: 0.45rem 0.9rem;
 		border-radius: 6px;
@@ -222,6 +224,27 @@ const hasImage = imagePath && images[imagePath];
 		font-weight: 600;
 		text-decoration: none;
 		transition: all 0.2s ease;
+		box-sizing: border-box;
+	}
+
+	/* Dynamic button layout depending on button count */
+	/* 1 Button: Full width */
+	.card-actions > :first-child:nth-last-child(1) {
+		flex: 1 1 100%;
+	}
+
+	/* 2 Buttons: Split evenly side-by-side */
+	.card-actions > :first-child:nth-last-child(2),
+	.card-actions > :first-child:nth-last-child(2) ~ .action-btn {
+		flex: 1 1 calc(50% - 0.3rem);
+	}
+
+	/* 3 Buttons: First button full-width, next two split side-by-side underneath */
+	.card-actions > :first-child:nth-last-child(3) {
+		flex: 1 1 100%;
+	}
+	.card-actions > :first-child:nth-last-child(3) ~ .action-btn {
+		flex: 1 1 calc(50% - 0.3rem);
 	}
 
 	.action-primary {
@@ -264,6 +287,9 @@ const hasImage = imagePath && images[imagePath];
 		.card-actions {
 			flex-direction: column;
 			align-items: stretch;
+		}
+		.card-actions > .action-btn {
+			flex: 1 1 100% !important;
 		}
 		.action-btn {
 			justify-content: center;
