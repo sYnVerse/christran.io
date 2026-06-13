@@ -1,0 +1,951 @@
+---
+---
+
+<section class="f1-aero-sim" aria-label="F1 Aerodynamics Simulator">
+	<div class="f1-aero-panel">
+		<header class="f1-aero-header">
+			<h3 class="f1-aero-title">F1 Aerodynamics Simulator</h3>
+			<p class="f1-aero-subtitle">Explore how active aero transforms car behavior</p>
+		</header>
+
+		<!-- Mode Toggle -->
+		<div class="f1-mode-toggle-row">
+			<div class="f1-mode-toggle" id="f1-mode-toggle" role="radiogroup" aria-label="Aerodynamic mode">
+				<button
+					class="f1-mode-btn active"
+					id="f1-btn-xmode"
+					role="radio"
+					aria-checked="true"
+					data-mode="x"
+				>
+					<span class="f1-mode-icon">⚡</span>
+					<span class="f1-mode-label">X-Mode</span>
+					<span class="f1-mode-desc">Low Drag</span>
+				</button>
+				<button
+					class="f1-mode-btn"
+					id="f1-btn-zmode"
+					role="radio"
+					aria-checked="false"
+					data-mode="z"
+				>
+					<span class="f1-mode-icon">🏁</span>
+					<span class="f1-mode-label">Z-Mode</span>
+					<span class="f1-mode-desc">High Downforce</span>
+				</button>
+				<div class="f1-mode-slider" id="f1-mode-slider"></div>
+			</div>
+		</div>
+
+		<!-- Speed Slider -->
+		<div class="f1-speed-section">
+			<div class="f1-speed-header">
+				<label class="f1-label" for="f1-speed-input">Speed</label>
+				<output class="f1-speed-value" id="f1-speed-value">220 <span class="f1-unit">km/h</span></output>
+			</div>
+			<input
+				type="range"
+				id="f1-speed-input"
+				min="80"
+				max="360"
+				value="220"
+				step="1"
+				class="f1-range"
+				aria-label="Speed in km/h"
+			/>
+			<div class="f1-speed-marks">
+				<span>80</span>
+				<span>150</span>
+				<span>220</span>
+				<span>290</span>
+				<span>360</span>
+			</div>
+		</div>
+
+		<!-- Car Silhouette -->
+		<div class="f1-car-visual" aria-hidden="true">
+			<div class="f1-car-container">
+				<svg viewBox="0 0 400 120" class="f1-car-svg" id="f1-car-svg">
+					<!-- Ground line -->
+					<line x1="20" y1="105" x2="380" y2="105" stroke="rgba(123,158,255,0.15)" stroke-width="1" stroke-dasharray="4,4"/>
+
+					<!-- Airflow lines (animated) -->
+					<g class="f1-airflow" id="f1-airflow">
+						<line x1="0" y1="30" x2="60" y2="38" stroke="rgba(123,158,255,0.2)" stroke-width="1"/>
+						<line x1="0" y1="50" x2="60" y2="52" stroke="rgba(123,158,255,0.15)" stroke-width="1"/>
+						<line x1="0" y1="70" x2="60" y2="66" stroke="rgba(123,158,255,0.2)" stroke-width="1"/>
+					</g>
+
+					<!-- Car body -->
+					<path d="M80,90 L80,65 L100,55 L140,48 L180,42 L220,40 L270,40 L300,42 L330,50 L345,60 L345,90 Z"
+						fill="rgba(123,158,255,0.08)" stroke="rgba(123,158,255,0.5)" stroke-width="1.5" stroke-linejoin="round"/>
+
+					<!-- Cockpit -->
+					<path d="M170,42 L185,28 L220,25 L240,28 L250,40"
+						fill="rgba(11,16,33,0.9)" stroke="rgba(123,158,255,0.4)" stroke-width="1.2" stroke-linejoin="round"/>
+
+					<!-- Front wing -->
+					<g id="f1-front-wing" class="f1-wing">
+						<line x1="65" y1="88" x2="95" y2="88" stroke="rgba(123,158,255,0.6)" stroke-width="2.5" stroke-linecap="round"/>
+						<line id="f1-front-flap" x1="65" y1="82" x2="92" y2="82" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
+						<line x1="65" y1="95" x2="80" y2="95" stroke="rgba(123,158,255,0.3)" stroke-width="1.5" stroke-linecap="round"/>
+					</g>
+
+					<!-- Rear wing -->
+					<g id="f1-rear-wing" class="f1-wing">
+						<line x1="330" y1="90" x2="358" y2="90" stroke="rgba(123,158,255,0.6)" stroke-width="2.5" stroke-linecap="round"/>
+						<line id="f1-rear-flap" x1="332" y1="84" x2="360" y2="84" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
+						<line x1="338" y1="56" x2="338" y2="90" stroke="rgba(123,158,255,0.3)" stroke-width="1.5"/>
+						<!-- DRS flap -->
+						<line id="f1-drs-flap" x1="330" y1="55" x2="358" y2="55" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"
+							class="f1-drs-flap"/>
+					</g>
+
+					<!-- Wheels -->
+					<ellipse cx="115" cy="95" rx="16" ry="12" fill="rgba(30,35,50,0.9)" stroke="rgba(123,158,255,0.3)" stroke-width="1"/>
+					<ellipse cx="310" cy="95" rx="16" ry="12" fill="rgba(30,35,50,0.9)" stroke="rgba(123,158,255,0.3)" stroke-width="1"/>
+
+					<!-- Diffuser -->
+					<path d="M335,90 L355,100 L365,100" stroke="rgba(123,158,255,0.3)" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+
+					<!-- Downforce arrows -->
+					<g id="f1-downforce-arrows" class="f1-downforce-arrows">
+						<line x1="150" y1="15" x2="150" y2="35" stroke="rgba(123,158,255,0.3)" stroke-width="1.5" marker-end="url(#f1-arrowhead)"/>
+						<line x1="250" y1="12" x2="250" y2="32" stroke="rgba(123,158,255,0.3)" stroke-width="1.5" marker-end="url(#f1-arrowhead)"/>
+						<line x1="340" y1="20" x2="340" y2="48" stroke="rgba(123,158,255,0.4)" stroke-width="1.5" marker-end="url(#f1-arrowhead)"/>
+					</g>
+
+					<defs>
+						<marker id="f1-arrowhead" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+							<path d="M0,0 L6,3 L0,6 Z" fill="rgba(123,158,255,0.5)"/>
+						</marker>
+					</defs>
+
+					<!-- Mode label on car -->
+					<text id="f1-mode-label-svg" x="210" y="75" text-anchor="middle" fill="var(--accent)" font-size="11" font-family="'Atkinson', monospace" font-weight="bold" opacity="0.7">X-MODE</text>
+				</svg>
+
+				<!-- Wing angle indicator -->
+				<div class="f1-wing-angle-badge" id="f1-wing-angle-badge">
+					<span class="f1-wing-angle-label">DRS Flap</span>
+					<span class="f1-wing-angle-val" id="f1-wing-angle-val">Open</span>
+				</div>
+			</div>
+		</div>
+
+		<!-- Gauges Grid -->
+		<div class="f1-gauges-grid">
+			<!-- Drag Column -->
+			<div class="f1-gauge-col">
+				<div class="f1-gauge-card f1-gauge-drag">
+					<div class="f1-gauge-icon">💨</div>
+					<div class="f1-gauge-info">
+						<span class="f1-gauge-label">Drag Coefficient</span>
+						<span class="f1-gauge-number" id="f1-cd-value">0.70</span>
+						<span class="f1-gauge-unit">Cd</span>
+					</div>
+				</div>
+				<div class="f1-gauge-card f1-gauge-drag-force">
+					<div class="f1-gauge-icon">⬅</div>
+					<div class="f1-gauge-info">
+						<span class="f1-gauge-label">Drag Force</span>
+						<span class="f1-gauge-number" id="f1-drag-value">1,601</span>
+						<span class="f1-gauge-unit">N</span>
+					</div>
+				</div>
+			</div>
+
+			<!-- Downforce Column -->
+			<div class="f1-gauge-col">
+				<div class="f1-gauge-card f1-gauge-downforce">
+					<div class="f1-gauge-icon">⬇</div>
+					<div class="f1-gauge-info">
+						<span class="f1-gauge-label">Downforce Coefficient</span>
+						<span class="f1-gauge-number" id="f1-cl-value">2.50</span>
+						<span class="f1-gauge-unit">Cl</span>
+					</div>
+				</div>
+				<div class="f1-gauge-card f1-gauge-downforce-force">
+					<div class="f1-gauge-icon">⏬</div>
+					<div class="f1-gauge-info">
+						<span class="f1-gauge-label">Downforce</span>
+						<span class="f1-gauge-number" id="f1-downforce-value">5,717</span>
+						<span class="f1-gauge-unit">N</span>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- L/D Ratio -->
+		<div class="f1-ld-ratio">
+			<span class="f1-label">Aerodynamic Efficiency (L/D)</span>
+			<span class="f1-ld-number" id="f1-ld-value">3.57</span>
+		</div>
+
+		<!-- Aero Balance Bar -->
+		<div class="f1-balance-section">
+			<div class="f1-balance-header">
+				<span class="f1-label">Aero Balance</span>
+			</div>
+			<div class="f1-balance-bar-wrap">
+				<div class="f1-balance-bar" id="f1-balance-bar">
+					<div class="f1-balance-front" id="f1-balance-front" style="width: 42%">
+						<span class="f1-balance-text">Front</span>
+					</div>
+					<div class="f1-balance-rear" id="f1-balance-rear" style="width: 58%">
+						<span class="f1-balance-text">Rear</span>
+					</div>
+				</div>
+				<div class="f1-balance-values">
+					<span id="f1-balance-front-pct">42%</span>
+					<span id="f1-balance-rear-pct">58%</span>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<noscript>
+		<div class="f1-aero-panel f1-noscript-panel">
+			<h3 class="f1-aero-title">F1 Aerodynamics — 2026 Regulations</h3>
+			<p class="f1-aero-subtitle">Active aero comparison (JavaScript required for interactive version)</p>
+			<table class="f1-noscript-table">
+				<thead>
+					<tr>
+						<th>Parameter</th>
+						<th>X-Mode (Low Drag)</th>
+						<th>Z-Mode (High Downforce)</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr><td>Drag Coefficient (Cd)</td><td>0.70</td><td>1.05</td></tr>
+					<tr><td>Downforce Coefficient (Cl)</td><td>2.50</td><td>4.50</td></tr>
+					<tr><td>Drag Force @ 300 km/h</td><td>3,543 N</td><td>5,315 N</td></tr>
+					<tr><td>Downforce @ 300 km/h</td><td>12,654 N</td><td>22,778 N</td></tr>
+					<tr><td>L/D Ratio</td><td>3.57</td><td>4.29</td></tr>
+					<tr><td>Front Aero Balance</td><td>42%</td><td>46%</td></tr>
+					<tr><td>Rear Wing DRS Flap</td><td>Open (flat)</td><td>Closed (angled)</td></tr>
+				</tbody>
+			</table>
+		</div>
+	</noscript>
+</section>
+
+<style>
+	.f1-aero-sim {
+		max-width: 100%;
+		margin: 2rem 0;
+		font-family: "Atkinson", sans-serif;
+	}
+
+	.f1-aero-panel {
+		background: rgba(11, 16, 33, 0.85);
+		backdrop-filter: blur(12px);
+		-webkit-backdrop-filter: blur(12px);
+		border: 1px solid rgba(123, 158, 255, 0.15);
+		border-radius: 16px;
+		padding: 2rem;
+		box-shadow:
+			0 4px 24px rgba(0, 0, 0, 0.3),
+			0 0 60px rgba(123, 158, 255, 0.04);
+	}
+
+	/* Header */
+	.f1-aero-header {
+		text-align: center;
+		margin-bottom: 1.75rem;
+	}
+
+	.f1-aero-title {
+		font-size: 1.35rem;
+		font-weight: 700;
+		color: rgb(var(--black));
+		margin: 0 0 0.35rem;
+		letter-spacing: -0.01em;
+	}
+
+	.f1-aero-subtitle {
+		font-size: 0.85rem;
+		color: rgb(var(--gray));
+		margin: 0;
+		opacity: 0.8;
+	}
+
+	/* Labels */
+	.f1-label {
+		font-size: 0.7rem;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		color: rgb(var(--gray));
+		font-weight: 600;
+	}
+
+	.f1-unit {
+		font-size: 0.7em;
+		color: rgb(var(--gray));
+		opacity: 0.7;
+		font-weight: 400;
+	}
+
+	/* Mode Toggle */
+	.f1-mode-toggle-row {
+		display: flex;
+		justify-content: center;
+		margin-bottom: 1.5rem;
+	}
+
+	.f1-mode-toggle {
+		position: relative;
+		display: flex;
+		background: rgba(30, 35, 50, 0.6);
+		border: 1px solid rgba(123, 158, 255, 0.12);
+		border-radius: 14px;
+		padding: 4px;
+		gap: 0;
+		width: 100%;
+		max-width: 360px;
+	}
+
+	.f1-mode-btn {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 2px;
+		padding: 0.6rem 1rem;
+		border: none;
+		background: transparent;
+		border-radius: 11px;
+		cursor: pointer;
+		position: relative;
+		z-index: 1;
+		transition: color 0.3s ease;
+		color: rgb(var(--gray));
+	}
+
+	.f1-mode-btn.active {
+		color: rgb(var(--black));
+	}
+
+	.f1-mode-btn:hover:not(.active) {
+		color: rgb(var(--gray-dark));
+	}
+
+	.f1-mode-icon {
+		font-size: 1.1rem;
+		line-height: 1;
+	}
+
+	.f1-mode-label {
+		font-size: 0.8rem;
+		font-weight: 700;
+		letter-spacing: 0.03em;
+	}
+
+	.f1-mode-desc {
+		font-size: 0.65rem;
+		opacity: 0.7;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+	}
+
+	.f1-mode-slider {
+		position: absolute;
+		top: 4px;
+		left: 4px;
+		width: calc(50% - 4px);
+		height: calc(100% - 8px);
+		background: linear-gradient(135deg, var(--accent-dark), var(--accent));
+		border-radius: 11px;
+		transition: transform 0.35s cubic-bezier(0.34, 1.45, 0.64, 1);
+		box-shadow: 0 2px 12px rgba(123, 158, 255, 0.3);
+		z-index: 0;
+	}
+
+	.f1-mode-slider.z-mode {
+		transform: translateX(100%);
+		background: linear-gradient(135deg, #df4b8a, #ff6b9d);
+		box-shadow: 0 2px 12px rgba(255, 107, 157, 0.3);
+	}
+
+	/* Speed Slider */
+	.f1-speed-section {
+		margin-bottom: 1.5rem;
+	}
+
+	.f1-speed-header {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		margin-bottom: 0.5rem;
+	}
+
+	.f1-speed-value {
+		font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace;
+		font-size: 1.5rem;
+		font-weight: 700;
+		color: rgb(var(--black));
+		letter-spacing: -0.02em;
+	}
+
+	.f1-range {
+		-webkit-appearance: none;
+		appearance: none;
+		width: 100%;
+		height: 6px;
+		border-radius: 3px;
+		background: rgba(30, 35, 50, 0.8);
+		outline: none;
+		cursor: pointer;
+		border: 1px solid rgba(123, 158, 255, 0.1);
+	}
+
+	.f1-range::-webkit-slider-thumb {
+		-webkit-appearance: none;
+		width: 22px;
+		height: 22px;
+		border-radius: 50%;
+		background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+		border: 2px solid rgba(255, 255, 255, 0.2);
+		cursor: pointer;
+		box-shadow: 0 2px 8px rgba(123, 158, 255, 0.4);
+		transition: box-shadow 0.2s ease, transform 0.15s ease;
+	}
+
+	.f1-range::-webkit-slider-thumb:hover {
+		box-shadow: 0 2px 16px rgba(123, 158, 255, 0.6);
+		transform: scale(1.1);
+	}
+
+	.f1-range::-moz-range-thumb {
+		width: 22px;
+		height: 22px;
+		border-radius: 50%;
+		background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+		border: 2px solid rgba(255, 255, 255, 0.2);
+		cursor: pointer;
+		box-shadow: 0 2px 8px rgba(123, 158, 255, 0.4);
+	}
+
+	.f1-speed-marks {
+		display: flex;
+		justify-content: space-between;
+		margin-top: 0.35rem;
+		font-size: 0.6rem;
+		color: rgb(var(--gray));
+		opacity: 0.5;
+		font-family: ui-monospace, monospace;
+	}
+
+	/* Car Visual */
+	.f1-car-visual {
+		margin-bottom: 1.5rem;
+		padding: 0.5rem 0;
+	}
+
+	.f1-car-container {
+		position: relative;
+		max-width: 100%;
+	}
+
+	.f1-car-svg {
+		width: 100%;
+		height: auto;
+		max-height: 140px;
+	}
+
+	.f1-drs-flap {
+		transition: transform 0.5s cubic-bezier(0.34, 1.2, 0.64, 1);
+		transform-origin: 330px 55px;
+	}
+
+	.f1-drs-flap.closed {
+		transform: rotate(30deg);
+	}
+
+	.f1-downforce-arrows line {
+		transition: opacity 0.4s ease, y1 0.4s ease, y2 0.4s ease;
+	}
+
+	.f1-downforce-arrows.strong line {
+		stroke: rgba(255, 107, 157, 0.5);
+		stroke-width: 2;
+	}
+
+	.f1-wing-angle-badge {
+		position: absolute;
+		top: 8px;
+		right: 8px;
+		background: rgba(30, 35, 50, 0.8);
+		border: 1px solid rgba(123, 158, 255, 0.15);
+		border-radius: 8px;
+		padding: 0.3rem 0.6rem;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 1px;
+	}
+
+	.f1-wing-angle-label {
+		font-size: 0.55rem;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		color: rgb(var(--gray));
+		opacity: 0.7;
+	}
+
+	.f1-wing-angle-val {
+		font-size: 0.75rem;
+		font-weight: 700;
+		color: var(--accent);
+		font-family: ui-monospace, monospace;
+		transition: color 0.3s ease;
+	}
+
+	.f1-wing-angle-val.closed {
+		color: #ff6b9d;
+	}
+
+	/* Gauges Grid */
+	.f1-gauges-grid {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 0.75rem;
+		margin-bottom: 1.25rem;
+	}
+
+	.f1-gauge-col {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+
+	.f1-gauge-card {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		background: rgba(30, 35, 50, 0.4);
+		border: 1px solid rgba(123, 158, 255, 0.08);
+		border-radius: 12px;
+		padding: 0.85rem;
+		transition: border-color 0.3s ease, box-shadow 0.3s ease;
+	}
+
+	.f1-gauge-card:hover {
+		border-color: rgba(123, 158, 255, 0.2);
+		box-shadow: 0 2px 12px rgba(123, 158, 255, 0.06);
+	}
+
+	.f1-gauge-icon {
+		font-size: 1.3rem;
+		width: 36px;
+		height: 36px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: rgba(123, 158, 255, 0.08);
+		border-radius: 8px;
+		flex-shrink: 0;
+	}
+
+	.f1-gauge-info {
+		display: flex;
+		flex-direction: column;
+		gap: 1px;
+		min-width: 0;
+	}
+
+	.f1-gauge-label {
+		font-size: 0.6rem;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		color: rgb(var(--gray));
+		opacity: 0.8;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.f1-gauge-number {
+		font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace;
+		font-size: 1.25rem;
+		font-weight: 700;
+		color: rgb(var(--black));
+		letter-spacing: -0.02em;
+		transition: color 0.3s ease;
+	}
+
+	.f1-gauge-unit {
+		font-size: 0.6rem;
+		color: rgb(var(--gray));
+		opacity: 0.6;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+	}
+
+	/* L/D Ratio */
+	.f1-ld-ratio {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 0.75rem 1rem;
+		background: rgba(123, 158, 255, 0.05);
+		border: 1px solid rgba(123, 158, 255, 0.1);
+		border-radius: 10px;
+		margin-bottom: 1.25rem;
+	}
+
+	.f1-ld-number {
+		font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace;
+		font-size: 1.4rem;
+		font-weight: 700;
+		color: var(--accent);
+		letter-spacing: -0.02em;
+	}
+
+	/* Aero Balance */
+	.f1-balance-section {
+		margin-top: 0.25rem;
+	}
+
+	.f1-balance-header {
+		margin-bottom: 0.5rem;
+	}
+
+	.f1-balance-bar-wrap {
+		position: relative;
+	}
+
+	.f1-balance-bar {
+		display: flex;
+		height: 32px;
+		border-radius: 8px;
+		overflow: hidden;
+		border: 1px solid rgba(123, 158, 255, 0.1);
+	}
+
+	.f1-balance-front {
+		background: linear-gradient(90deg, var(--accent-dark), var(--accent));
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		transition: width 0.5s cubic-bezier(0.34, 1.2, 0.64, 1);
+		min-width: 60px;
+	}
+
+	.f1-balance-rear {
+		background: linear-gradient(90deg, rgba(123, 158, 255, 0.2), rgba(123, 158, 255, 0.08));
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		transition: width 0.5s cubic-bezier(0.34, 1.2, 0.64, 1);
+		min-width: 60px;
+	}
+
+	.f1-balance-text {
+		font-size: 0.65rem;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		font-weight: 600;
+		color: rgb(var(--black));
+		opacity: 0.9;
+	}
+
+	.f1-balance-values {
+		display: flex;
+		justify-content: space-between;
+		margin-top: 0.3rem;
+		font-family: ui-monospace, monospace;
+		font-size: 0.75rem;
+		font-weight: 600;
+		color: rgb(var(--gray));
+	}
+
+	/* Noscript */
+	.f1-noscript-panel {
+		margin-top: 0;
+	}
+
+	.f1-noscript-table {
+		width: 100%;
+		border-collapse: collapse;
+		margin-top: 1rem;
+		font-size: 0.8rem;
+	}
+
+	.f1-noscript-table th,
+	.f1-noscript-table td {
+		padding: 0.5rem 0.75rem;
+		text-align: left;
+		border-bottom: 1px solid rgba(123, 158, 255, 0.1);
+		color: rgb(var(--gray-dark));
+	}
+
+	.f1-noscript-table th {
+		color: var(--accent);
+		font-weight: 600;
+		font-size: 0.7rem;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+	}
+
+	.f1-noscript-table td:first-child {
+		color: rgb(var(--gray));
+		font-weight: 500;
+	}
+
+	.f1-noscript-table tbody tr:hover {
+		background: rgba(123, 158, 255, 0.04);
+	}
+
+	/* Responsive */
+	@media (max-width: 540px) {
+		.f1-aero-panel {
+			padding: 1.25rem;
+			border-radius: 12px;
+		}
+
+		.f1-aero-title {
+			font-size: 1.15rem;
+		}
+
+		.f1-gauges-grid {
+			grid-template-columns: 1fr;
+			gap: 0.5rem;
+		}
+
+		.f1-gauge-col {
+			flex-direction: row;
+			gap: 0.5rem;
+		}
+
+		.f1-gauge-card {
+			flex: 1;
+			padding: 0.65rem;
+		}
+
+		.f1-gauge-icon {
+			width: 30px;
+			height: 30px;
+			font-size: 1rem;
+		}
+
+		.f1-gauge-number {
+			font-size: 1.05rem;
+		}
+
+		.f1-speed-value {
+			font-size: 1.25rem;
+		}
+
+		.f1-mode-toggle {
+			max-width: 300px;
+		}
+
+		.f1-mode-btn {
+			padding: 0.5rem 0.6rem;
+		}
+
+		.f1-balance-front,
+		.f1-balance-rear {
+			min-width: 45px;
+		}
+
+		.f1-ld-ratio {
+			flex-direction: column;
+			gap: 0.25rem;
+			text-align: center;
+		}
+	}
+</style>
+
+<script>
+	document.addEventListener('DOMContentLoaded', () => {
+		// --- Elements ---
+		const speedInput = document.getElementById('f1-speed-input') as HTMLInputElement | null;
+		const speedValue = document.getElementById('f1-speed-value');
+		const btnX = document.getElementById('f1-btn-xmode');
+		const btnZ = document.getElementById('f1-btn-zmode');
+		const modeSlider = document.getElementById('f1-mode-slider');
+		const cdDisplay = document.getElementById('f1-cd-value');
+		const clDisplay = document.getElementById('f1-cl-value');
+		const dragDisplay = document.getElementById('f1-drag-value');
+		const downforceDisplay = document.getElementById('f1-downforce-value');
+		const ldDisplay = document.getElementById('f1-ld-value');
+		const balanceFront = document.getElementById('f1-balance-front');
+		const balanceRear = document.getElementById('f1-balance-rear');
+		const balanceFrontPct = document.getElementById('f1-balance-front-pct');
+		const balanceRearPct = document.getElementById('f1-balance-rear-pct');
+		const drsFlap = document.getElementById('f1-drs-flap');
+		const downforceArrows = document.getElementById('f1-downforce-arrows');
+		const modeLabelSvg = document.getElementById('f1-mode-label-svg');
+		const wingAngleVal = document.getElementById('f1-wing-angle-val');
+
+		if (!speedInput) return;
+
+		// --- Mode parameters ---
+		const modes = {
+			x: { cd: 0.70, cl: 2.5, balance: 42 },
+			z: { cd: 1.05, cl: 4.5, balance: 46 }
+		};
+
+		// --- Animation state ---
+		let currentMode: 'x' | 'z' = 'x';
+		let animatedCd = modes.x.cd;
+		let animatedCl = modes.x.cl;
+		let animatedBalance = modes.x.balance;
+		let targetCd = modes.x.cd;
+		let targetCl = modes.x.cl;
+		let targetBalance = modes.x.balance;
+		let animFrameId: number | null = null;
+
+		const RHO = 1.225;       // Air density kg/m³
+		const AREA = 1.5;        // Frontal area m²
+
+		function formatNumber(n: number): string {
+			return Math.round(n).toLocaleString('en-US');
+		}
+
+		function lerp(a: number, b: number, t: number): number {
+			return a + (b - a) * t;
+		}
+
+		function updateDisplay() {
+			const speed = parseInt(speedInput!.value, 10);
+			const v = speed / 3.6; // km/h to m/s
+
+			// Forces
+			const dragForce = 0.5 * RHO * animatedCd * AREA * v * v;
+			const downforce = 0.5 * RHO * animatedCl * AREA * v * v;
+			const ldRatio = animatedCl / animatedCd;
+
+			// Update speed display
+			if (speedValue) {
+				speedValue.innerHTML = `${speed} <span class="f1-unit">km/h</span>`;
+			}
+
+			// Update range track fill
+			const pct = ((speed - 80) / (360 - 80)) * 100;
+			const trackColor = currentMode === 'z'
+				? `linear-gradient(90deg, #df4b8a ${pct}%, rgba(30,35,50,0.8) ${pct}%)`
+				: `linear-gradient(90deg, var(--accent) ${pct}%, rgba(30,35,50,0.8) ${pct}%)`;
+			speedInput!.style.background = trackColor;
+
+			// Coefficients
+			if (cdDisplay) cdDisplay.textContent = animatedCd.toFixed(2);
+			if (clDisplay) clDisplay.textContent = animatedCl.toFixed(2);
+
+			// Forces
+			if (dragDisplay) dragDisplay.textContent = formatNumber(dragForce);
+			if (downforceDisplay) downforceDisplay.textContent = formatNumber(downforce);
+
+			// L/D
+			if (ldDisplay) ldDisplay.textContent = ldRatio.toFixed(2);
+
+			// Balance
+			const frontPct = Math.round(animatedBalance);
+			const rearPct = 100 - frontPct;
+			if (balanceFront) balanceFront.style.width = `${frontPct}%`;
+			if (balanceRear) balanceRear.style.width = `${rearPct}%`;
+			if (balanceFrontPct) balanceFrontPct.textContent = `${frontPct}%`;
+			if (balanceRearPct) balanceRearPct.textContent = `${rearPct}%`;
+		}
+
+		function animateTween() {
+			const SPEED = 0.08; // Interpolation speed per frame
+
+			const dCd = Math.abs(animatedCd - targetCd);
+			const dCl = Math.abs(animatedCl - targetCl);
+			const dBal = Math.abs(animatedBalance - targetBalance);
+
+			if (dCd < 0.001 && dCl < 0.001 && dBal < 0.01) {
+				animatedCd = targetCd;
+				animatedCl = targetCl;
+				animatedBalance = targetBalance;
+				updateDisplay();
+				animFrameId = null;
+				return;
+			}
+
+			animatedCd = lerp(animatedCd, targetCd, SPEED);
+			animatedCl = lerp(animatedCl, targetCl, SPEED);
+			animatedBalance = lerp(animatedBalance, targetBalance, SPEED);
+
+			updateDisplay();
+			animFrameId = requestAnimationFrame(animateTween);
+		}
+
+		function startTween() {
+			if (animFrameId !== null) cancelAnimationFrame(animFrameId);
+			animFrameId = requestAnimationFrame(animateTween);
+		}
+
+		function setMode(mode: 'x' | 'z') {
+			currentMode = mode;
+			const params = modes[mode];
+			targetCd = params.cd;
+			targetCl = params.cl;
+			targetBalance = params.balance;
+
+			// Toggle buttons
+			if (btnX && btnZ) {
+				btnX.classList.toggle('active', mode === 'x');
+				btnZ.classList.toggle('active', mode === 'z');
+				btnX.setAttribute('aria-checked', String(mode === 'x'));
+				btnZ.setAttribute('aria-checked', String(mode === 'z'));
+			}
+
+			// Slide indicator
+			if (modeSlider) {
+				modeSlider.classList.toggle('z-mode', mode === 'z');
+			}
+
+			// DRS flap visual
+			if (drsFlap) {
+				drsFlap.classList.toggle('closed', mode === 'z');
+			}
+
+			// Downforce arrows
+			if (downforceArrows) {
+				downforceArrows.classList.toggle('strong', mode === 'z');
+			}
+
+			// SVG mode label
+			if (modeLabelSvg) {
+				modeLabelSvg.textContent = mode === 'x' ? 'X-MODE' : 'Z-MODE';
+			}
+
+			// Wing angle badge
+			if (wingAngleVal) {
+				wingAngleVal.textContent = mode === 'x' ? 'Open' : 'Closed';
+				wingAngleVal.classList.toggle('closed', mode === 'z');
+			}
+
+			startTween();
+		}
+
+		// --- Event Listeners ---
+		if (btnX) btnX.addEventListener('click', () => setMode('x'));
+		if (btnZ) btnZ.addEventListener('click', () => setMode('z'));
+
+		speedInput.addEventListener('input', () => {
+			updateDisplay();
+		});
+
+		// Keyboard support for mode toggle
+		const toggle = document.getElementById('f1-mode-toggle');
+		if (toggle) {
+			toggle.addEventListener('keydown', (e: KeyboardEvent) => {
+				if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+					e.preventDefault();
+					setMode('x');
+				} else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+					e.preventDefault();
+					setMode('z');
+				}
+			});
+		}
+
+		// Initial render
+		updateDisplay();
+	});
+</script>
