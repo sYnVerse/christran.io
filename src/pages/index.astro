@@ -3,10 +3,15 @@ import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import ProjectCard from '../components/ProjectCard.astro';
+import BlogCard from '../components/BlogCard.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 import { getFeaturedProjects } from '../data/projects';
+import { getCollection } from 'astro:content';
 
 const featured = getFeaturedProjects();
+const latestPosts = (await getCollection('blog'))
+	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+	.slice(0, 3);
 ---
 
 <!doctype html>
@@ -326,16 +331,82 @@ const featured = getFeaturedProjects();
 				gap: 1rem;
 				margin-bottom: 1rem;
 			}
+			.blog-grid {
+				display: grid;
+				grid-template-columns: repeat(3, 1fr);
+				gap: 1rem;
+				margin-bottom: 1.5rem;
+			}
+			.cta-container {
+				margin-top: 1.5rem;
+				display: flex;
+				justify-content: flex-start;
+			}
 			.view-all-link {
-				display: inline-block;
+				position: relative;
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				padding: 0.65rem 1.5rem;
+				border-radius: 9999px;
+				background: linear-gradient(135deg, rgba(30, 35, 50, 0.95) 0%, rgba(15, 20, 35, 0.98) 100%);
+				backdrop-filter: blur(12px);
+				-webkit-backdrop-filter: blur(12px);
+				border: 1px solid rgba(123, 158, 255, 0.3);
 				color: var(--accent);
-				text-decoration: none;
 				font-size: 0.9rem;
-				font-weight: 500;
-				transition: opacity 0.2s ease;
+				font-weight: 600;
+				text-decoration: none;
+				box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 8px 32px rgba(0, 0, 0, 0.5);
+				transition: all 0.22s cubic-bezier(0.34, 1.45, 0.64, 1);
+				z-index: 1;
+				overflow: visible;
+			}
+			.view-all-link::before,
+			.view-all-link::after {
+				content: "";
+				position: absolute;
+				left: -2px;
+				top: -2px;
+				width: calc(100% + 4px);
+				height: calc(100% + 4px);
+				border-radius: 9999px;
+				z-index: -1;
+				transition: opacity 0.32s ease;
+				background: linear-gradient(45deg, #042f4a, #0a4d6e, #0d6b7d, #0e7490, #0891b2, #06b6d4, #22d3ee, #2dd4bf, #34d399, #5eead4, #67e8f9, #38bdf8, #0ea5e9, #0369a1, #042f4a);
+				background-size: 200% auto;
+				animation: pill-gradient-flow 6s linear infinite;
+				pointer-events: none;
+			}
+			.view-all-link::after {
+				filter: blur(16px);
+				opacity: 0.65;
+				transition: filter 0.32s ease, opacity 0.32s ease;
 			}
 			.view-all-link:hover {
-				opacity: 0.8;
+				color: #ffffff;
+				transform: scale(1.04) translateY(-2px);
+				border-color: rgba(123, 158, 255, 0.6);
+				box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 12px 40px rgba(0, 0, 0, 0.6);
+				opacity: 1;
+			}
+			.view-all-link:hover::after {
+				filter: blur(24px) brightness(1.3);
+				opacity: 0.9;
+			}
+			.view-all-link:active {
+				transform: scale(0.98) translateY(0);
+			}
+			@keyframes pill-gradient-flow {
+				0% {
+					background-position: 0% 50%;
+				}
+				50% {
+					background-position: 100% 50%;
+				}
+				100% {
+					background-position: 0% 50%;
+				}
 			}
 			@media (max-width: 640px) {
 				.home-page main {
@@ -346,8 +417,15 @@ const featured = getFeaturedProjects();
 					grid-template-columns: 1fr;
 					gap: 1rem;
 				}
+				.blog-grid {
+					grid-template-columns: 1fr;
+					gap: 1rem;
+				}
 				.featured-section {
 					margin: 1.5rem 0;
+				}
+				.cta-container {
+					justify-content: center;
 				}
 			}
 		</style>
@@ -386,7 +464,21 @@ const featured = getFeaturedProjects();
 						<ProjectCard project={project} compact />
 					))}
 				</div>
-				<a href="/portfolio" class="view-all-link">View all projects →</a>
+				<div class="cta-container">
+					<a href="/portfolio" class="view-all-link">View all projects →</a>
+				</div>
+			</section>
+
+			<section class="featured-section" aria-label="Latest blog posts">
+				<h2 class="featured-heading">Latest Deep-Dives</h2>
+				<div class="blog-grid">
+					{latestPosts.map((post) => (
+						<BlogCard post={post} />
+					))}
+				</div>
+				<div class="cta-container">
+					<a href="/blog" class="view-all-link">View all posts →</a>
+				</div>
 			</section>
 		</main>
 		<Footer />

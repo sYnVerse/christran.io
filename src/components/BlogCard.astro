@@ -1,0 +1,187 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+import FormattedDate from './FormattedDate.astro';
+
+interface Props {
+	post: CollectionEntry<'blog'>;
+}
+
+const { post } = Astro.props;
+
+// Dynamically resolve optimized blog hero images from src/assets/img/blog/
+const images = import.meta.glob<{ default: ImageMetadata }>('/src/assets/img/blog/*.{jpeg,jpg,png,gif,webp}');
+const imagePath = post.data.heroImage ? post.data.heroImage.replace(/^\/img\//, '/src/assets/img/blog/') : '';
+const hasImage = imagePath && images[imagePath];
+---
+
+<div class="blog-card">
+	<a href={`/blog/${post.id}/`} class="card-image-link" aria-label={`Read ${post.data.title}`}>
+		<div class="card-image">
+			{hasImage ? (
+				<Image src={images[imagePath]()} alt={post.data.title} width={600} height={340} quality={80} format="webp" />
+			) : (
+				<div class="card-image-placeholder">
+					<span>📝</span>
+				</div>
+			)}
+			<div class="card-image-overlay"></div>
+		</div>
+	</a>
+
+	<div class="card-body">
+		<div class="card-meta">
+			<span class="card-date">
+				<FormattedDate date={post.data.pubDate} />
+			</span>
+		</div>
+		<h3 class="card-title">
+			<a href={`/blog/${post.id}/`}>{post.data.title}</a>
+		</h3>
+		<p class="card-description">{post.data.description}</p>
+		<a href={`/blog/${post.id}/`} class="read-more" aria-label={`Read ${post.data.title}`}>
+			Read post
+			<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+		</a>
+	</div>
+</div>
+
+<style>
+	.blog-card {
+		display: flex;
+		flex-direction: column;
+		border-radius: 12px;
+		background: rgba(30, 35, 50, 0.6);
+		backdrop-filter: blur(12px);
+		-webkit-backdrop-filter: blur(12px);
+		border: 1px solid rgba(123, 158, 255, 0.1);
+		border-top: 3px solid transparent;
+		overflow: hidden;
+		transition: transform 0.3s ease, box-shadow 0.3s ease, border-top-color 0.3s ease;
+		height: 100%;
+	}
+
+	.blog-card:hover {
+		transform: translateY(-6px);
+		box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(123, 158, 255, 0.15);
+		border-top-color: var(--accent);
+	}
+
+	.card-image-link {
+		display: block;
+		text-decoration: none;
+		overflow: hidden;
+	}
+
+	.card-image {
+		position: relative;
+		width: 100%;
+		aspect-ratio: 16 / 9;
+		overflow: hidden;
+	}
+
+	.card-image img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		border-radius: 0;
+		transition: transform 0.4s ease;
+	}
+
+	.blog-card:hover .card-image img {
+		transform: scale(1.05);
+	}
+
+	.card-image-placeholder {
+		width: 100%;
+		height: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: linear-gradient(135deg, rgba(123, 158, 255, 0.15), rgba(75, 110, 223, 0.25));
+		font-size: 3rem;
+	}
+
+	.card-image-overlay {
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(to top, rgba(11, 16, 33, 0.6) 0%, transparent 50%);
+		pointer-events: none;
+	}
+
+	.card-body {
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+		padding: 1.25rem;
+		gap: 0.6rem;
+	}
+
+	.card-meta {
+		font-size: 0.78rem;
+		color: rgb(var(--gray));
+	}
+
+	.card-title {
+		margin: 0;
+		font-size: 1.15rem;
+		line-height: 1.3;
+	}
+
+	.card-title a {
+		color: rgb(var(--black));
+		text-decoration: none;
+		transition: color 0.2s ease;
+	}
+
+	.blog-card:hover .card-title a {
+		color: var(--accent);
+	}
+
+	.card-description {
+		margin: 0;
+		font-size: 0.85rem;
+		color: rgb(var(--gray));
+		line-height: 1.6;
+		display: -webkit-box;
+		-webkit-line-clamp: 3;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+		flex-grow: 1;
+	}
+
+	.read-more {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+		font-size: 0.82rem;
+		font-weight: 600;
+		color: var(--accent);
+		text-decoration: none;
+		margin-top: auto;
+		padding-top: 0.5rem;
+		transition: transform 0.2s ease, opacity 0.2s ease;
+	}
+
+	.read-more svg {
+		transition: transform 0.2s ease;
+	}
+
+	.read-more:hover svg {
+		transform: translateX(3px);
+	}
+
+	@media (max-width: 720px) {
+		.card-body {
+			padding: 1rem;
+		}
+
+		.card-title {
+			font-size: 1.1rem;
+		}
+
+		.card-description {
+			font-size: 0.82rem;
+		}
+	}
+</style>
