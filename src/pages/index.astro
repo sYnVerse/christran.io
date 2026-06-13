@@ -278,7 +278,7 @@ const latestPosts = (await getCollection('blog'))
 			/* Scroll indicator */
 			.scroll-indicator {
 				position: absolute;
-				bottom: 2rem;
+				bottom: clamp(7rem, 13vh, 9.5rem);
 				left: 50%;
 				transform: translateX(-50%) translateY(calc((1 - var(--scroll-indicator-opacity, 1)) * 10px));
 				display: flex;
@@ -288,13 +288,11 @@ const latestPosts = (await getCollection('blog'))
 				opacity: var(--scroll-indicator-opacity, 1);
 				transition: opacity 0.2s ease, transform 0.2s ease;
 				pointer-events: none;
+				z-index: 10;
 			}
 			@media (min-width: 721px) and (max-height: 680px) {
 				.tagline-parallax {
 					font-size: clamp(1.8rem, 8vh, 3.5rem) !important;
-				}
-				.scroll-indicator {
-					bottom: 1.25rem !important;
 				}
 			}
 			.scroll-text {
@@ -472,6 +470,184 @@ const latestPosts = (await getCollection('blog'))
 				border-color: rgba(123, 158, 255, 0.6);
 				box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 12px 40px rgba(0, 0, 0, 0.6);
 			}
+			/* Scroll Stage Progress Navigator */
+			.scroll-nav {
+				position: fixed;
+				right: 2rem;
+				top: 50%;
+				transform: translateY(-50%);
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				gap: 1.25rem;
+				z-index: 1000;
+				background: rgba(11, 16, 33, 0.4);
+				padding: 1rem 0.5rem;
+				border-radius: 20px;
+				backdrop-filter: blur(8px);
+				-webkit-backdrop-filter: blur(8px);
+				border: 1px solid rgba(255, 255, 255, 0.05);
+			}
+			.scroll-nav-line {
+				position: absolute;
+				top: 1.5rem;
+				bottom: 1.5rem;
+				width: 3px;
+				background: rgba(255, 255, 255, 0.1);
+				z-index: -1;
+				overflow: hidden;
+				border-radius: 1.5px;
+			}
+			/* Flowing dash animation inside vertical line */
+			.scroll-nav-line::after {
+				content: "";
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				background: linear-gradient(to bottom, transparent, var(--accent), transparent);
+				background-size: 100% 80px;
+				animation: scroll-flow-animation 2.5s linear infinite;
+			}
+			@keyframes scroll-flow-animation {
+				0% {
+					background-position: 0 -80px;
+				}
+				100% {
+					background-position: 0 100%;
+				}
+			}
+			.scroll-nav-progress {
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 0%;
+				background: var(--accent);
+				box-shadow: 0 0 8px var(--accent);
+				transition: height 0.1s ease-out;
+			}
+			/* Scroll helper hint similar to the mouse icon at the bottom of the scroll nav */
+			.scroll-nav-hint {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				gap: 0.2rem;
+				margin-top: 0.5rem;
+				opacity: 0.8;
+				transition: opacity 0.3s ease, transform 0.3s ease;
+			}
+			.scroll-nav-hint.hidden {
+				opacity: 0;
+				transform: translateY(10px) scale(0.8);
+				pointer-events: none;
+			}
+			.mouse-icon-mini {
+				width: 14px;
+				height: 22px;
+				border: 1.5px solid rgba(176, 186, 209, 0.4);
+				border-radius: 7px;
+				position: relative;
+				transition: border-color 0.3s ease;
+			}
+			.scroll-nav-dot.active ~ .scroll-nav-hint .mouse-icon-mini,
+			.scroll-nav-hint:hover .mouse-icon-mini {
+				border-color: var(--accent);
+			}
+			.mouse-wheel-mini {
+				width: 2px;
+				height: 5px;
+				background: var(--accent);
+				border-radius: 1px;
+				position: absolute;
+				top: 3px;
+				left: 50%;
+				transform: translateX(-50%);
+				animation: mouse-scroll-anim-mini 1.6s infinite ease-in-out;
+			}
+			.chevron-mini {
+				width: 12px;
+				height: 12px;
+				color: rgba(176, 186, 209, 0.6);
+				animation: chevron-bounce-mini 1.6s infinite ease-in-out;
+			}
+			@keyframes mouse-scroll-anim-mini {
+				0% {
+					top: 3px;
+					opacity: 1;
+				}
+				50% {
+					top: 10px;
+					opacity: 0;
+				}
+				100% {
+					top: 3px;
+					opacity: 1;
+				}
+			}
+			@keyframes chevron-bounce-mini {
+				0%, 100% {
+					transform: translateY(0);
+					opacity: 0.4;
+				}
+				50% {
+					transform: translateY(3px);
+					opacity: 1;
+					color: var(--accent);
+				}
+			}
+			.scroll-nav-dot {
+				width: 10px;
+				height: 10px;
+				border-radius: 50%;
+				background: rgba(30, 35, 50, 0.9);
+				border: 2px solid rgba(123, 158, 255, 0.4);
+				cursor: pointer;
+				padding: 0;
+				position: relative;
+				transition: all 0.3s cubic-bezier(0.34, 1.45, 0.64, 1);
+				outline: none;
+			}
+			.scroll-nav-dot.active {
+				background: var(--accent);
+				border-color: var(--accent);
+				box-shadow: 0 0 10px var(--accent);
+				transform: scale(1.3);
+			}
+			.scroll-nav-dot:hover {
+				border-color: #ffffff;
+				transform: scale(1.15);
+			}
+			.dot-label {
+				position: absolute;
+				right: 22px;
+				top: 50%;
+				transform: translateY(-50%) translateX(6px);
+				background: rgba(11, 16, 33, 0.9);
+				border: 1px solid rgba(123, 158, 255, 0.25);
+				padding: 0.2rem 0.5rem;
+				border-radius: 4px;
+				color: var(--accent);
+				font-size: 0.68rem;
+				font-weight: 700;
+				text-transform: uppercase;
+				letter-spacing: 0.08em;
+				pointer-events: none;
+				opacity: 0;
+				transition: opacity 0.22s ease, transform 0.22s ease;
+				white-space: nowrap;
+				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+			}
+			.scroll-nav-dot:hover .dot-label {
+				opacity: 1;
+				transform: translateY(-50%) translateX(0);
+			}
+			@media (max-width: 720px) {
+				.scroll-nav {
+					display: none !important;
+				}
+			}
 			@keyframes pill-gradient-flow {
 				0% {
 					background-position: 0% 50%;
@@ -507,6 +683,32 @@ const latestPosts = (await getCollection('blog'))
 	</head>
 	<body class="home-page">
 		<Header />
+		
+		<nav class="scroll-nav" aria-label="Page stage progress">
+			<div class="scroll-nav-line">
+				<div class="scroll-nav-progress" id="scroll-progress-bar"></div>
+			</div>
+			<button class="scroll-nav-dot active" data-stage="0" aria-label="Scroll to home stage">
+				<span class="dot-label">Home</span>
+			</button>
+			<button class="scroll-nav-dot" data-stage="1" aria-label="Scroll to about stage">
+				<span class="dot-label">About</span>
+			</button>
+			<button class="scroll-nav-dot" data-stage="2" aria-label="Scroll to projects stage">
+				<span class="dot-label">Projects</span>
+			</button>
+			<button class="scroll-nav-dot" data-stage="3" aria-label="Scroll to blog stage">
+				<span class="dot-label">Blog</span>
+			</button>
+			<div class="scroll-nav-hint" id="scroll-nav-hint" aria-hidden="true">
+				<div class="mouse-icon-mini">
+					<span class="mouse-wheel-mini"></span>
+				</div>
+				<svg class="chevron-mini" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+					<path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"></path>
+				</svg>
+			</div>
+		</nav>
 		
 		<main class="scroll-journey">
 			<!-- Stage 1: Tagline -->
@@ -619,6 +821,17 @@ const latestPosts = (await getCollection('blog'))
 				// Run immediately to calculate on load
 				handleResize();
 
+				// Add dot click event listeners for desktop navigation
+				const dots = document.querySelectorAll('.scroll-nav-dot');
+				dots.forEach((dot, index) => {
+					dot.addEventListener('click', () => {
+						const stageElement = stages[index];
+						if (stageElement) {
+							stageElement.scrollIntoView({ behavior: 'smooth' });
+						}
+					});
+				});
+
 				let targetScrollY = window.scrollY;
 				let currentScrollY = window.scrollY;
 				let rafId = null;
@@ -633,6 +846,42 @@ const latestPosts = (await getCollection('blog'))
 					}
 
 					const isMobile = window.innerWidth <= 720;
+
+					// Update overall scroll progress bar and stage dots
+					if (!isMobile) {
+						const progressBar = document.getElementById('scroll-progress-bar');
+						if (progressBar) {
+							const totalScroll = document.documentElement.scrollHeight - viewportHeight;
+							const overallProgress = totalScroll > 0 ? (currentScrollY / totalScroll) * 100 : 0;
+							progressBar.style.height = `${overallProgress}%`;
+						}
+
+						let activeIndex = 0;
+						stages.forEach((stage, index) => {
+							const rect = stage.getBoundingClientRect();
+							if (rect.top <= viewportHeight / 2 && rect.bottom > viewportHeight / 2) {
+								activeIndex = index;
+							}
+						});
+
+						const dots = document.querySelectorAll('.scroll-nav-dot');
+						dots.forEach((dot, index) => {
+							if (index === activeIndex) {
+								dot.classList.add('active');
+							} else {
+								dot.classList.remove('active');
+							}
+						});
+
+						const navHint = document.getElementById('scroll-nav-hint');
+						if (navHint) {
+							if (activeIndex === stages.length - 1) {
+								navHint.classList.add('hidden');
+							} else {
+								navHint.classList.remove('hidden');
+							}
+						}
+					}
 
 					// Calculate bg-opacity based on Stage 1 (index 0) progress
 					const stage1 = stages[0];
