@@ -61,7 +61,6 @@ import LoaderOverlay from './LoaderOverlay.astro';
 		</div>
 	</nav>
 	<SearchModal />
-	<LoaderOverlay />
 	<noscript>
 		<style>
 			/* Disable hamburger button since it won't toggle anything */
@@ -93,6 +92,7 @@ import LoaderOverlay from './LoaderOverlay.astro';
 		</style>
 	</noscript>
 </header>
+<LoaderOverlay />
 
 <script>
 	const btn = document.getElementById('hamburger-btn');
