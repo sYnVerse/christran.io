@@ -95,7 +95,7 @@ export const projects: Project[] = [
     image: '/img/projects/f1-wiki.webp',
     liveUrl: 'https://f1.fandom.com',
     detailUrl: '/portfolio/f1-wiki',
-    featured: true,
+    featured: false,
     order: 8,
   },
   {
@@ -124,7 +124,7 @@ export const projects: Project[] = [
     image: '/img/projects/illusyn.webp',
     liveUrl: 'https://illusyn.christran.io',
     detailUrl: '/portfolio/illusyn',
-    featured: true,
+    featured: false,
     order: 6,
   },
   {
