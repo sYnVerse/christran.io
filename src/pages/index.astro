@@ -953,23 +953,18 @@ const latestPosts = (await getCollection('blog'))
 							// Stage 1 tagline sequential animations
 							const pEased = 1 - Math.pow(1 - p, 3);
 							const opacity1 = 1;
-							let translate1 = 0;
-							if (!prefersReducedMotion) {
-								translate1 = pEased * -80 * translateMultiplier;
-							}
-
 							const pLine2 = Math.min(1, Math.max(0, (pEased - 0.15) / 0.35));
 							const opacity2 = pLine2;
-							let translate2 = 0;
-							if (!prefersReducedMotion) {
-								translate2 = pLine2 * 80 * translateMultiplier;
-							}
-
 							const pLine3 = Math.min(1, Math.max(0, (pEased - 0.45) / 0.35));
 							const opacity3 = pLine3;
+
+							let translate1 = 0;
+							let translate2 = 0;
 							let translate3 = 0;
 							if (!prefersReducedMotion) {
-								translate3 = pLine3 * -120 * translateMultiplier;
+								translate1 = pEased * -80 * translateMultiplier;
+								translate2 = pEased * -80 * translateMultiplier;
+								translate3 = pEased * -80 * translateMultiplier;
 							}
 
 							if (tagline) {
