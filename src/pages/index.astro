@@ -157,7 +157,7 @@ const latestPosts = (await getCollection('blog'))
 					gap: 0.75rem !important;
 				}
 				.cta-container {
-					margin-top: 0.8rem !important;
+					margin-top: 2.3rem !important;
 				}
 				.stage-sticky {
 					padding-top: 4.5rem !important;
@@ -168,6 +168,9 @@ const latestPosts = (await getCollection('blog'))
 					padding: 1.25rem 1.25rem !important;
 					transform: scale(0.85) translateY(var(--stage-translate, 0px)) !important;
 					transform-origin: center center;
+				}
+				.cta-container {
+					margin-top: 2.05rem !important;
 				}
 				.stage-sticky {
 					padding-top: 4rem !important;
@@ -363,7 +366,8 @@ const latestPosts = (await getCollection('blog'))
 			}
 			/* Featured section */
 			.featured-section {
-				margin: 2.5rem 0;
+				margin-top: 2.5rem;
+				margin-bottom: 0.5rem;
 			}
 			.featured-heading {
 				font-size: 1.4rem;
@@ -386,13 +390,13 @@ const latestPosts = (await getCollection('blog'))
 				display: grid;
 				grid-template-columns: repeat(2, 1fr);
 				gap: 1rem;
-				margin-bottom: 1rem;
+				margin-bottom: 0;
 			}
 			.blog-grid {
 				display: grid;
 				grid-template-columns: repeat(3, 1fr);
 				gap: 1rem;
-				margin-bottom: 1.5rem;
+				margin-bottom: 0;
 			}
 			/* Compact homepage project and blog cards to prevent viewport clipping */
 			.featured-grid :global(.card-description),
@@ -401,9 +405,9 @@ const latestPosts = (await getCollection('blog'))
 				display: none;
 			}
 			.cta-container {
-				margin-top: 1.5rem;
+				margin-top: 3.0rem;
 				display: flex;
-				justify-content: flex-start;
+				justify-content: center;
 			}
 			.view-all-wrapper {
 				position: relative;
@@ -667,15 +671,18 @@ const latestPosts = (await getCollection('blog'))
 				.featured-grid {
 					grid-template-columns: 1fr;
 					gap: 1rem;
+					margin-bottom: 1rem;
 				}
 				.blog-grid {
 					grid-template-columns: 1fr;
 					gap: 1rem;
+					margin-bottom: 1.5rem;
 				}
 				.featured-section {
 					margin: 1.5rem 0;
 				}
 				.cta-container {
+					margin-top: 1.5rem;
 					justify-content: center;
 				}
 			}
