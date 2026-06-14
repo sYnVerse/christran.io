@@ -85,11 +85,15 @@ const categoryLabels: Record<string, string> = {
 				min-height: calc(100vh - 200px);
 				padding: 1rem;
 				box-sizing: border-box;
+				width: 100%;
+				max-width: 100%;
 			}
 
 			.portfolio-container {
-				max-width: 960px;
+				max-width: 1600px;
 				margin: 0 auto;
+				width: 100%;
+				box-sizing: border-box;
 			}
 
 			.portfolio-header {
@@ -149,8 +153,32 @@ const categoryLabels: Record<string, string> = {
 			/* Project grid */
 			.projects-grid {
 				display: grid;
-				grid-template-columns: repeat(2, 1fr);
+				grid-template-columns: 1fr;
 				gap: 1.5rem;
+			}
+
+			@media (min-width: 600px) {
+				.projects-grid {
+					grid-template-columns: repeat(2, 1fr);
+				}
+			}
+
+			@media (min-width: 900px) {
+				.projects-grid {
+					grid-template-columns: repeat(3, 1fr);
+				}
+			}
+
+			@media (min-width: 1200px) {
+				.projects-grid {
+					grid-template-columns: repeat(4, 1fr);
+				}
+			}
+
+			@media (min-width: 1500px) {
+				.projects-grid {
+					grid-template-columns: repeat(5, 1fr);
+				}
 			}
 
 			.project-item {
@@ -221,10 +249,6 @@ const categoryLabels: Record<string, string> = {
 			}
 
 			@media (max-width: 720px) {
-				.projects-grid {
-					grid-template-columns: 1fr;
-				}
-
 				.portfolio-header h1 {
 					font-size: 2rem;
 				}
