@@ -36,6 +36,7 @@
 						<span class="terminal-input-wrap">
 							<span class="terminal-input-val" id="term-input-val" aria-hidden="true"></span>
 							<span class="term-cursor" aria-hidden="true"></span>
+							<span class="ghost-text" id="ghost-text" aria-hidden="true"></span>
 							<input
 								type="text"
 								class="terminal-input"
@@ -298,6 +299,21 @@
 				word-break: break-all;
 				font: inherit;
 				color: rgb(var(--gray-dark));
+				position: relative;
+				z-index: 2;
+			}
+			.ghost-text {
+				position: absolute;
+				left: 0;
+				top: 0;
+				z-index: 1;
+				color: #555555;
+				font: inherit;
+				white-space: pre-wrap;
+				word-break: break-all;
+				pointer-events: auto;
+				width: 100%;
+				user-select: none;
 			}
 			.terminal-input {
 				position: absolute;
@@ -313,7 +329,7 @@
 				font: inherit;
 				padding: 0;
 				margin: 0;
-				z-index: 2;
+				z-index: 3;
 			}
 			.terminal-input::placeholder {
 				color: rgba(210, 215, 235, 0.4);
@@ -391,7 +407,25 @@
 				const output = document.getElementById('term-output');
 				const input = document.getElementById('term-input');
 				const terminalWindow = document.getElementById('terminal-window');
+				const ghostText = document.getElementById('ghost-text');
 				if (!output || !input) return;
+
+				const autocompleteCandidates = [
+					'whoami',
+					'ping skills',
+					'traceroute career',
+					'ls',
+					'certs',
+					'skills',
+					'contact',
+					'portfolio',
+					'resume',
+					'cat resume',
+					'about',
+					'clear',
+					'help',
+					'search'
+				];
 
 				// Restore terminal output from sessionStorage if exists
 				try {
@@ -418,7 +452,70 @@
 					}
 				}
 				updateInputText();
-				input.addEventListener('input', updateInputText);
+
+				function updateGhostText() {
+					if (!ghostText) return;
+					const currentVal = input.value;
+					const normalizedVal = currentVal.trim().toLowerCase();
+
+					if (!normalizedVal) {
+						ghostText.textContent = '';
+						return;
+					}
+
+					const match = autocompleteCandidates.find(function (cmd) {
+						return cmd.indexOf(normalizedVal) === 0;
+					});
+
+					if (match) {
+						const remainder = match.slice(normalizedVal.length);
+						ghostText.textContent = currentVal + remainder;
+					} else {
+						ghostText.textContent = '';
+					}
+				}
+
+				function acceptAutocomplete() {
+					if (ghostText && ghostText.textContent) {
+						input.value = ghostText.textContent;
+						ghostText.textContent = '';
+						updateInputText();
+					}
+				}
+
+				input.addEventListener('input', function () {
+					updateInputText();
+					updateGhostText();
+				});
+
+				// Mobile swipe-to-complete coordinates
+				let touchStartX = 0;
+				let touchStartY = 0;
+
+				input.addEventListener('touchstart', function (e) {
+					touchStartX = e.changedTouches[0].screenX;
+					touchStartY = e.changedTouches[0].screenY;
+				}, { passive: true });
+
+				input.addEventListener('touchend', function (e) {
+					const touchEndX = e.changedTouches[0].screenX;
+					const touchEndY = e.changedTouches[0].screenY;
+					
+					const diffX = touchEndX - touchStartX;
+					const diffY = touchEndY - touchStartY;
+
+					// Ensure horizontal swipe is dominant and goes right (min 40px)
+					if (Math.abs(diffX) > Math.abs(diffY) && diffX > 40) {
+						acceptAutocomplete();
+					}
+				});
+
+				if (ghostText) {
+					ghostText.addEventListener('click', function () {
+						acceptAutocomplete();
+						input.focus();
+					});
+				}
 
 				const promptText = 'visitor@christran.io:~$';
 
@@ -619,22 +716,7 @@
 				} catch (e) {}
 				let historyIndex = -1;
 
-				const autocompleteCandidates = [
-					'whoami',
-					'ping skills',
-					'traceroute career',
-					'ls',
-					'certs',
-					'skills',
-					'contact',
-					'portfolio',
-					'resume',
-					'cat resume',
-					'about',
-					'clear',
-					'help',
-					'search'
-				];
+				// Removed old duplicate autocompleteCandidates definition to avoid redeclared block-scoped variable
 
 				function handleTabComplete() {
 					const val = input.value;
@@ -652,6 +734,9 @@
 					if (matches.length === 1) {
 						input.value = matches[0];
 						updateInputText();
+						if (ghostText) {
+							ghostText.textContent = '';
+						}
 					} else {
 						// Find longest common prefix
 						let longestPrefix = matches[0];
@@ -677,7 +762,16 @@
 				input.addEventListener('keydown', function (e) {
 					if (e.key === 'Tab') {
 						e.preventDefault();
-						handleTabComplete();
+						if (ghostText && ghostText.textContent) {
+							acceptAutocomplete();
+						} else {
+							handleTabComplete();
+						}
+					} else if (e.key === 'ArrowRight' && input.selectionStart === input.value.length) {
+						if (ghostText && ghostText.textContent) {
+							e.preventDefault();
+							acceptAutocomplete();
+						}
 					} else if (e.key === 'ArrowUp') {
 						e.preventDefault();
 						if (history.length > 0) {
@@ -688,6 +782,9 @@
 							}
 							input.value = history[historyIndex];
 							updateInputText();
+							if (ghostText) {
+								ghostText.textContent = '';
+							}
 							setTimeout(function () {
 								input.selectionStart = input.selectionEnd = input.value.length;
 							}, 0);
@@ -703,6 +800,9 @@
 								input.value = '';
 							}
 							updateInputText();
+							if (ghostText) {
+								ghostText.textContent = '';
+							}
 							setTimeout(function () {
 								input.selectionStart = input.selectionEnd = input.value.length;
 							}, 0);
@@ -712,6 +812,9 @@
 						var cmd = input.value;
 						input.value = '';
 						updateInputText();
+						if (ghostText) {
+							ghostText.textContent = '';
+						}
 						
 						if (cmd.trim() !== '') {
 							if (history.length === 0 || history[history.length - 1] !== cmd) {
