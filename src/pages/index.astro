@@ -351,18 +351,16 @@ const latestPosts = (await getCollection('blog'))
 				box-shadow: var(--box-shadow);
 				border: 1px solid rgba(255, 255, 255, 0.05);
 				z-index: 2;
-				will-change: opacity, transform, filter;
+				will-change: opacity, transform;
 				opacity: var(--stage-opacity, 1);
 				transform: translateY(var(--stage-translate, 0px));
-				filter: blur(var(--stage-blur, 0px));
-				transition: opacity 0.1s ease-out, transform 0.1s ease-out, filter 0.1s ease-out;
+				transition: opacity 0.1s ease-out, transform 0.1s ease-out;
 			}
 			.stage-tagline .hero-content {
-				will-change: opacity, transform, filter;
+				will-change: opacity, transform;
 				opacity: var(--stage-opacity, 1);
 				transform: translateY(var(--stage-translate, 0px));
-				filter: blur(var(--stage-blur, 0px));
-				transition: opacity 0.1s ease-out, transform 0.1s ease-out, filter 0.1s ease-out;
+				transition: opacity 0.1s ease-out, transform 0.1s ease-out;
 			}
 			/* Featured section */
 			.featured-section {
@@ -459,8 +457,6 @@ const latestPosts = (await getCollection('blog'))
 				padding: 0.65rem 1.6rem;
 				border-radius: 9999px;
 				background: linear-gradient(135deg, rgba(30, 35, 50, 0.95) 0%, rgba(15, 20, 35, 0.98) 100%);
-				backdrop-filter: blur(12px);
-				-webkit-backdrop-filter: blur(12px);
 				border: 1px solid rgba(123, 158, 255, 0.3);
 				color: var(--accent);
 				font-size: 0.9rem;
