@@ -843,6 +843,11 @@
 					trigger.setAttribute('aria-expanded', String(isOpen));
 					try {
 						sessionStorage.setItem('term_open', String(isOpen));
+						if (isOpen) {
+							sessionStorage.setItem('term_open_path', window.location.pathname);
+						} else {
+							sessionStorage.removeItem('term_open_path');
+						}
 					} catch (e) {}
 					if (isOpen) {
 						if (triggerIcon) triggerIcon.style.display = 'none';
@@ -869,7 +874,8 @@
 				// Restore terminal open state on page load
 				try {
 					const isOpen = sessionStorage.getItem('term_open') === 'true';
-					if (isOpen) {
+					const openPath = sessionStorage.getItem('term_open_path');
+					if (isOpen && openPath === window.location.pathname) {
 						widget.classList.add('open');
 						trigger.setAttribute('aria-expanded', 'true');
 						if (triggerIcon) triggerIcon.style.display = 'none';
@@ -879,6 +885,9 @@
 						if (body) {
 							body.scrollTop = body.scrollHeight;
 						}
+					} else if (isOpen) {
+						sessionStorage.setItem('term_open', 'false');
+						sessionStorage.removeItem('term_open_path');
 					}
 				} catch (e) {}
 
