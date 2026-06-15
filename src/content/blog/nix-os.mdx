@@ -1,0 +1,184 @@
+---
+title: "I Migrated my Docker LXCs to NixOS"
+author: "Chris Tran"
+pubDate: "2026-06-14"
+heroImage: "/img/nix-os.png"
+description: "Say goodbye to configuration drift and 'it works on my machine' syndrome. Discover how NixOS allows you to define your home lab's entire operating system, packages, and services in a single, reproducible codebase."
+tags: ["Home Lab","NixOS","Self-Hosted","DevOps","Linux","Docker"]
+---
+
+Years ago, I started my self-hosting journey with a \$5 droplet on DigitalOcean. Nowadays, my home lab is my pride and joy—and my absolute nightmare. It started innocently enough with a single, LXC container running Ubuntu, on Proxmox VE. Over time, that became several LXCs across multiple host servers. I was self-hosting everything: Nextcloud, Plex, Home Assistant, Pi-hole, Immich, and a dozen microservices.
+
+But as my home lab grew, so did the cognitive load of maintaining it. 
+
+If you run a home lab, you know this feeling. You execute a late-night `apt upgrade`, something breaks, and you spend the next three hours scouring StackOverflow to find which obscure configuration file in `/etc/` was overwritten. You change a setting, forget about it, and six months later, when the SSD dies, you realize your backups are missing that *one* manual tweak required to make the system boot.
+
+This is the cost of mutable state. And it is exactly why I decided to blow up my traditional Debian-based setup and migrate my Docker containers to **NixOS**.
+
+---
+
+## The Mutable State Problem: The Decay of the Snowflake Server
+
+In traditional Linux distributions like Debian, Ubuntu, or Rocky Linux, the operating system is a **mutable canvas**. You start with a clean slate, and over time, you paint over it with commands:
+
+```bash
+sudo apt install curl git docker.io
+sudo nano /etc/network/interfaces
+sudo systemctl enable --now docker
+```
+
+Each of these commands mutates the state of your machine. This approach works fine initially, but over months or years, it leads to several critical issues:
+
+1. **Configuration Drift:** You tweak a configuration file at 2:00 AM to fix an issue. You don't document it. You don't commit it to a repository. That tweak is now a permanent, undocumented dependency of your system. Your server has officially become a **snowflake**—unique, fragile, and impossible to replicate.
+2. **Dependency Hell:** Package `A` requires Library `X` (v1.2). Package `B` gets updated and pulls in Library `X` (v2.0), silently breaking Package `A`.
+3. **The Disaster Recovery Dread:** If your primary OS drive dies right now, how long would it take you to rebuild your system back to 100% functionality? For most home labbers, the honest answer is days of frustration, trial, and error.
+
+We have spent the last decade in the DevOps world fighting this problem with tools like Ansible, Terraform, and Docker. Yet, we often still install the underlying host operating systems manually. NixOS solves this by treating the entire operating system as code.
+
+---
+
+## NixOS Core Concepts: Declarative Nirvana
+
+NixOS is built around the **Nix package manager** and the functional **Nix language**. Instead of run-time commands modifying the system, you define the desired final state of your system in a configuration file (usually `/etc/nixos/configuration.nix`), and NixOS makes it so.
+
+```nix
+# A small taste of NixOS configuration
+{ config, pkgs, ... }: {
+  boot.loader.systemd-boot.enable = true;
+  networking.hostName = "homelab-node-01";
+
+  environment.systemPackages = with pkgs; [
+    git
+    vim
+    tmux
+    htop
+  ];
+
+  services.openssh.enable = true;
+}
+```
+
+If a package or service isn't defined in this configuration, **it doesn't exist on the system**. 
+
+### 1. Nix Flakes: Lockfiles for Your Infrastructure
+To achieve true reproducibility, NixOS introduced **Flakes**. Think of a Flake as a `package.json` or `Cargo.toml` for your entire operating system. It provides a standardized way to define dependencies (like the Nixpkgs channel) and pin them to exact Git commits using a `flake.lock` file. 
+
+With Flakes, if I build my configuration on my main server or my spare laptop, I am guaranteed to get the exact same packages, kernel versions, and configurations down to the single bit.
+
+### 2. Generations and Instant Rollbacks
+When you apply a new configuration in NixOS using `nixos-rebuild switch`, the system doesn't overwrite existing binaries. Instead, it compiles the new configuration in isolation inside `/nix/store` and updates symlinks to point to the new files.
+
+This architecture enables **Generations**. Every single time you change your configuration, NixOS creates a new bootable system generation. 
+
+* Did you mess up your network configuration and lock yourself out of SSH? Run `nixos-rebuild switch --rollback`.
+* Did a kernel update cause a kernel panic on boot? Simply reboot, select the previous generation from the bootloader menu, and you are instantly back to a working system. 
+
+```
+NixOS - Default (Generation 42)
+NixOS - Generation 41 (2026-06-12)
+NixOS - Generation 40 (2026-06-05)
+```
+
+No more system rescue USBs. No more reinstalling from scratch.
+
+---
+
+## From Docker-Compose to Nix: Declaring Services Natively
+
+Most home lab enthusiasts rely heavily on Docker Compose. It’s a great tool, but managing a dozen different `docker-compose.yml` files scattered across different directories can become disorganized.
+
+NixOS allows you to declare containers and self-hosted services natively in your system configuration. You have two primary ways to do this: using native NixOS service modules, or using the virtualized OCI containers module.
+
+### The Old Way: `docker-compose.yml`
+Here is a typical Compose setup for running a self-hosted AdGuard Home instance:
+
+```yaml
+version: '3'
+services:
+  adguardhome:
+    image: adguard/adguardhome
+    container_name: adguardhome
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "3000:3000/tcp"
+    volumes:
+      - ./workdir:/opt/adguardhome/work
+      - ./confdir:/opt/adguardhome/conf
+    restart: unless-stopped
+```
+
+### The NixOS Way: Declaring Services as Code
+Here is how we can translate that exact configuration into NixOS. We can use the native AdGuard Home module provided by Nixpkgs, which completely eliminates the overhead of running a Docker daemon for this service:
+
+```nix
+{ config, pkgs, ... }: {
+
+  # Enable the native AdGuard Home service
+  services.adguardhome = {
+    enable = true;
+    openFirewall = true; # Automatically opens the necessary ports
+    settings = {
+      http = {
+        address = "0.0.0.0";
+        port = 3000;
+      };
+      dns = {
+        bind_hosts = [ "0.0.0.0" ];
+        port = 53;
+      };
+    };
+  };
+}
+```
+
+By using the native NixOS service:
+- You get configuration validation at compile time.
+- Systemd automatically manages the lifecycle, logging, and sandboxing of the service.
+- You don't have to manage external data directories or volume permissions manually; NixOS handles it under `/var/lib/adguardhome`.
+
+### Running OCI (Docker) Containers Natively in Nix
+If a service doesn't have a native NixOS module, or if you prefer to keep using official Docker images, NixOS has a built-in option called `virtualisation.oci-containers`:
+
+```nix
+{ config, pkgs, ... }: {
+  virtualisation.oci-containers = {
+    backend = "docker"; # Or "podman" for daemonless containers
+    containers = {
+      jellyfin = {
+        image = "jellyfin/jellyfin:latest";
+        ports = [ "8096:8096" ];
+        volumes = [
+          "/var/lib/jellyfin/config:/config"
+          "/var/lib/jellyfin/cache:/cache"
+          "/mnt/media:/media"
+        ];
+        extraOptions = [ "--device=/dev/dri:/dev/dri" ]; # Hardware acceleration
+      };
+    };
+  };
+}
+```
+
+This brings your Docker containers directly into the system lifecycle. When you rebuild your NixOS system, it automatically pulls the images, configures the networks, and spins up the systemd services managing those containers.
+
+---
+
+## The Migration Strategy: How I Did It
+
+If you want to migrate to NixOS, **do not try to rewrite your whole home lab in a weekend**. The learning curve can be steep. Instead, I recommend a phased approach:
+
+1. **Spin up a VM:** Create a NixOS virtual machine on Proxmox, Hyper-V, or VirtualBox. Get comfortable with the syntax of `/etc/nixos/configuration.nix`.
+2. **Commit your config to Git:** Create a private GitHub or GitLab repository. Keep your configuration there. This is now the "source of truth" for your server.
+3. **Migrate services one by one:** Start with simple stateless utility services (like Tailscale or Node Exporter), then move on to dockerized applications, and finally handle state-heavy applications like databases.
+4. **Adopt Flakes and Deploy Tools:** Once you are comfortable, transition your configuration to use Flakes. To manage multiple servers from a single workstation, tools like [colmena](https://github.com/zhaofengli/colmena) or [deploy-rs](https://github.com/serokell/deploy-rs) allow you to push configurations to all your home lab nodes with a single command.
+
+---
+
+## Conclusion: Peaceful Systems Administration
+
+Migrating my home lab to NixOS was easily one of the most challenging but rewarding infrastructure projects I've undertaken. 
+
+Today, my entire home lab is defined in a single, clean Git repository. If a node fails, I can boot a bare-metal machine with a NixOS minimal installer, point it to my Git repository, run one command, and walk away. Twenty minutes later, the machine is fully provisioned, joined to my Tailscale mesh, running my services, and functioning exactly as it was before.
+
+The days of the "snowflake" home server are over. If you're tired of configuration drift, brittle updates, and disaster recovery anxiety, it's time to take the plunge. Welcome to declarative home lab nirvana.
