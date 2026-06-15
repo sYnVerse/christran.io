@@ -68,7 +68,7 @@ function getGeminiModel() {
     throw new Error('GEMINI_API_KEY is not set in environment variables.');
   }
   const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-  return genAI.getGenerativeModel({ 
+  return genAI.getGenerativeModel({
     model: "gemini-3.5-flash",
     generationConfig: { responseMimeType: "application/json" }
   });
@@ -92,7 +92,7 @@ function getResend() {
 }
 
 // Helper to retry async operations (like API requests) with exponential backoff
-async function retryCall(fn, retries = 3, delayMs = 2000) {
+async function retryCall(fn, retries = 10, delayMs = 60000) {
   try {
     return await fn();
   } catch (error) {
@@ -114,11 +114,11 @@ async function getExistingPostsContext() {
     }
     const files = fs.readdirSync(BLOG_CONTENT_PATH).filter(f => f.endsWith('.md') || f.endsWith('.mdx'));
     const posts = [];
-    
+
     for (const file of files) {
       const filepath = path.join(BLOG_CONTENT_PATH, file);
       const content = fs.readFileSync(filepath, 'utf-8');
-      
+
       // Simple frontmatter parser
       const match = content.match(/^---\r?\n([\s\S]+?)\r?\n---/);
       if (match) {
@@ -126,7 +126,7 @@ async function getExistingPostsContext() {
         const titleMatch = fm.match(/title:\s*"([^"]+)"|title:\s*'([^']+)'|title:\s*(.+)/);
         const descMatch = fm.match(/description:\s*"([^"]+)"|description:\s*'([^']+)'|description:\s*(.+)/);
         const tagsMatch = fm.match(/tags:\s*\[([^\]]+)\]/);
-        
+
         posts.push({
           title: titleMatch ? (titleMatch[1] || titleMatch[2] || titleMatch[3]) : file,
           description: descMatch ? (descMatch[1] || descMatch[2] || descMatch[3]) : '',
@@ -145,8 +145,8 @@ async function getExistingPostsContext() {
 async function generateBlogIdeas(keywords = '') {
   const existingPosts = await getExistingPostsContext();
   const model = getGeminiModel();
-  
-  const contextText = existingPosts.length > 0 
+
+  const contextText = existingPosts.length > 0
     ? `Here are some of the existing blog posts on the site for reference:\n${existingPosts.map(p => `- Title: "${p.title}"\n  Description: "${p.description}"\n  Tags: ${JSON.stringify(p.tags)}`).join('\n')}`
     : 'The blog is new and does not have any posts yet.';
 
@@ -187,18 +187,18 @@ async function generateBlogIdeas(keywords = '') {
   const result = await retryCall(() => model.generateContent(prompt));
   const text = result.response.text();
 
-  
+
   // Clean JSON response (in case Gemini wraps it in ```json ... ```)
   const cleanJsonText = text.replace(/^```json\s*/i, '').replace(/```\s*$/, '').trim();
   const parsedData = JSON.parse(cleanJsonText);
-  
+
   // Save generated ideas to data/ideas.json
   const ideasWithIds = parsedData.ideas.map((idea, index) => ({
     id: `idea_${Date.now()}_${index}`,
     ...idea,
     generatedAt: new Date().toISOString()
   }));
-  
+
   const filepath = path.join(DATA_DIR, 'ideas.json');
   let existingIdeas = [];
   if (fs.existsSync(filepath)) {
@@ -211,11 +211,11 @@ async function generateBlogIdeas(keywords = '') {
       existingIdeas = [];
     }
   }
-  
+
   const allIdeas = [...ideasWithIds, ...existingIdeas];
   const limitedIdeas = allIdeas.slice(0, 50);
   fs.writeFileSync(filepath, JSON.stringify(limitedIdeas, null, 2));
-  
+
   return ideasWithIds;
 }
 
@@ -225,7 +225,7 @@ async function sendIdeasEmail(ideas) {
     throw new Error('USER_EMAIL environment variable is not configured.');
   }
   const resend = getResend();
-  
+
   const ideasHtml = ideas.map((idea, idx) => `
     <div style="margin-bottom: 24px; padding: 16px; border: 1px solid #e2e8f0; border-radius: 8px; background-color: #f8fafc;">
       <h3 style="margin-top: 0; color: #1e293b; font-size: 18px;">${idx + 1}. ${idea.title}</h3>
@@ -242,7 +242,7 @@ async function sendIdeasEmail(ideas) {
 
   const dashboardUrl = process.env.DASHBOARD_URL || 'http://localhost:5000';
 
-  
+
   const htmlContent = `
     <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #334155;">
       <h2 style="color: #6366f1; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 20px;">💡 Daily Blog Post Ideas</h2>
@@ -329,28 +329,28 @@ async function generateImagenHeroImage(title, description, slug) {
     console.log('🔄 Falling back to free high-quality stock photo via LoremFlickr...');
     try {
       const fallbackUrl = 'https://loremflickr.com/1024/576/technology,coding,hardware,minimalist';
-      
+
       const response = await fetch(fallbackUrl);
       if (!response.ok) {
         throw new Error(`LoremFlickr API failed: ${response.status} ${response.statusText}`);
       }
-      
+
       const arrayBuffer = await response.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
       const filename = `${slug}.webp`;
       const outputPath = path.join(ASSETS_IMG_PATH, filename);
-      
+
       console.log(`Converting fetched image to optimized WebP at: ${outputPath}`);
       await sharp(buffer)
         .webp({ quality: 85 })
         .toFile(outputPath);
-        
+
       console.log(`✅ Fallback Hero Image successfully saved: /img/${filename}`);
       return `/img/${filename}`;
     } catch (fallbackError) {
       console.error('❌ Failed to generate fallback Hero Image:', fallbackError);
       // Fall back to a default image in the assets/img/ folder
-      return '/img/google-antigravity.png'; 
+      return '/img/google-antigravity.png';
     }
   }
 }
@@ -360,13 +360,13 @@ async function generateImagenHeroImage(title, description, slug) {
 // Generate draft logic
 async function generateDraft(idea) {
   const model = getGeminiTextModel();
-  
+
   // Generate default slug for the image filename
   const slug = idea.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-  
+
   // Generate the AI hero image first
   const heroImageUrl = await generateImagenHeroImage(idea.title, idea.description, slug);
-  
+
   const prompt = `You are a professional technical writer and tech blogger. You are drafting a blog post for Chris Tran's personal site (christran.io).
   
   Topic Details:
@@ -399,7 +399,7 @@ async function generateDraft(idea) {
   const result = await retryCall(() => model.generateContent(prompt));
   const draftText = result.response.text();
 
-  
+
   // Clean draft text (remove leading/trailing markdown blocks if the LLM added them)
   let cleanDraft = draftText.trim();
   if (cleanDraft.startsWith('```markdown')) {
@@ -407,7 +407,7 @@ async function generateDraft(idea) {
   } else if (cleanDraft.startsWith('```')) {
     cleanDraft = cleanDraft.replace(/^```\s*/, '').replace(/```\s*$/, '').trim();
   }
-  
+
   // Save active draft to server
   const activeDraft = {
     idea,
@@ -415,7 +415,7 @@ async function generateDraft(idea) {
     generatedAt: new Date().toISOString()
   };
   fs.writeFileSync(path.join(DATA_DIR, 'active-draft.json'), JSON.stringify(activeDraft, null, 2));
-  
+
   return cleanDraft;
 }
 
@@ -424,7 +424,7 @@ async function sendDraftEmail(title, draftContent) {
   if (!userEmail) return;
   const resend = getResend();
   const dashboardUrl = process.env.DASHBOARD_URL || 'http://localhost:5000';
-  
+
   // Convert markdown to very basic HTML for preview in email
   const htmlContent = `
     <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 700px; margin: 0 auto; padding: 20px; color: #334155;">
@@ -453,7 +453,7 @@ async function sendDraftEmail(title, draftContent) {
 // Refine draft logic
 async function refineDraft(currentDraft, suggestion) {
   const model = getGeminiTextModel();
-  
+
   const prompt = `You are a professional technical editor. I have a draft of a blog post, and I want you to refine it based on specific suggestions.
   
   Suggestions/Feedback:
@@ -469,14 +469,14 @@ async function refineDraft(currentDraft, suggestion) {
   const result = await retryCall(() => model.generateContent(prompt));
   const refinedText = result.response.text();
 
-  
+
   let cleanRefined = refinedText.trim();
   if (cleanRefined.startsWith('```markdown')) {
     cleanRefined = cleanRefined.replace(/^```markdown\s*/i, '').replace(/```\s*$/, '').trim();
   } else if (cleanRefined.startsWith('```')) {
     cleanRefined = cleanRefined.replace(/^```\s*/, '').replace(/```\s*$/, '').trim();
   }
-  
+
   // Update saved active draft
   let activeDraft = {};
   try {
@@ -484,11 +484,11 @@ async function refineDraft(currentDraft, suggestion) {
   } catch (e) {
     activeDraft = { generatedAt: new Date().toISOString() };
   }
-  
+
   activeDraft.content = cleanRefined;
   activeDraft.refinedAt = new Date().toISOString();
   fs.writeFileSync(path.join(DATA_DIR, 'active-draft.json'), JSON.stringify(activeDraft, null, 2));
-  
+
   return cleanRefined;
 }
 
@@ -573,7 +573,7 @@ function updatePostHeroImage(slug, heroImagePath) {
   const mdxFilename = `${slug}.mdx`;
   const mdPath = path.join(BLOG_CONTENT_PATH, filename);
   const mdxPath = path.join(BLOG_CONTENT_PATH, mdxFilename);
-  
+
   if (fs.existsSync(mdPath)) {
     const content = fs.readFileSync(mdPath, 'utf-8');
     const updated = updateFrontmatterHeroImage(content, heroImagePath);
@@ -593,7 +593,7 @@ function updatePostHeroImage(slug, heroImagePath) {
 app.get('/api/posts', (req, res) => {
   try {
     const posts = [];
-    
+
     // Check if there is an active draft
     const draftFile = path.join(DATA_DIR, 'active-draft.json');
     let activeDraftInfo = null;
@@ -646,9 +646,9 @@ app.get('/api/images/suggest', async (req, res) => {
   try {
     const { title, keywords, slug } = req.query;
     const searchTerms = keywords || title || 'technology';
-    
+
     console.log(`Fetching suggestions for keywords: "${searchTerms}", slug: "${slug}"`);
-    
+
     // Picsum Suggestions (random list page to keep it fresh)
     async function fetchPicsumSuggestions() {
       try {
@@ -838,7 +838,7 @@ app.post('/api/images/generate-imagen', async (req, res) => {
 
     const base64Bytes = data.predictions[0].bytesBase64Encoded;
     const buffer = Buffer.from(base64Bytes, 'base64');
-    
+
     // Save to temp image in DATA_DIR
     const tempFilename = `temp-${slug}-${Date.now()}.webp`;
     const tempOutputPath = path.join(DATA_DIR, tempFilename);
@@ -903,7 +903,7 @@ app.post('/api/images/select', async (req, res) => {
         await sharp(buffer)
           .webp({ quality: 85 })
           .toFile(finalOutputPath);
-        
+
         console.log(`✅ Saved and WebP-optimized remote image to: ${finalOutputPath}`);
       }
     }
@@ -1022,9 +1022,9 @@ app.post('/api/draft/generate', async (req, res) => {
     if (!idea) {
       return res.status(400).json({ success: false, error: 'Missing idea payload.' });
     }
-    
+
     const draft = await generateDraft(idea);
-    
+
     // Remove the selected idea from ideas.json
     const filepath = path.join(DATA_DIR, 'ideas.json');
     if (fs.existsSync(filepath)) {
@@ -1038,12 +1038,12 @@ app.post('/api/draft/generate', async (req, res) => {
         console.error('Failed to update ideas list after draft generation:', err);
       }
     }
-    
+
     // Attempt to send email in background (don't block dashboard generation)
     if (hasResendKey && userEmail) {
       sendDraftEmail(idea.title, draft).catch(err => console.error('Failed to email draft:', err));
     }
-    
+
     res.json({ success: true, content: draft });
   } catch (error) {
     console.error('Error generating draft:', error);
@@ -1073,12 +1073,12 @@ app.post('/api/draft/save', (req, res) => {
     if (!content || !slug) {
       return res.status(400).json({ success: false, error: 'Missing content or slug.' });
     }
-    
+
     // Ensure slug is clean
     const safeSlug = slug.toLowerCase().replace(/[^a-z0-9-]+/g, '-').replace(/^-+|-+$/g, '');
     const filename = `${safeSlug}.md`;
     const finalPath = path.join(BLOG_CONTENT_PATH, filename);
-    
+
     // Check if the content contains a reference to an image file in frontmatter
     // e.g. heroImage: "/img/some-slug.webp"
     const matchImage = content.match(/heroImage:\s*"\/img\/([^"]+)\.webp"/);
@@ -1095,7 +1095,7 @@ app.post('/api/draft/save', (req, res) => {
         }
       }
     }
-    
+
     fs.writeFileSync(finalPath, content, 'utf-8');
 
     res.json({ success: true, filePath: finalPath, filename });
@@ -1112,7 +1112,7 @@ app.post('/api/git/commit', async (req, res) => {
     if (!message || !filename) {
       return res.status(400).json({ success: false, error: 'Missing commit message or filename.' });
     }
-    
+
     // Run git commands in sequence
     // 1. Resolve relative paths from repo root
     const relativeFilePath = path.join('src', 'content', 'blog', filename);
@@ -1120,39 +1120,39 @@ app.post('/api/git/commit', async (req, res) => {
     const relativeImagePath = path.join('src', 'assets', 'img', 'blog', imageFilename);
 
     const fullImagePath = path.join(REPO_ROOT, relativeImagePath);
-    
+
     console.log(`Git workflow starting in ${REPO_ROOT} for file: ${relativeFilePath}`);
-    
+
     // Check if the image file exists, and stage it if so
     let gitAddCommand = `git add ${relativeFilePath}`;
     if (fs.existsSync(fullImagePath)) {
       console.log(`Staging associated hero image: ${relativeImagePath}`);
       gitAddCommand += ` ${relativeImagePath}`;
     }
-    
+
     // git add
     const addResult = await execPromise(gitAddCommand, { cwd: REPO_ROOT });
     console.log('Git Add output:', addResult.stdout, addResult.stderr);
-    
+
     // git commit
     const commitResult = await execPromise(`git commit -m "${message.replace(/"/g, '\\"')}"`, { cwd: REPO_ROOT });
     console.log('Git Commit output:', commitResult.stdout, commitResult.stderr);
-    
+
     // git push
     const pushResult = await execPromise(`git push`, { cwd: REPO_ROOT });
     console.log('Git Push output:', pushResult.stdout, pushResult.stderr);
-    
+
     res.json({
       success: true,
       log: `Git Add:\n${addResult.stdout || 'Done.'}\n\nGit Commit:\n${commitResult.stdout}\n\nGit Push:\n${pushResult.stdout || 'Done.'}`
     });
   } catch (error) {
     console.error('Git Command failed:', error);
-    res.status(500).json({ 
-      success: false, 
+    res.status(500).json({
+      success: false,
       error: error.message,
       stdout: error.stdout,
-      stderr: error.stderr 
+      stderr: error.stderr
     });
   }
 });
