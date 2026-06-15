@@ -7,13 +7,13 @@ description: "Say goodbye to configuration drift and 'it works on my machine' sy
 tags: ["Home Lab","NixOS","Self-Hosted","DevOps","Linux","Docker"]
 ---
 
-Years ago, I started my self-hosting journey with a \$5 droplet on DigitalOcean. Nowadays, my home lab is my pride and joy—and my absolute nightmare. It started innocently enough with a single, LXC container running Ubuntu, on Proxmox VE. Over time, that became several LXCs across multiple host servers. I was self-hosting everything: Nextcloud, Plex, Home Assistant, Pi-hole, Immich, and a dozen microservices.
+Like most self-hosters, my obsession started innocently: a \$5 DigitalOcean droplet running a single container. Today, my home lab is a sprawling, multi-node beast—my absolute pride, and my constant operational nightmare. What began as a simple Ubuntu LXC on Proxmox has mutated into a house of cards running everything from Nextcloud to Immich.
 
 But as my home lab grew, so did the cognitive load of maintaining it. 
 
 If you run a home lab, you know this feeling. You execute a late-night `apt upgrade`, something breaks, and you spend the next three hours scouring StackOverflow to find which obscure configuration file in `/etc/` was overwritten. You change a setting, forget about it, and six months later, when the SSD dies, you realize your backups are missing that *one* manual tweak required to make the system boot.
 
-This is the cost of mutable state. And it is exactly why I decided to blow up my traditional Debian-based setup and migrate my Docker containers to **NixOS**.
+This is the tax we pay for mutable state—the silent killer of stable infrastructure. Tired of walking on eggshells with every system update, I decided to blow up my traditional Debian-based setup and rebuild my entire home lab with **NixOS**.
 
 ---
 
@@ -85,7 +85,7 @@ No more system rescue USBs. No more reinstalling from scratch.
 
 ## From Docker-Compose to Nix: Declaring Services Natively
 
-Most home lab enthusiasts rely heavily on Docker Compose. It’s a great tool, but managing a dozen different `docker-compose.yml` files scattered across different directories can become disorganized.
+If you self-host, Docker Compose is probably your hammer of choice. But as your lab grows, you quickly end up with a dozen `docker-compose.yml` files scattered across random directories, conflicting volume permissions, and an increasingly messy web of Portainer stacks or git repos. It is GitOps in theory, but operational chaos in practice.
 
 NixOS allows you to declare containers and self-hosted services natively in your system configuration. You have two primary ways to do this: using native NixOS service modules, or using the virtualized OCI containers module.
 
