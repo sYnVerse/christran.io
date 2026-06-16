@@ -1,0 +1,76 @@
+---
+title: "sYnX"
+description: "A modern task management application for organizing and tracking personal and professional tasks. Features an intuitive interface, priority levels, due dates, and progress tracking to stay productive."
+category: "app"
+tags: ["Task Management", "Productivity", "Web App"]
+techStack: ["Cloudflare Workers", "KV Storage", "TypeScript"]
+image: "/img/projects/synx.webp"
+liveUrl: "https://synx.christran.io"
+featured: false
+order: 5
+---
+
+<p>
+	<strong>sYnX</strong> is a fast, responsive task management application designed to organize and track personal and professional responsibilities. Built as a serverless static asset application utilizing the Remix framework, it provides an intuitive user interface with robust offline-first caching and KV-backed server persistence.
+</p>
+
+<h2>Technical Stack</h2>
+
+<div class="specs-grid">
+	<div class="spec-card">
+		<div class="spec-header">
+			<span class="spec-icon">
+				<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/></svg>
+			</span>
+			<h3>Application Layer</h3>
+		</div>
+		<table class="spec-table">
+			<tbody>
+				<tr><td class="spec-label">Framework</td><td>Remix (React UI Engine)</td></tr>
+				<tr><td class="spec-label">Build Tool</td><td>Vite (using Remix Vite Plugin)</td></tr>
+				<tr><td class="spec-label">Language</td><td>TypeScript</td></tr>
+				<tr><td class="spec-label">Styling</td><td>Vanilla CSS (Custom UI Components)</td></tr>
+			</tbody>
+		</table>
+	</div>
+
+	<div class="spec-card">
+		<div class="spec-header">
+			<span class="spec-icon">
+				<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+			</span>
+			<h3>Edge Deployment</h3>
+		</div>
+		<table class="spec-table">
+			<tbody>
+				<tr><td class="spec-label">Hosting</td><td>Cloudflare Workers Assets (Static + Dynamic routing)</td></tr>
+				<tr><td class="spec-label">Database</td><td>Cloudflare Workers KV (KeyValue Storage)</td></tr>
+				<tr><td class="spec-label">Proxy binding</td><td>Cloudflare Developer Platform (Remix Dev Proxy)</td></tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<div class="lab-note">
+	<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+	<span>
+		<strong>Remix Dev Proxy Binding:</strong> The developer setup utilizes Cloudflare's Dev Proxy to dynamically bridge bindings (such as the <code>TO_DO_LIST</code> KV namespace) directly into the local Remix Vite server during development.
+	</span>
+</div>
+
+<h2>Core Features</h2>
+<ul>
+	<li><strong>Task Organization</strong> — Add, remove, edit, and categorize items based on priority levels and due dates.</li>
+	<li><strong>Remix Routing</strong> — Utilizes Remix's nested routers to update specific sections of the dashboard instantly without full page refreshes.</li>
+	<li><strong>Workers KV Persistence</strong> — High-speed reads and writes to global KV storage ensure task states load near-instantly regardless of location.</li>
+	<li><strong>Cloudflare Assets</strong> — Deploys static assets globally, serving client files directly from Cloudflare's edge CDN.</li>
+</ul>
+
+<div class="tech-tags">
+	<span class="tag">Remix</span>
+	<span class="tag">Cloudflare Workers Assets</span>
+	<span class="tag">Workers KV</span>
+	<span class="tag">TypeScript</span>
+	<span class="tag">Vite</span>
+	<span class="tag">React</span>
+</div>

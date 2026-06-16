@@ -1,0 +1,76 @@
+---
+title: "AI Chat"
+description: "Large Language Model interface for AI-powered text generation and conversation. Provides access to advanced language models for content creation, analysis, and interactive conversations with customizable parameters."
+category: "app"
+tags: ["AI", "Language Model", "Text Generation"]
+techStack: ["Cloudflare Workers", "TypeScript", "Workers AI"]
+image: "/img/projects/ai-chat.webp"
+liveUrl: "https://llm.christran.io"
+featured: false
+order: 9
+---
+
+<p>
+	<strong>AI Chat</strong> is a lightweight, responsive chat interface designed to run LLM conversations at the edge. Utilizing Server-Sent Events (SSE) to stream text responses from Cloudflare's model registry, it provides a performant chatbot workspace with minimal load-time overhead and client-side history preservation.
+</p>
+
+<h2>Technical Stack</h2>
+
+<div class="specs-grid">
+	<div class="spec-card">
+		<div class="spec-header">
+			<span class="spec-icon">
+				<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+			</span>
+			<h3>Edge AI & Stream</h3>
+		</div>
+		<table class="spec-table">
+			<tbody>
+				<tr><td class="spec-label">Inference Engine</td><td>Cloudflare Workers AI LLMs</td></tr>
+				<tr><td class="spec-label">Models Supported</td><td><code>Llama-3-8B-Instruct</code>, <code>Mistral-7B</code></td></tr>
+				<tr><td class="spec-label">Stream API</td><td>Server-Sent Events (SSE)</td></tr>
+				<tr><td class="spec-label">Language</td><td>TypeScript</td></tr>
+			</tbody>
+		</table>
+	</div>
+
+	<div class="spec-card">
+		<div class="spec-header">
+			<span class="spec-icon">
+				<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/></svg>
+			</span>
+			<h3>Infrastructure</h3>
+		</div>
+		<table class="spec-table">
+			<tbody>
+				<tr><td class="spec-label">Compute</td><td>Cloudflare Workers</td></tr>
+				<tr><td class="spec-label">AI Telemetry</td><td>Cloudflare AI Gateway (Rate limiting & logging)</td></tr>
+				<tr><td class="spec-label">Session Cache</td><td>Client-side browser state (sessionStorage/localStorage)</td></tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<div class="lab-note">
+	<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+	<span>
+		<strong>Streaming with SSE:</strong> Instead of waiting for full LLM completions, the edge Worker streams individual tokens to the client as they are generated, improving perceived response times.
+	</span>
+</div>
+
+<h2>Core Features</h2>
+<ul>
+	<li><strong>Responsive Chat Interface</strong> — Clean, mobile-friendly layout optimized for typing, reading, and viewing code blocks.</li>
+	<li><strong>AI Gateway Integration</strong> — Configured to run through Cloudflare AI Gateway to enable caching, logging, analytics, and custom rate limits.</li>
+	<li><strong>Local History Persistence</strong> — Stores conversation history directly on the user's browser, preventing server leaks and maintaining chat continuity across reloads.</li>
+	<li><strong>Custom Prompts</strong> — Easily supports overriding the LLM's system prompt or selecting different model categories directly from the web layout.</li>
+</ul>
+
+<div class="tech-tags">
+	<span class="tag">Cloudflare Workers</span>
+	<span class="tag">Workers AI</span>
+	<span class="tag">AI Gateway</span>
+	<span class="tag">Server-Sent Events</span>
+	<span class="tag">TypeScript</span>
+	<span class="tag">LLM Streaming</span>
+</div>

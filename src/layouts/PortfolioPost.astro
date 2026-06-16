@@ -1,0 +1,191 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+type Props = CollectionEntry<'portfolio'>['data'];
+
+const { title, description } = Astro.props;
+---
+
+<html lang="en">
+	<head>
+		<BaseHead title={`${title} | Chris Tran`} description={description} />
+		<style>
+			main {
+				width: calc(100% - 2em);
+				max-width: 100%;
+				margin: 0;
+			}
+			.prose {
+				width: 720px;
+				max-width: calc(100% - 2em);
+				margin: auto;
+				padding: 1em;
+				color: rgb(var(--gray-dark));
+			}
+			.title {
+				margin-bottom: 1.5rem;
+				padding: 1rem 0;
+				text-align: center;
+				line-height: 1.2;
+			}
+			.title h1 {
+				margin: 0;
+				background: linear-gradient(135deg, rgb(var(--black)) 0%, var(--accent) 100%);
+				-webkit-background-clip: text;
+				-webkit-text-fill-color: transparent;
+				background-clip: text;
+				font-size: 2.5rem;
+			}
+			@media (max-width: 720px) {
+				.title h1 {
+					font-size: 2.0rem;
+				}
+			}
+			
+			/* Shared portfolio detail styles */
+			:global(.specs-grid) {
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+				gap: 1.25rem;
+				margin: 1.5rem 0 2rem;
+			}
+			:global(.spec-card) {
+				padding: 1.25rem;
+				background: rgba(30, 35, 50, 0.5);
+				backdrop-filter: blur(8px);
+				-webkit-backdrop-filter: blur(8px);
+				border: 1px solid rgba(123, 158, 255, 0.12);
+				border-radius: 10px;
+				transition: border-color 0.3s ease;
+			}
+			:global(.spec-card:hover) {
+				border-color: rgba(123, 158, 255, 0.3);
+			}
+			:global(.spec-header) {
+				display: flex;
+				align-items: center;
+				gap: 0.75rem;
+				margin-bottom: 1rem;
+			}
+			:global(.spec-icon) {
+				color: var(--accent);
+				display: flex;
+				align-items: center;
+				flex-shrink: 0;
+			}
+			:global(.spec-header h3) {
+				margin: 0;
+				font-size: 1rem;
+				color: rgb(var(--black));
+			}
+			:global(.spec-table) {
+				width: 100%;
+				border-collapse: collapse;
+			}
+			:global(.spec-table td) {
+				padding: 0.4rem 0;
+				font-size: 0.88rem;
+				border-bottom: 1px solid rgba(123, 158, 255, 0.08);
+			}
+			:global(.spec-table tr:last-child td) {
+				border-bottom: none;
+			}
+			:global(.spec-label) {
+				color: rgb(var(--gray));
+				font-weight: 600;
+				width: 5rem;
+			}
+			:global(.lab-note) {
+				display: flex;
+				align-items: flex-start;
+				gap: 0.8rem;
+				padding: 1rem 1.25rem;
+				background: rgba(123, 158, 255, 0.08);
+				border: 1px solid rgba(123, 158, 255, 0.15);
+				border-radius: 8px;
+				margin: 1rem 0 1.5rem;
+				font-size: 0.9rem;
+				color: rgb(var(--gray));
+				line-height: 1.5;
+			}
+			:global(.lab-note svg) {
+				flex-shrink: 0;
+				color: var(--accent);
+				margin-top: 0.15rem;
+			}
+			:global(.github-teaser) {
+				display: flex;
+				align-items: center;
+				gap: 0.6rem;
+				padding: 1rem 1.25rem;
+				background: rgba(123, 158, 255, 0.08);
+				border: 1px solid rgba(123, 158, 255, 0.15);
+				border-radius: 8px;
+				margin: 1.5rem 0;
+				font-size: 0.9rem;
+				color: rgb(var(--gray));
+			}
+			:global(.github-teaser svg) {
+				flex-shrink: 0;
+				color: var(--accent);
+			}
+			:global(.tech-tags) {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.5rem;
+				margin: 2rem 0;
+			}
+			:global(.tag) {
+				padding: 0.2rem 0.65rem;
+				background: rgba(123, 158, 255, 0.12);
+				border: 1px solid rgba(123, 158, 255, 0.2);
+				border-radius: 4px;
+				font-size: 0.78rem;
+				font-weight: 500;
+				color: var(--accent);
+			}
+			:global(.back-link-wrapper) {
+				margin-top: 2.5rem;
+				padding-top: 1.5rem;
+				border-top: 1px solid rgba(var(--gray-light), 0.3);
+			}
+			:global(.back-link) {
+				color: var(--accent);
+				text-decoration: none;
+				font-size: 0.9rem;
+				font-weight: 500;
+				transition: opacity 0.2s ease;
+			}
+			:global(.back-link:hover) {
+				opacity: 0.8;
+			}
+			@media (max-width: 720px) {
+				:global(.specs-grid) {
+					grid-template-columns: 1fr;
+				}
+			}
+		</style>
+	</head>
+
+	<body>
+		<Header />
+		<main>
+			<article>
+				<div class="prose">
+					<div class="title">
+						<h1>{title}</h1>
+						<hr />
+					</div>
+					<slot />
+					<div class="back-link-wrapper">
+						<a href="/portfolio" class="back-link">← Back to Portfolio</a>
+					</div>
+				</div>
+			</article>
+		</main>
+		<Footer />
+	</body>
+</html>

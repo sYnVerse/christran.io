@@ -1,0 +1,90 @@
+---
+title: "sYntinel"
+description: "Real-time 3D globe visualization of global service outages and infrastructure health. Features interactive telemetry columns, an outage disaster simulator, system monitor dashboard, and a dedicated focus mode."
+category: "app"
+tags: ["3D Visualization", "System Monitoring", "Real-time Telemetry"]
+techStack: ["Angular", "Three.js", "globe.gl", "Cloudflare Workers", "TypeScript"]
+image: "/img/projects/syntinel.webp"
+liveUrl: "https://syntinel.christran.io"
+sourceUrl: "https://github.com/sYnVerse/sYntinel"
+featured: true
+order: 3
+---
+
+<p>
+	<strong>sYntinel</strong> is a real-time monitoring dashboard featuring an interactive 3D WebGL globe. It aggregates status information from major infrastructure providers and displays them as geographically positioned, color-coded telemetry columns. This visual cockpit allows administrators to identify global service disruptions and regional connectivity issues instantly.
+</p>
+
+<h2>Technical Stack</h2>
+
+<div class="specs-grid">
+	<div class="spec-card">
+		<div class="spec-header">
+			<span class="spec-icon">
+				<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/></svg>
+			</span>
+			<h3>Visualization & UI</h3>
+		</div>
+		<table class="spec-table">
+			<tbody>
+				<tr><td class="spec-label">Framework</td><td>Angular 19</td></tr>
+				<tr><td class="spec-label">3D Engine</td><td>Three.js & globe.gl</td></tr>
+				<tr><td class="spec-label">Styling</td><td>Vanilla CSS (Glassmorphism & animations)</td></tr>
+				<tr><td class="spec-label">Fonts</td><td>Outfit, JetBrains Mono</td></tr>
+			</tbody>
+		</table>
+	</div>
+
+	<div class="spec-card">
+		<div class="spec-header">
+			<span class="spec-icon">
+				<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+			</span>
+			<h3>Backend & API</h3>
+		</div>
+		<table class="spec-table">
+			<tbody>
+				<tr><td class="spec-label">Runtime</td><td>Cloudflare Workers (Edge Workers API)</td></tr>
+				<tr><td class="spec-label">Data APIs</td><td>Pingdom API & StatusGator API</td></tr>
+				<tr><td class="spec-label">Failover</td><td>Built-in service status simulation engine</td></tr>
+				<tr><td class="spec-label">Bundler</td><td>Angular CLI</td></tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<div class="lab-note">
+	<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+	<span>
+		<strong>Simulation Failover Engine:</strong> If API tokens for Pingdom or StatusGator are not configured, the Cloudflare Worker seamlessly falls back to generating simulated outages so the visualizer remains functional for testing and demonstrations.
+	</span>
+</div>
+
+<h2>Core Features</h2>
+
+- <strong>Interactive 3D Globe</strong> — Color-coded columns show service status at a glance:
+  - <span style={{color: '#ff5f56', fontWeight: 'bold'}}>Down</span> — Red columns, high altitude
+  - <span style={{color: '#ffbd2e', fontWeight: 'bold'}}>Degraded</span> — Orange columns, medium altitude
+  - <span style={{color: '#27c93f', fontWeight: 'bold'}}>Operational</span> — Green columns, low altitude
+- <strong>System Monitor Dashboard</strong> — Includes radar pulse status indicators, 24-hour uptime timelines, latency metrics, and a live incident log feed.
+- <strong>Outage Disaster Simulator</strong> — Admins can trigger simulated disaster scenarios to test visualization grids, including:
+  - *Solar Flare* (Global collapse of all monitored services)
+  - *DNS Backbone Collapsed* (Widespread degraded status)
+  - *AWS Cloud Core Outage* (Regional outage targeting North American/European zones)
+- <strong>Focus Mode</strong> — Hides sidebar controls and expands the system monitor dashboard into a full-screen, distraction-free environment ideal for server room displays.
+
+<h2>Credits & Context</h2>
+<p>
+	This project is a fork based on the original real-time globe visualization concept by <a href="https://github.com/cppshane" target="_blank" rel="noopener noreferrer">cppshane</a> (via the open-source <a href="https://github.com/cppshane/lucent" target="_blank" rel="noopener noreferrer">lucent</a> repository). It has been adapted and expanded to run on Cloudflare Workers and integrate with sYnVerse branding conventions.
+</p>
+
+<div class="tech-tags">
+	<span class="tag">Angular 19</span>
+	<span class="tag">Three.js</span>
+	<span class="tag">globe.gl</span>
+	<span class="tag">Cloudflare Workers</span>
+	<span class="tag">TypeScript</span>
+	<span class="tag">Pingdom API</span>
+	<span class="tag">StatusGator API</span>
+	<span class="tag">WebGL</span>
+</div>

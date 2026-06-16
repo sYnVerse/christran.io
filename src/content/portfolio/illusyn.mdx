@@ -1,0 +1,79 @@
+---
+title: "illusYn"
+description: "AI-powered text-to-image generation platform that transforms written descriptions into stunning visual artwork. Leverages advanced models to generate custom images from text prompts, perfect for content creators and designers."
+category: "app"
+tags: ["AI Art", "Image Generation", "Creative"]
+techStack: ["Cloudflare Workers", "TypeScript", "Workers AI"]
+image: "/img/projects/illusyn.webp"
+liveUrl: "https://illusyn.christran.io"
+featured: false
+order: 6
+---
+
+<p>
+	<strong>illusYn</strong> is an advanced AI art studio that translates text descriptions and input images into high-fidelity visuals. Powered by Cloudflare's serverless AI inference registry, it provides content creators and designers with a full-featured workspace to generate, edit, crop, and isolate image elements instantly in their browsers.
+</p>
+
+<h2>Technical Stack</h2>
+
+<div class="specs-grid">
+	<div class="spec-card">
+		<div class="spec-header">
+			<span class="spec-icon">
+				<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+			</span>
+			<h3>Edge Runtime & Models</h3>
+		</div>
+		<table class="spec-table">
+			<tbody>
+				<tr><td class="spec-label">Inference Engine</td><td>Cloudflare Workers AI</td></tr>
+				<tr><td class="spec-label">Text-to-Image</td><td><code>Stable Diffusion XL (SDXL)</code></td></tr>
+				<tr><td class="spec-label">Image-to-Image</td><td><code>Stable Diffusion XL Turbo</code></td></tr>
+				<tr><td class="spec-label">Segmentation</td><td><code>Segment Anything Model (SAM)</code> (Background removal)</td></tr>
+			</tbody>
+		</table>
+	</div>
+
+	<div class="spec-card">
+		<div class="spec-header">
+			<span class="spec-icon">
+				<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"/></svg>
+			</span>
+			<h3>Data & Storage</h3>
+		</div>
+		<table class="spec-table">
+			<tbody>
+				<tr><td class="spec-label">Image Bucket</td><td>Cloudflare R2 (Serverless Object Storage)</td></tr>
+				<tr><td class="spec-label">Metadata Cache</td><td>Cloudflare D1 (SQL Database)</td></tr>
+				<tr><td class="spec-label">Language</td><td>TypeScript</td></tr>
+				<tr><td class="spec-label">Bundler</td><td>Wrangler Assets</td></tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<div class="lab-note">
+	<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><image x="3" y="3" width="18" height="18" xlink:href=""/></svg>
+	<span>
+		<strong>Edge Storage Capabilities:</strong> Generated images and user-uploaded templates are stored inside **Cloudflare R2 Object Storage**, with their prompts, creation seeds, and dimensions cataloged in a **D1 SQL Database** to allow instant gallery loading and search filtering.
+	</span>
+</div>
+
+<h2>Key Features</h2>
+<ul>
+	<li><strong>Text-to-Image Generation</strong> — Compiles complex textual prompts into detailed digital paintings, vector assets, and illustrations.</li>
+	<li><strong>Image-to-Image Redefinition</strong> — Allows users to upload baseline sketches or photographs and apply prompt styles to iterate on concepts while preserving structural integrity.</li>
+	<li><strong>AI-Powered Background Removal</strong> — A premium inference tool that isolates objects using the Segment Anything Model (SAM), executing edge-based background subtraction in seconds.</li>
+	<li><strong>Dynamic Canvas Cropping</strong> — An interactive in-browser cropping tool that lets creators adjust aspect ratios, isolate focal points, and re-encode outputs.</li>
+</ul>
+
+<div class="tech-tags">
+	<span class="tag">Cloudflare Workers AI</span>
+	<span class="tag">Stable Diffusion XL</span>
+	<span class="tag">Segment Anything Model</span>
+	<span class="tag">Cloudflare R2</span>
+	<span class="tag">D1 Database</span>
+	<span class="tag">TypeScript</span>
+	<span class="tag">Image-to-Image</span>
+	<span class="tag">In-Browser Editor</span>
+</div>

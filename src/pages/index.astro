@@ -5,10 +5,18 @@ import Footer from '../components/Footer.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import BlogCard from '../components/BlogCard.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
-import { getFeaturedProjects } from '../data/projects';
 import { getCollection } from 'astro:content';
 
-const featured = getFeaturedProjects();
+const portfolio = await getCollection('portfolio');
+const featured = portfolio
+	.filter((p) => p.data.featured)
+	.map((p) => ({
+		slug: p.id,
+		...p.data,
+		detailUrl: `/portfolio/${p.id}`,
+	}))
+	.sort((a, b) => a.order - b.order);
+
 const latestPosts = (await getCollection('blog'))
 	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
 	.slice(0, 3);

@@ -1,0 +1,90 @@
+---
+title: "sYnapse"
+description: "A unified agentic trading platform acting as a secure multi-broker gateway. Integrates with Alpaca (equities) and Tradovate (futures) API endpoints to manage account positions, place custom market/limit orders, and orchestrate autonomous strategy execution running entirely on Cloudflare Workers and Durable Objects."
+category: "app"
+tags: ["Algorithmic Trading", "Finance", "Authentication", "Durable Objects"]
+techStack: ["Cloudflare Workers", "React", "D1 Database", "Durable Objects", "OpenAuth.js", "Vite"]
+image: "/img/projects/synapse.webp"
+liveUrl: "https://synapse.christran.io"
+featured: false
+order: 2
+---
+
+<p>
+	<strong>sYnapse</strong> is a modern, unified agentic trading gateway designed to interface with various broker APIs, enabling secure, autonomous, and low-latency algorithmic trading. Built to run on edge infrastructure, it coordinates and executes trades on both equity and futures markets while providing real-time telemetry on active positions, capital allocation, and order statuses.
+</p>
+
+<h2>System Architecture</h2>
+
+<div class="specs-grid">
+	<div class="spec-card">
+		<div class="spec-header">
+			<span class="spec-icon">
+				<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+			</span>
+			<h3>Execution & Compute</h3>
+		</div>
+		<table class="spec-table">
+			<tbody>
+				<tr><td class="spec-label">Runtime</td><td>Cloudflare Workers (Edge Compute)</td></tr>
+				<tr><td class="spec-label">Language</td><td>TypeScript, React (Frontend)</td></tr>
+				<tr><td class="spec-label">UI Bundler</td><td>Vite</td></tr>
+				<tr><td class="spec-label">SSO Gateway</td><td>sYnID (OpenAuth.js)</td></tr>
+			</tbody>
+		</table>
+	</div>
+
+	<div class="spec-card">
+		<div class="spec-header">
+			<span class="spec-icon">
+				<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"/></svg>
+			</span>
+			<h3>Data & State</h3>
+		</div>
+		<table class="spec-table">
+			<tbody>
+				<tr><td class="spec-label">Broker Link</td><td>Durable Objects (WebSockets)</td></tr>
+				<tr><td class="spec-label">Database</td><td>Cloudflare D1 (Serverless SQL)</td></tr>
+				<tr><td class="spec-label">Storage</td><td>Cloudflare KV (Configuration caching)</td></tr>
+				<tr><td class="spec-label">Security</td><td>Cloudflare Turnstile (Anti-Bot)</td></tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<div class="lab-note">
+	<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+	<span>
+		<strong>Multi-Broker Strategy Orchestration:</strong> The backend worker uses modular adapters to talk to both **Alpaca API** (equities/options) and **Tradovate API** (futures), allowing a single agentic strategy to hedge across asset classes.
+	</span>
+</div>
+
+<h2>Core Features</h2>
+<ul>
+	<li><strong>Secure Broker Gateways</strong> — Handles OAuth, session refreshes, and encrypted API keys securely at the edge.</li>
+	<li><strong>Durable WebSockets</strong> — Maintains constant, low-latency socket connections to broker data streams using Cloudflare Durable Objects.</li>
+	<li><strong>State Management</strong> — Logs orders, trades, and strategy metrics into a serverless SQL database (D1) for analytics.</li>
+	<li><strong>Single Sign-On (SSO)</strong> — Seamless authentication integration using the shared domain's sYnID provider.</li>
+</ul>
+
+<h2>Technical Organization</h2>
+<p>
+	The application repository is split into a deployable edge backend and a single-page administration UI:
+</p>
+<ul>
+	<li><code>src/worker.ts</code>: Worker API endpoints, cron executor, and static asset serving</li>
+	<li><code>src/brokers/*</code>: Broker client wrappers (Alpaca, Tradovate) and authentication managers</li>
+	<li><code>web/</code>: React UI dashboard for configuration, manual order override, and strategy performance visualization</li>
+</ul>
+
+<div class="tech-tags">
+	<span class="tag">Cloudflare Workers</span>
+	<span class="tag">Durable Objects</span>
+	<span class="tag">D1 Database</span>
+	<span class="tag">React</span>
+	<span class="tag">Vite</span>
+	<span class="tag">OpenAuth.js</span>
+	<span class="tag">TypeScript</span>
+	<span class="tag">Alpaca API</span>
+	<span class="tag">Tradovate API</span>
+</div>

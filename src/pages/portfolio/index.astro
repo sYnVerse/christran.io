@@ -3,9 +3,17 @@ import BaseHead from '../../components/BaseHead.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
-import { projects } from '../../data/projects';
+import { getCollection } from 'astro:content';
 
-const sortedProjects = [...projects].sort((a, b) => a.order - b.order);
+const projects = await getCollection('portfolio');
+const sortedProjects = projects
+	.map((project) => ({
+		slug: project.id,
+		...project.data,
+		detailUrl: `/portfolio/${project.id}`,
+	}))
+	.sort((a, b) => a.order - b.order);
+
 const categories = ['all', 'app', 'infrastructure', 'community'] as const;
 const categoryLabels: Record<string, string> = {
 	all: 'All',

@@ -1,0 +1,78 @@
+---
+title: "Chat"
+description: "Real-time chat application for seamless communication and collaboration. Built with modern web technologies, featuring instant messaging, user authentication, and responsive design for desktop and mobile."
+category: "app"
+tags: ["Real-time Chat", "Communication", "WebSocket"]
+techStack: ["Cloudflare Workers", "Durable Objects", "WebSocket"]
+image: "/img/projects/chat.webp"
+liveUrl: "https://chat.christran.io"
+featured: false
+order: 10
+---
+
+<p>
+	<strong>Chat</strong> is a real-time, multi-room WebSocket communication application. Built on Cloudflare Workers and utilizing Durable Objects, it supports persistent, synchronized, and low-latency chat sessions between multiple concurrent users within custom-defined rooms.
+</p>
+
+<h2>Technical Stack</h2>
+
+<div class="specs-grid">
+	<div class="spec-card">
+		<div class="spec-header">
+			<span class="spec-icon">
+				<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+			</span>
+			<h3>State & WebSocket Sync</h3>
+		</div>
+		<table class="spec-table">
+			<tbody>
+				<tr><td class="spec-label">Compute Engine</td><td>Cloudflare Workers</td></tr>
+				<tr><td class="spec-label">State Coordinator</td><td>Durable Objects (Single-instance routing)</td></tr>
+				<tr><td class="spec-label">WebSocket Sync</td><td>PartyKit (PartyServer API integration)</td></tr>
+				<tr><td class="spec-label">Session Logic</td><td>WebSockets (in-memory pub/sub)</td></tr>
+			</tbody>
+		</table>
+	</div>
+
+	<div class="spec-card">
+		<div class="spec-header">
+			<span class="spec-icon">
+				<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"/></svg>
+			</span>
+			<h3>Data & Storage</h3>
+		</div>
+		<table class="spec-table">
+			<tbody>
+				<tr><td class="spec-label">DB Engine</td><td>Durable Object SQL Storage API</td></tr>
+				<tr><td class="spec-label">Chat History</td><td>Serverless SQL tables scoped per room</td></tr>
+				<tr><td class="spec-label">Frontend UI</td><td>Vanilla JS & WebSockets</td></tr>
+				<tr><td class="spec-label">Language</td><td>TypeScript</td></tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<div class="lab-note">
+	<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+	<span>
+		<strong>Durable SQL Storage API:</strong> Instead of holding chat history entirely in RAM or making slow external database roundtrips, the chat room's Durable Object writes directly to its own local, high-speed SQLite database file using Cloudflare's SQL Storage API.
+	</span>
+</div>
+
+<h2>Core Features</h2>
+<ul>
+	<li><strong>Multi-Room Separation</strong> — Dynamic room generation based on URL slug paths. Users in the same URL route are grouped into a dedicated Durable Object instance.</li>
+	<li><strong>WebSocket Broadcasts</strong> — Messages sent by a user are instantly broadcast to all active connections in that room, ensuring real-time text delivery.</li>
+	<li><strong>Automatic History Load</strong> — When a new user opens a room, the Durable Object queries its local SQL table to retrieve and render the chat room's message history.</li>
+	<li><strong>PartyServer Simplicity</strong> — Leverages the PartyKit/PartyServer API to streamline socket connections and event routing without complex state management code.</li>
+</ul>
+
+<div class="tech-tags">
+	<span class="tag">Cloudflare Workers</span>
+	<span class="tag">Durable Objects</span>
+	<span class="tag">SQL Storage API</span>
+	<span class="tag">WebSockets</span>
+	<span class="tag">PartyKit</span>
+	<span class="tag">TypeScript</span>
+	<span class="tag">Real-Time Sync</span>
+</div>

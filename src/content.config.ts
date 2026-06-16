@@ -15,4 +15,21 @@ const blog = defineCollection({
   }),
 });
 
-export const collections = { blog };
+const portfolio = defineCollection({
+  // Load Markdown and MDX files in the `src/content/portfolio/` directory.
+  loader: glob({ base: "./src/content/portfolio", pattern: "**/*.{md,mdx}" }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    category: z.enum(['app', 'infrastructure', 'community']),
+    tags: z.array(z.string()),
+    techStack: z.array(z.string()),
+    image: z.string().optional(),
+    liveUrl: z.string().optional(),
+    sourceUrl: z.string().optional(),
+    featured: z.boolean(),
+    order: z.number(),
+  }),
+});
+
+export const collections = { blog, portfolio };

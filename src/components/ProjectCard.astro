@@ -1,6 +1,20 @@
 ---
-import type { Project } from '../data/projects';
 import { Image } from 'astro:assets';
+
+export interface Project {
+	slug: string;
+	title: string;
+	description: string;
+	category: 'app' | 'infrastructure' | 'community';
+	tags: string[];
+	techStack: string[];
+	image?: string;
+	liveUrl?: string;
+	sourceUrl?: string;
+	detailUrl?: string;
+	featured: boolean;
+	order: number;
+}
 
 interface Props {
 	project: Project;

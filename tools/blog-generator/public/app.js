@@ -13,27 +13,27 @@ function showToast(message, type = 'info') {
     container.className = 'toast-container';
     document.body.appendChild(container);
   }
-  
+
   const toast = document.createElement('div');
   toast.className = `toast ${type}`;
-  
+
   let iconName = 'info';
   if (type === 'success') iconName = 'check-circle';
   if (type === 'warning') iconName = 'alert-triangle';
   if (type === 'error') iconName = 'alert-circle';
-  
+
   toast.innerHTML = `
     <i data-lucide="${iconName}"></i>
     <span>${message}</span>
   `;
-  
+
   container.appendChild(toast);
   if (window.lucide) {
     window.lucide.createIcons();
   }
-  
+
   setTimeout(() => toast.classList.add('show'), 10);
-  
+
   setTimeout(() => {
     toast.classList.remove('show');
     setTimeout(() => toast.remove(), 300);
@@ -41,7 +41,7 @@ function showToast(message, type = 'info') {
 }
 
 // Override default window.alert to use the premium toast system
-window.alert = function(message) {
+window.alert = function (message) {
   let type = 'info';
   const msgLower = message.toLowerCase();
   if (msgLower.includes('fail') || msgLower.includes('error') || msgLower.includes('could not') || msgLower.includes('invalid') || msgLower.includes('too large') || msgLower.includes('missing')) {
@@ -131,11 +131,11 @@ function updateIcons() {
 tabBtns.forEach(btn => {
   btn.addEventListener('click', () => {
     const targetTab = btn.getAttribute('data-tab');
-    
+
     // Update active tab buttons
     tabBtns.forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    
+
     // Update active content
     tabContents.forEach(content => {
       content.classList.remove('active');
@@ -143,12 +143,12 @@ tabBtns.forEach(btn => {
         content.classList.add('active');
       }
     });
-    
+
     // Initialize image manager tab if selected
     if (targetTab === 'image-tab') {
       initImageManagerTab();
     }
-    
+
     // Initialize git publisher tab if selected
     if (targetTab === 'publish-tab') {
       initGitPublisherTab();
@@ -168,7 +168,7 @@ async function fetchConfig() {
     const res = await fetch(`${API_BASE}/api/config`);
     const config = await res.json();
     appConfig = config;
-    
+
     // Update status indicator
     if (config.hasGeminiKey && config.hasResendKey) {
       configStatus.className = 'status-indicator ready';
@@ -201,7 +201,7 @@ async function loadIdeas() {
 // Render Ideas list
 function renderIdeas(ideas) {
   ideasContainer.innerHTML = '';
-  
+
   if (!ideas || ideas.length === 0) {
     ideasContainer.innerHTML = `
       <div class="empty-state">
@@ -214,16 +214,16 @@ function renderIdeas(ideas) {
     updateIcons();
     return;
   }
-  
+
   btnEmailIdeas.disabled = false;
-  
+
   ideas.forEach(idea => {
     const card = document.createElement('div');
     card.className = 'idea-card';
-    
+
     const outlineItems = idea.outline.map(pt => `<li>${pt}</li>`).join('');
     const tagsItems = idea.tags.map(t => `<span class="tag">#${t}</span>`).join('');
-    
+
     card.innerHTML = `
       <h3 class="idea-title">${idea.title}</h3>
       <p class="idea-desc">"${idea.description}"</p>
@@ -240,15 +240,15 @@ function renderIdeas(ideas) {
         </button>
       </div>
     `;
-    
+
     // Bind write draft event
     card.querySelector('.btn-select').addEventListener('click', async () => {
       await generateDraftForIdea(idea);
     });
-    
+
     ideasContainer.appendChild(card);
   });
-  
+
   updateIcons();
 }
 
@@ -257,12 +257,12 @@ async function generateDraftForIdea(idea) {
   // Disable all select buttons while generating
   document.querySelectorAll('.btn-select').forEach(b => b.disabled = true);
   btnGenerateIdeas.disabled = true;
-  
+
   // Show loader in ideas container
   ideasContainer.classList.add('hidden');
   ideasLoader.classList.remove('hidden');
   ideasLoader.querySelector('p').innerText = `Gemini is writing the draft for: "${idea.title}"... This may take a moment.`;
-  
+
   try {
     const response = await fetch(`${API_BASE}/api/draft/generate`, {
       method: 'POST',
@@ -270,11 +270,11 @@ async function generateDraftForIdea(idea) {
       body: JSON.stringify({ idea })
     });
     const result = await response.json();
-    
+
     if (result.success) {
       loadDraftContent(result.content, idea.title);
       navigateToTab('editor-tab');
-      
+
       // Notify user draft was also emailed
       if (appConfig && appConfig.hasResendKey && appConfig.userEmail) {
         alert(`Draft generated successfully and emailed to ${appConfig.userEmail}!`);
@@ -301,11 +301,11 @@ function loadDraftContent(markdownContent, title = '') {
   activeDraft = markdownContent;
   markdownEditor.value = markdownContent;
   markdownEditor.disabled = false;
-  
+
   btnSaveDraft.disabled = false;
   refinePrompt.disabled = false;
   btnRefineDraft.disabled = false;
-  
+
   if (title) {
     activePostTitle.innerText = title;
   } else {
@@ -313,7 +313,7 @@ function loadDraftContent(markdownContent, title = '') {
     const fm = parseFrontmatter(markdownContent);
     activePostTitle.innerText = fm && fm.title ? fm.title : 'Draft Post';
   }
-  
+
   updatePreview(markdownContent);
   updateSlugDisplay(markdownContent);
 }
@@ -328,12 +328,12 @@ function updatePreview(markdownContent) {
     `;
     return;
   }
-  
+
   // Separate frontmatter and body
   const match = markdownContent.match(/^---\r?\n([\s\S]+?)\r?\n---/);
   let body = markdownContent;
   let frontmatterHtml = '';
-  
+
   if (match) {
     body = markdownContent.substring(match[0].length);
     const fmText = match[1];
@@ -344,7 +344,7 @@ function updatePreview(markdownContent) {
       </div>
     `;
   }
-  
+
   // Parse body Markdown
   const parsedBody = md.render(body);
   htmlPreview.innerHTML = frontmatterHtml + parsedBody;
@@ -419,7 +419,7 @@ btnGenerateIdeas.addEventListener('click', async () => {
   ideasContainer.classList.add('hidden');
   ideasLoader.classList.remove('hidden');
   ideasLoader.querySelector('p').innerText = 'Analyzing existing articles and brainstorming ideas...';
-  
+
   try {
     const res = await fetch(`${API_BASE}/api/ideas/generate`, {
       method: 'POST'
@@ -448,14 +448,14 @@ btnGenerateCustomIdeas.addEventListener('click', async () => {
     alert('Please enter some keywords or a topic you have in mind.');
     return;
   }
-  
+
   btnGenerateCustomIdeas.disabled = true;
   btnGenerateIdeas.disabled = true;
   customIdeasKeywords.disabled = true;
   ideasContainer.classList.add('hidden');
   ideasLoader.classList.remove('hidden');
   ideasLoader.querySelector('p').innerText = `Brainstorming ideas around: "${keywords}"...`;
-  
+
   try {
     const res = await fetch(`${API_BASE}/api/ideas/generate`, {
       method: 'POST',
@@ -510,11 +510,11 @@ btnEmailIdeas.addEventListener('click', async () => {
 btnRefineDraft.addEventListener('click', async () => {
   const prompt = refinePrompt.value.trim();
   if (!prompt) return;
-  
+
   refinePrompt.disabled = true;
   btnRefineDraft.disabled = true;
   refineLoader.classList.remove('hidden');
-  
+
   try {
     const res = await fetch(`${API_BASE}/api/draft/refine`, {
       method: 'POST',
@@ -549,13 +549,13 @@ btnSaveDraft.addEventListener('click', async () => {
     alert('Could not determine slug. Please make sure the post has a title in frontmatter.');
     return;
   }
-  
+
   // Prompt user to verify the slug
   const finalSlug = prompt('Verify slug/filename for markdown file:', slug);
   if (!finalSlug) return;
-  
+
   btnSaveDraft.disabled = true;
-  
+
   try {
     const res = await fetch(`${API_BASE}/api/draft/save`, {
       method: 'POST',
@@ -569,7 +569,7 @@ btnSaveDraft.addEventListener('click', async () => {
     if (result.success) {
       savedFilename = result.filename;
       alert(`Successfully saved draft to: src/content/blog/${result.filename}!`);
-      
+
       // Open publish tab (will initialize dropdown selection and enable inputs)
       navigateToTab('publish-tab');
     } else {
@@ -590,11 +590,11 @@ btnGitPublish.addEventListener('click', async () => {
     alert('Please enter a commit message.');
     return;
   }
-  
+
   btnGitPublish.disabled = true;
   commitMessage.disabled = true;
   consoleLog.innerText = `Running Git publish workflow...\nStaging file...\nCommitting: "${msg}"...\nPushing to remote origin...`;
-  
+
   try {
     const res = await fetch(`${API_BASE}/api/git/commit`, {
       method: 'POST',
@@ -605,7 +605,7 @@ btnGitPublish.addEventListener('click', async () => {
       })
     });
     const result = await res.json();
-    
+
     if (result.success) {
       consoleLog.innerText += `\n\n✅ SUCCESS!\n\n${result.log}`;
       alert('Successfully committed and pushed blog post to GitHub!');
@@ -642,7 +642,7 @@ async function initImageManagerTab() {
   uploadedBase64 = null;
   uploadPreviewContainer.classList.add('hidden');
   imageFileInput.value = '';
-  
+
   // Find out if we have a draft open in the editor tab
   let draftSlug = null;
   if (activeDraft) {
@@ -651,7 +651,7 @@ async function initImageManagerTab() {
       draftSlug = loadedPosts.activeDraft.slug;
     }
   }
-  
+
   await fetchPostsAndPopulateSelector(draftSlug);
 }
 
@@ -661,17 +661,17 @@ async function fetchPostsAndPopulateSelector(selectSlugAfterLoad = null) {
     const res = await fetch(`${API_BASE}/api/posts`);
     const data = await res.json();
     loadedPosts = data;
-    
+
     // Clear and populate selector
     imagePostSelector.innerHTML = '<option value="">-- Select a post --</option>';
-    
+
     if (data.activeDraft) {
       const option = document.createElement('option');
       option.value = 'active-draft';
       option.textContent = `📝 Active Draft: ${data.activeDraft.title}`;
       imagePostSelector.appendChild(option);
     }
-    
+
     if (data.posts && data.posts.length > 0) {
       data.posts.forEach(post => {
         const option = document.createElement('option');
@@ -680,7 +680,7 @@ async function fetchPostsAndPopulateSelector(selectSlugAfterLoad = null) {
         imagePostSelector.appendChild(option);
       });
     }
-    
+
     // Set selection if requested
     if (selectSlugAfterLoad) {
       if (data.activeDraft && (selectSlugAfterLoad === 'active-draft' || data.activeDraft.slug === selectSlugAfterLoad)) {
@@ -692,7 +692,7 @@ async function fetchPostsAndPopulateSelector(selectSlugAfterLoad = null) {
         }
       }
     }
-    
+
     // Trigger selector change event to render details
     imagePostSelector.dispatchEvent(new Event('change'));
   } catch (error) {
@@ -704,30 +704,30 @@ async function fetchPostsAndPopulateSelector(selectSlugAfterLoad = null) {
 // Handle post selector changes
 imagePostSelector.addEventListener('change', () => {
   const val = imagePostSelector.value;
-  
+
   if (!val) {
     selectedPost = null;
     imageSearchKeywords.disabled = true;
     imageSearchKeywords.value = '';
     btnSearchImages.disabled = true;
-    
+
     renderCurrentImagePreview();
     imageSuggestionsGrid.innerHTML = '';
     galleryStatus.textContent = 'Select a post above to load suggestions';
     return;
   }
-  
+
   if (val === 'active-draft') {
     selectedPost = loadedPosts.activeDraft;
   } else {
     selectedPost = loadedPosts.posts.find(p => p.slug === val);
   }
-  
+
   if (selectedPost) {
     imageSearchKeywords.disabled = false;
     btnSearchImages.disabled = false;
     imageSearchKeywords.value = selectedPost.tags ? selectedPost.tags.join(', ') : '';
-    
+
     renderCurrentImagePreview();
     searchImageSuggestions();
   }
@@ -737,7 +737,7 @@ imagePostSelector.addEventListener('change', () => {
 function renderCurrentImagePreview() {
   currentImagePreview.innerHTML = '';
   currentImageDetails.innerHTML = '';
-  
+
   if (!selectedPost) {
     currentImagePreview.innerHTML = `
       <div class="empty-image-placeholder">
@@ -748,10 +748,10 @@ function renderCurrentImagePreview() {
     updateIcons();
     return;
   }
-  
+
   const imgUrl = selectedPost.heroImage;
   const isFallbackOrEmpty = !imgUrl || imgUrl === '/img/google-antigravity.png';
-  
+
   if (isFallbackOrEmpty) {
     currentImagePreview.innerHTML = `
       <div class="empty-image-placeholder">
@@ -765,7 +765,7 @@ function renderCurrentImagePreview() {
     const cacheBustedUrl = `${imgUrl}?t=${Date.now()}`;
     currentImagePreview.innerHTML = `<img src="${cacheBustedUrl}" alt="Current Hero Image">`;
   }
-  
+
   currentImageDetails.innerHTML = `
     <table>
       <tr>
@@ -782,30 +782,30 @@ function renderCurrentImagePreview() {
       </tr>
     </table>
   `;
-  
+
   updateIcons();
 }
 
 // Search image suggestions
 async function searchImageSuggestions() {
   if (!selectedPost) return;
-  
+
   galleryLoader.classList.remove('hidden');
   imageSuggestionsGrid.classList.add('hidden');
   galleryStatus.textContent = 'Searching stock photos...';
-  
+
   try {
     const title = selectedPost.title;
     const keywords = imageSearchKeywords.value.trim();
     const slug = selectedPost.slug;
-    
+
     const url = `${API_BASE}/api/images/suggest?title=${encodeURIComponent(title)}&keywords=${encodeURIComponent(keywords)}&slug=${encodeURIComponent(slug)}`;
     const res = await fetch(url);
     const result = await res.json();
-    
+
     galleryLoader.classList.add('hidden');
     imageSuggestionsGrid.classList.remove('hidden');
-    
+
     if (result.success) {
       suggestedImages = result.suggestions;
       galleryStatus.textContent = `Found ${result.suggestions.length} options`;
@@ -824,22 +824,22 @@ async function searchImageSuggestions() {
 // Render stock suggestions grid cards
 function renderSuggestions(suggestions) {
   imageSuggestionsGrid.innerHTML = '';
-  
+
   if (!suggestions || suggestions.length === 0) {
     imageSuggestionsGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">No suggestions returned. Try changing keywords.</div>';
     return;
   }
-  
+
   suggestions.forEach(item => {
     const card = document.createElement('div');
     card.className = 'image-card-suggest';
-    
+
     // Check if currently active
     const isCurrentActive = selectedPost.heroImage && (selectedPost.heroImage === item.url || (selectedPost.heroImage.includes(selectedPost.slug) && item.source === 'Imagen 4' && !item.requires_generation));
     if (isCurrentActive) {
       card.classList.add('selected');
     }
-    
+
     if (item.requires_generation) {
       card.classList.add('requires-generation');
       card.innerHTML = `
@@ -858,7 +858,7 @@ function renderSuggestions(suggestions) {
           <span class="suggest-img-author">${item.photographer}</span>
         </div>
       `;
-      
+
       // Bind explicit Imagen 4 trigger
       card.querySelector('#btn-gen-imagen').addEventListener('click', (e) => {
         e.stopPropagation();
@@ -874,16 +874,16 @@ function renderSuggestions(suggestions) {
           <span class="suggest-img-author" title="${item.photographer}">${item.photographer}</span>
         </div>
       `;
-      
+
       // Bind selection click
       card.addEventListener('click', () => {
         selectImage(item.url, item.source);
       });
     }
-    
+
     imageSuggestionsGrid.appendChild(card);
   });
-  
+
   updateIcons();
 }
 
@@ -891,12 +891,12 @@ function renderSuggestions(suggestions) {
 async function generateImagen4(cardElem) {
   const overlay = cardElem.querySelector('.generation-overlay');
   const originalOverlayHtml = overlay.innerHTML;
-  
+
   overlay.innerHTML = `
     <div class="spinner" style="width:24px; height:24px; border-width:3px;"></div>
     <p style="font-size:11px; margin-top:4px;">Gemini is rendering your vector artwork...</p>
   `;
-  
+
   try {
     const res = await fetch(`${API_BASE}/api/images/generate-imagen`, {
       method: 'POST',
@@ -908,14 +908,14 @@ async function generateImagen4(cardElem) {
       })
     });
     const result = await res.json();
-    
+
     if (result.success) {
       // Re-populate card elements with generated preview
       overlay.remove();
       cardElem.classList.remove('requires-generation');
       const imgElem = cardElem.querySelector('.suggest-img-wrapper img');
       imgElem.src = result.imageUrl;
-      
+
       // Auto-select the newly generated image
       await selectImage(result.imageUrl, 'Imagen 4', result.tempPath);
     } else {
@@ -944,12 +944,12 @@ async function generateImagen4(cardElem) {
 // Select a suggestions card (stock URL or local temp)
 async function selectImage(url, source, tempPath = null) {
   if (!selectedPost) return;
-  
+
   // Disable clicks while saving
   const cards = document.querySelectorAll('.image-card-suggest');
   cards.forEach(c => c.style.pointerEvents = 'none');
   galleryStatus.textContent = 'Saving image selection...';
-  
+
   try {
     const res = await fetch(`${API_BASE}/api/images/select`, {
       method: 'POST',
@@ -962,17 +962,17 @@ async function selectImage(url, source, tempPath = null) {
       })
     });
     const result = await res.json();
-    
+
     if (result.success) {
       selectedPost.heroImage = result.heroImage;
-      
+
       // Sync markdown editor if draft is open
       updateEditorHeroImageIfActive(selectedPost.slug, result.heroImage);
-      
+
       // Update UI
       renderCurrentImagePreview();
       searchImageSuggestions(); // reloads list and updates active highlight
-      
+
       alert(`Hero Image successfully updated to: ${result.heroImage}!`);
     } else {
       alert(`Failed to save image selection: ${result.error}`);
@@ -1020,12 +1020,12 @@ function preventDefaults(e) {
 // Drop handler
 dragDropZone.addEventListener('drop', (e) => {
   preventDefaults(e);
-  
+
   if (!selectedPost) {
     alert('Please select a blog post first before dropping files.');
     return;
   }
-  
+
   const dt = e.dataTransfer;
   const files = dt.files;
   if (files && files.length > 0) {
@@ -1056,12 +1056,12 @@ function processUploadedFile(file) {
     alert('Invalid file format. Please upload an image file (PNG, JPG, WEBP).');
     return;
   }
-  
+
   if (file.size > 10 * 1024 * 1024) {
     alert('File is too large. Maximum size allowed is 10MB.');
     return;
   }
-  
+
   const reader = new FileReader();
   reader.onload = (e) => {
     uploadedBase64 = e.target.result;
@@ -1075,10 +1075,10 @@ function processUploadedFile(file) {
 // Submit manually uploaded file
 btnSubmitUpload.addEventListener('click', async () => {
   if (!uploadedBase64 || !selectedPost) return;
-  
+
   btnSubmitUpload.disabled = true;
   btnSubmitUpload.innerHTML = '<div class="spinner" style="width:12px; height:12px; border-width:2px; display:inline-block; margin-right:4px;"></div> Uploading...';
-  
+
   try {
     const res = await fetch(`${API_BASE}/api/images/upload`, {
       method: 'POST',
@@ -1088,7 +1088,7 @@ btnSubmitUpload.addEventListener('click', async () => {
         slug: selectedPost.slug
       })
     });
-    
+
     if (!res.ok) {
       let errorMsg = `Server error: ${res.status} ${res.statusText}`;
       if (res.status === 413) {
@@ -1096,24 +1096,24 @@ btnSubmitUpload.addEventListener('click', async () => {
       }
       throw new Error(errorMsg);
     }
-    
+
     const result = await res.json();
-    
+
     if (result.success) {
       selectedPost.heroImage = result.heroImage;
-      
+
       // Update Markdown editor frontmatter
       updateEditorHeroImageIfActive(selectedPost.slug, result.heroImage);
-      
+
       // Re-render previews
       renderCurrentImagePreview();
       searchImageSuggestions(); // reload suggestions grid
-      
+
       // Clear upload preview
       uploadedBase64 = null;
       uploadPreviewContainer.classList.add('hidden');
       imageFileInput.value = '';
-      
+
       alert(`Success! Image uploaded and saved to: ${result.heroImage}`);
     } else {
       alert(`Upload failed: ${result.error}`);
@@ -1132,9 +1132,9 @@ btnSubmitUpload.addEventListener('click', async () => {
 function updateEditorHeroImageIfActive(slug, heroImagePath) {
   if (activeDraft) {
     const editorSlug = slugInfo.getAttribute('data-slug');
-    const isMatchingSlug = editorSlug === slug || slug === 'active-draft' || 
-                           (loadedPosts.activeDraft && loadedPosts.activeDraft.slug === slug);
-                           
+    const isMatchingSlug = editorSlug === slug || slug === 'active-draft' ||
+      (loadedPosts.activeDraft && loadedPosts.activeDraft.slug === slug);
+
     if (isMatchingSlug) {
       const match = activeDraft.match(/^---\r?\n([\s\S]+?)\r?\n---/);
       if (match) {
@@ -1145,7 +1145,7 @@ function updateEditorHeroImageIfActive(slug, heroImagePath) {
           fm = fm.trim() + `\nheroImage: "${heroImagePath}"\n`;
         }
         const newContent = activeDraft.replace(/^---\r?\n([\s\S]+?)\r?\n---/, `---\n${fm}---`);
-        
+
         // Update state and textarea
         activeDraft = newContent;
         markdownEditor.value = newContent;
@@ -1165,17 +1165,17 @@ async function initGitPublisherTab() {
     const res = await fetch(`${API_BASE}/api/posts`);
     const data = await res.json();
     loadedPosts = data;
-    
+
     // Clear and populate selector
     commitFilenameSelect.innerHTML = '<option value="">-- Select a post to publish --</option>';
-    
+
     if (data.activeDraft) {
       const option = document.createElement('option');
       option.value = `${data.activeDraft.slug}.md`;
       option.textContent = `📝 Active Draft: ${data.activeDraft.title}`;
       commitFilenameSelect.appendChild(option);
     }
-    
+
     if (data.posts && data.posts.length > 0) {
       data.posts.forEach(post => {
         const option = document.createElement('option');
@@ -1184,10 +1184,10 @@ async function initGitPublisherTab() {
         commitFilenameSelect.appendChild(option);
       });
     }
-    
+
     // Determine default selection
     let defaultFileSelection = '';
-    
+
     if (savedFilename) {
       defaultFileSelection = savedFilename;
     } else if (selectedPost) {
@@ -1195,7 +1195,7 @@ async function initGitPublisherTab() {
     } else if (data.activeDraft) {
       defaultFileSelection = `${data.activeDraft.slug}.md`;
     }
-    
+
     // Check if the calculated selection exists in the options
     if (defaultFileSelection) {
       const hasOption = Array.from(commitFilenameSelect.options).some(o => o.value === defaultFileSelection);
@@ -1203,7 +1203,7 @@ async function initGitPublisherTab() {
         commitFilenameSelect.value = defaultFileSelection;
       }
     }
-    
+
     // Trigger selector change event
     commitFilenameSelect.dispatchEvent(new Event('change'));
   } catch (error) {
@@ -1215,7 +1215,7 @@ async function initGitPublisherTab() {
 // Handle Git Publisher dropdown selection change
 commitFilenameSelect.addEventListener('change', () => {
   const val = commitFilenameSelect.value;
-  
+
   if (!val) {
     savedFilename = '';
     commitMessage.value = '';
@@ -1223,15 +1223,15 @@ commitFilenameSelect.addEventListener('change', () => {
     btnGitPublish.disabled = true;
     return;
   }
-  
+
   savedFilename = val;
   commitMessage.disabled = false;
   btnGitPublish.disabled = false;
-  
+
   // Find title of the selected post to generate a default commit message
   let postTitle = 'new post';
   const cleanSlug = val.replace(/\.mdx?$/, '');
-  
+
   if (loadedPosts.activeDraft && loadedPosts.activeDraft.slug === cleanSlug) {
     postTitle = loadedPosts.activeDraft.title;
   } else {
@@ -1240,7 +1240,7 @@ commitFilenameSelect.addEventListener('change', () => {
       postTitle = post.title;
     }
   }
-  
+
   commitMessage.value = `feat(blog): add/update post about ${postTitle}`;
 });
 
