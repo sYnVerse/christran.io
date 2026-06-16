@@ -8,7 +8,7 @@ import { Image } from 'astro:assets';
 
 type Props = CollectionEntry<'blog'>['data'];
 
-const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, tags } = Astro.props;
 
 // Dynamically resolve optimized blog hero images from src/assets/img/blog/
 const images = import.meta.glob<{ default: ImageMetadata }>('/src/assets/img/blog/*.{jpeg,jpg,png,gif,webp}');
@@ -74,6 +74,36 @@ if (imagePath && !hasImage) {
 			.last-updated-on {
 				font-style: italic;
 			}
+			.tech-tags {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.5rem;
+				margin: 2rem 0;
+			}
+			.tag {
+				padding: 0.2rem 0.65rem;
+				background: rgba(123, 158, 255, 0.12);
+				border: 1px solid rgba(123, 158, 255, 0.2);
+				border-radius: 4px;
+				font-size: 0.78rem;
+				font-weight: 500;
+				color: var(--accent);
+			}
+			.back-link-wrapper {
+				margin-top: 2.5rem;
+				padding-top: 1.5rem;
+				border-top: 1px solid rgba(var(--gray-light), 0.3);
+			}
+			.back-link {
+				color: var(--accent);
+				text-decoration: none;
+				font-size: 0.9rem;
+				font-weight: 500;
+				transition: opacity 0.2s ease;
+			}
+			.back-link:hover {
+				opacity: 0.8;
+			}
 		</style>
 	</head>
 
@@ -104,6 +134,16 @@ if (imagePath && !hasImage) {
 						<hr />
 					</div>
 					<slot />
+					{tags && tags.length > 0 && (
+						<div class="tech-tags">
+							{tags.map((tag) => (
+								<span class="tag">{tag}</span>
+							))}
+						</div>
+					)}
+					<div class="back-link-wrapper">
+						<a href="/blog" class="back-link">← Back to Blog</a>
+					</div>
 				</div>
 			</article>
 		</main>
