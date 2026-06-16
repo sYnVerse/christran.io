@@ -11,7 +11,8 @@
       // Avoid double-wrapping if the script runs multiple times
       if (pre.closest('.code-block-wrapper')) return;
 
-      const language = pre.getAttribute('data-language') || 'code';
+      const rawLanguage = pre.getAttribute('data-language');
+      const language = rawLanguage || 'text';
       const cleanLang = language.toUpperCase();
 
       // Create wrapper element
@@ -58,7 +59,8 @@
 
       // Check for line numbers eligibility
       const lines = pre.querySelectorAll('.line');
-      if (lines.length >= 3) {
+      const isPlaintext = !rawLanguage || ['plaintext', 'text', 'txt', 'none'].includes(rawLanguage.toLowerCase());
+      if (lines.length >= 3 && !isPlaintext) {
         pre.classList.add('has-line-numbers');
       }
 
