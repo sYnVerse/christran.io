@@ -281,6 +281,22 @@
     outline: none;
   }
 
+  pre.astro-code code {
+    display: grid;
+    min-width: max-content;
+  }
+
+  pre.astro-code .line {
+    display: block;
+    position: relative;
+    transition: background-color 0.15s ease;
+    min-height: 1.6em;
+  }
+
+  pre.astro-code .line:hover {
+    background-color: rgba(123, 158, 255, 0.05);
+  }
+
   /* Scrollbars styling */
   pre.astro-code::-webkit-scrollbar {
     height: 7px;
@@ -306,9 +322,7 @@
   }
 
   pre.astro-code.has-line-numbers .line {
-    display: block;
     padding-left: 3rem;
-    position: relative;
   }
 
   pre.astro-code.has-line-numbers .line::before {
