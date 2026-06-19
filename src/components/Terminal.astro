@@ -566,6 +566,7 @@
 				const TerminalSound = (function () {
 					let audioCtx = null;
 					let soundEnabled = true;
+					let lastClickTime = 0;
 
 					try {
 						soundEnabled = localStorage.getItem('term_sound') !== 'false';
@@ -589,21 +590,24 @@
 						if (!audioCtx) return;
 
 						const now = audioCtx.currentTime;
+						if (now - lastClickTime < 0.08) return;
+						lastClickTime = now;
+
 						const osc = audioCtx.createOscillator();
 						const gain = audioCtx.createGain();
 
-						osc.type = 'sine';
-						osc.frequency.setValueAtTime(1400, now);
-						osc.frequency.exponentialRampToValueAtTime(150, now + 0.02);
+						osc.type = 'triangle';
+						osc.frequency.setValueAtTime(600, now);
+						osc.frequency.exponentialRampToValueAtTime(80, now + 0.015);
 
-						gain.gain.setValueAtTime(0.015, now);
-						gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.02);
+						gain.gain.setValueAtTime(0.007, now);
+						gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.015);
 
 						osc.connect(gain);
 						gain.connect(audioCtx.destination);
 
 						osc.start(now);
-						osc.stop(now + 0.02);
+						osc.stop(now + 0.015);
 					}
 
 					function playError() {
@@ -1402,6 +1406,7 @@
 						}
 					} else if (e.key === 'Enter') {
 						e.preventDefault();
+						e.stopPropagation();
 						var cmd = input.value;
 						input.value = '';
 						updateInputText();
@@ -1552,6 +1557,16 @@
 				if (dotMinimize) {
 					dotMinimize.addEventListener('click', function (e) {
 						e.stopPropagation();
+						
+						// If maximized, restore normal size first
+						if (widget.classList.contains('maximized')) {
+							widget.classList.remove('maximized');
+							widget.style.top = widget.dataset.prevTop || '';
+							widget.style.left = widget.dataset.prevLeft || '';
+							widget.style.right = widget.dataset.prevRight || '';
+							widget.style.bottom = widget.dataset.prevBottom || '';
+						}
+						
 						widget.classList.toggle('minimized');
 						if (!widget.classList.contains('minimized')) {
 							input.focus();
@@ -1563,6 +1578,12 @@
 				if (dotMaximize) {
 					dotMaximize.addEventListener('click', function (e) {
 						e.stopPropagation();
+						
+						// If minimized, restore it first
+						if (widget.classList.contains('minimized')) {
+							widget.classList.remove('minimized');
+						}
+						
 						widget.classList.toggle('maximized');
 						if (widget.classList.contains('maximized')) {
 							widget.dataset.prevTop = widget.style.top;
