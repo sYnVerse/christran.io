@@ -16,15 +16,17 @@
 
 		<section class="terminal-widget" id="terminal-widget" aria-label="Interactive terminal widget">
 			<div class="terminal-window" id="terminal-window">
-				<div class="terminal-titlebar">
+				<div class="terminal-crt-overlay"></div>
+				<div class="terminal-titlebar" id="terminal-titlebar">
 					<div class="terminal-dots">
 						<span class="dot red" id="terminal-dot-close" title="Close" role="button" aria-label="Close terminal"></span>
-						<span class="dot yellow"></span>
-						<span class="dot green"></span>
+						<span class="dot yellow" id="terminal-dot-minimize" title="Minimize/Restore" role="button" aria-label="Minimize terminal"></span>
+						<span class="dot green" id="terminal-dot-maximize" title="Maximize/Restore" role="button" aria-label="Maximize terminal"></span>
 					</div>
 					<span class="terminal-title">visitor@christran.io — bash</span>
 				</div>
-				<div class="terminal-body">
+				<div class="terminal-body" id="terminal-body">
+					<canvas id="terminal-matrix-canvas" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none;"></canvas>
 					<div class="terminal-output" id="term-output" role="log">
 						<div class="term-line">
 							<span class="term-prompt">visitor@christran.io:~$</span>type a command and press Enter. try <code>help</code> or <code>ls</code>
@@ -156,12 +158,33 @@
 				opacity: 0;
 				transform: translateY(20px) scale(0.95);
 				pointer-events: none;
-				transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+				transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 			}
 			.terminal-widget.open {
 				opacity: 1;
 				transform: translateY(0) scale(1);
 				pointer-events: auto;
+			}
+			.terminal-widget.maximized {
+				width: 100vw !important;
+				height: 100vh !important;
+				top: 0 !important;
+				left: 0 !important;
+				bottom: 0 !important;
+				right: 0 !important;
+				max-width: none !important;
+				max-height: none !important;
+				border-radius: 0 !important;
+			}
+			.terminal-widget.maximized .terminal-window {
+				border-radius: 0 !important;
+				box-shadow: none !important;
+			}
+			.terminal-widget.minimized {
+				height: auto !important;
+			}
+			.terminal-widget.minimized .terminal-body {
+				display: none !important;
 			}
 			.terminal-widget .terminal-window {
 				height: 100%;
@@ -195,6 +218,35 @@
 				color: rgba(0, 0, 0, 0.6);
 				font-weight: bold;
 			}
+			.terminal-widget .dot.yellow {
+				cursor: pointer;
+				position: relative;
+			}
+			.terminal-widget .dot.yellow:hover::after {
+				content: '–';
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -55%);
+				font-size: 8px;
+				color: rgba(0, 0, 0, 0.6);
+				font-weight: bold;
+			}
+			.terminal-widget .dot.green {
+				cursor: pointer;
+				position: relative;
+			}
+			.terminal-widget .dot.green:hover::after {
+				content: '+';
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				font-size: 8px;
+				color: rgba(0, 0, 0, 0.6);
+				font-weight: bold;
+			}
+
 			@media (max-width: 640px) {
 				.terminal-widget {
 					top: calc(1rem + env(safe-area-inset-top));
@@ -213,26 +265,123 @@
 					padding: 1.25rem;
 				}
 			}
+
+			/* THEME & CRT VARIABLES AND CONFIG */
 			.terminal-window {
+				--term-bg: #1a1d29;
+				--term-title-bg: #252836;
+				--term-text: #b0bad1;
+				--term-accent: var(--accent);
+				--term-dim: rgba(210, 215, 235, 0.7);
+				--term-code-bg: rgba(123, 158, 255, 0.2);
+				--term-cursor: var(--accent);
+				--term-shadow: var(--box-shadow), 0 0 0 1px rgba(123, 158, 255, 0.15);
+
 				font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace;
 				font-size: 0.85rem;
 				line-height: 1.5;
-				background: #1a1d29;
+				background: var(--term-bg);
+				color: var(--term-text);
 				border-radius: 10px;
 				overflow-x: auto;
 				overflow-y: hidden;
-				box-shadow: var(--box-shadow), 0 0 0 1px rgba(123, 158, 255, 0.15);
+				box-shadow: var(--term-shadow);
 				max-width: 100%;
 				min-width: 0;
+				position: relative;
 			}
+
+			/* MATRIX THEME */
+			.terminal-window[data-theme="matrix"] {
+				--term-bg: #050d06;
+				--term-title-bg: #081609;
+				--term-text: #39ff14;
+				--term-accent: #39ff14;
+				--term-dim: #22990d;
+				--term-code-bg: rgba(57, 255, 20, 0.15);
+				--term-cursor: #39ff14;
+				--term-shadow: 0 12px 40px rgba(0, 0, 0, 0.85), 0 0 12px rgba(57, 255, 20, 0.35);
+			}
+
+			/* DRACULA THEME */
+			.terminal-window[data-theme="dracula"] {
+				--term-bg: #282a36;
+				--term-title-bg: #1e1f29;
+				--term-text: #f8f8f2;
+				--term-accent: #ff79c6;
+				--term-dim: #bd93f9;
+				--term-code-bg: rgba(189, 147, 249, 0.25);
+				--term-cursor: #50fa7b;
+				--term-shadow: 0 12px 40px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(189, 147, 249, 0.3);
+			}
+
+			/* CYBERPUNK THEME */
+			.terminal-window[data-theme="cyberpunk"] {
+				--term-bg: #0b0c10;
+				--term-title-bg: #1f2833;
+				--term-text: #66fcf1;
+				--term-accent: #ff007f;
+				--term-dim: #45a29e;
+				--term-code-bg: rgba(255, 0, 127, 0.2);
+				--term-cursor: #ff007f;
+				--term-shadow: 0 12px 40px rgba(0, 0, 0, 0.85), 0 0 12px rgba(255, 0, 127, 0.4);
+			}
+
+			/* LIGHT THEME */
+			.terminal-window[data-theme="light"] {
+				--term-bg: #f9fbfd;
+				--term-title-bg: #eceff4;
+				--term-text: #2e3440;
+				--term-accent: #5e81ac;
+				--term-dim: #4c566a;
+				--term-code-bg: rgba(94, 129, 172, 0.15);
+				--term-cursor: #2e3440;
+				--term-shadow: 0 12px 30px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.1);
+			}
+
+			/* CRT OVERLAY STYLING */
+			.terminal-crt-overlay {
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, rgba(0,0,0,0.15) 100%);
+				pointer-events: none;
+				z-index: 10;
+				border-radius: inherit;
+				display: none;
+			}
+			.terminal-crt-overlay::before {
+				content: " ";
+				display: block;
+				position: absolute;
+				top: 0; left: 0; bottom: 0; right: 0;
+				background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+				z-index: 10;
+				background-size: 100% 3px, 6px 100%;
+				pointer-events: none;
+				border-radius: inherit;
+			}
+			@keyframes crt-flicker {
+				0% { opacity: 0.98; }
+				50% { opacity: 1; }
+				100% { opacity: 0.99; }
+			}
+			.crt-mode .terminal-crt-overlay {
+				display: block;
+				animation: crt-flicker 0.15s infinite;
+			}
+
 			.terminal-titlebar {
 				display: flex;
 				align-items: center;
 				gap: 0.75rem;
 				padding: 0.5rem 0.75rem;
-				background: #252836;
+				background: var(--term-title-bg);
 				border-bottom: 1px solid rgba(0, 0, 0, 0.3);
-				cursor: text;
+				cursor: move;
+				user-select: none;
 			}
 			.terminal-dots {
 				display: flex;
@@ -247,7 +396,7 @@
 			.terminal-dots .dot.yellow { background: #ffbd2e; }
 			.terminal-dots .dot.green { background: #27c93f; }
 			.terminal-title {
-				color: rgba(210, 215, 235, 0.7);
+				color: var(--term-dim);
 				font-size: 0.75rem;
 			}
 			.terminal-body {
@@ -256,6 +405,8 @@
 				min-height: 210px;
 				overflow-y: auto;
 				cursor: text;
+				position: relative;
+				background: var(--term-bg);
 			}
 			.terminal-output {
 				margin-bottom: 0.5rem;
@@ -265,17 +416,18 @@
 				word-break: break-word;
 			}
 			.terminal-output .term-line code {
-				background: rgba(123, 158, 255, 0.2);
+				background: var(--term-code-bg);
 				padding: 1px 4px;
 				border-radius: 3px;
+				color: var(--term-text);
 			}
 			.term-prompt {
-				color: var(--accent);
+				color: var(--term-accent);
 				margin-right: 0.5rem;
 			}
-			/* Apply prompt color to dynamically appended lines (Astro scoping doesn't apply to innerHTML) */
+			/* Apply prompt color to dynamically appended lines */
 			.terminal-output :global(.term-prompt) {
-				color: var(--accent);
+				color: var(--term-accent);
 				margin-right: 0.5rem;
 			}
 			.term-prompt-short {
@@ -298,7 +450,7 @@
 				white-space: pre-wrap;
 				word-break: break-all;
 				font: inherit;
-				color: rgb(var(--gray-dark));
+				color: var(--term-text);
 				position: relative;
 				z-index: 2;
 			}
@@ -338,7 +490,7 @@
 				display: inline-block;
 				width: 8px;
 				height: 1.1em;
-				background: var(--accent);
+				background: var(--term-cursor);
 				animation: blink 1s step-end infinite;
 				vertical-align: text-bottom;
 			}
@@ -346,7 +498,7 @@
 				50% { opacity: 0; }
 			}
 			.terminal-output .term-response {
-				color: rgb(var(--gray));
+				color: var(--term-text);
 				white-space: pre-wrap;
 			}
 			.terminal-output .term-response a {
@@ -354,7 +506,7 @@
 				text-decoration: underline;
 			}
 			.terminal-output .term-response a:hover {
-				color: var(--accent);
+				color: var(--term-accent);
 			}
 
 			@media (max-width: 640px) {
@@ -410,6 +562,118 @@
 				const ghostText = document.getElementById('ghost-text');
 				if (!output || !input) return;
 
+				// Web Audio API Retro Sound Synthesizer
+				const TerminalSound = (function () {
+					let audioCtx = null;
+					let soundEnabled = true;
+
+					try {
+						soundEnabled = localStorage.getItem('term_sound') !== 'false';
+					} catch (e) {}
+
+					function init() {
+						if (!audioCtx) {
+							const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+							if (AudioContextClass) {
+								audioCtx = new AudioContextClass();
+							}
+						}
+						if (audioCtx && audioCtx.state === 'suspended') {
+							audioCtx.resume();
+						}
+					}
+
+					function playClick() {
+						if (!soundEnabled) return;
+						init();
+						if (!audioCtx) return;
+
+						const now = audioCtx.currentTime;
+						const osc = audioCtx.createOscillator();
+						const gain = audioCtx.createGain();
+
+						osc.type = 'sine';
+						osc.frequency.setValueAtTime(1400, now);
+						osc.frequency.exponentialRampToValueAtTime(150, now + 0.02);
+
+						gain.gain.setValueAtTime(0.015, now);
+						gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.02);
+
+						osc.connect(gain);
+						gain.connect(audioCtx.destination);
+
+						osc.start(now);
+						osc.stop(now + 0.02);
+					}
+
+					function playError() {
+						if (!soundEnabled) return;
+						init();
+						if (!audioCtx) return;
+
+						const now = audioCtx.currentTime;
+						const osc = audioCtx.createOscillator();
+						const gain = audioCtx.createGain();
+
+						osc.type = 'sawtooth';
+						osc.frequency.setValueAtTime(110, now);
+						osc.frequency.setValueAtTime(80, now + 0.08);
+
+						gain.gain.setValueAtTime(0.04, now);
+						gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.16);
+
+						osc.connect(gain);
+						gain.connect(audioCtx.destination);
+
+						osc.start(now);
+						osc.stop(now + 0.16);
+					}
+
+					function playStartup() {
+						if (!soundEnabled) return;
+						init();
+						if (!audioCtx) return;
+
+						const now = audioCtx.currentTime;
+						const notes = [261.63, 329.63, 392.00, 523.25]; // C4, E4, G4, C5 (Retro rising arpeggio)
+						
+						notes.forEach(function (freq, index) {
+							const osc = audioCtx.createOscillator();
+							const gain = audioCtx.createGain();
+							const time = now + index * 0.1;
+
+							osc.type = 'sine';
+							osc.frequency.setValueAtTime(freq, time);
+
+							gain.gain.setValueAtTime(0, time);
+							gain.gain.linearRampToValueAtTime(0.03, time + 0.02);
+							gain.gain.exponentialRampToValueAtTime(0.0001, time + 0.22);
+
+							osc.connect(gain);
+							gain.connect(audioCtx.destination);
+
+							osc.start(time);
+							osc.stop(time + 0.25);
+						});
+					}
+
+					return {
+						init: init,
+						playClick: playClick,
+						playError: playError,
+						playStartup: playStartup,
+						setSoundEnabled: function (enabled) {
+							soundEnabled = enabled;
+							try {
+								localStorage.setItem('term_sound', String(enabled));
+							} catch (e) {}
+						},
+						isSoundEnabled: function () {
+							return soundEnabled;
+						}
+					};
+				})();
+
 				const autocompleteCandidates = [
 					'whoami',
 					'ping skills',
@@ -421,11 +685,45 @@
 					'portfolio',
 					'resume',
 					'cat resume',
+					'cat skills',
+					'cat certs',
+					'cat contact',
+					'cat about',
+					'cat portfolio',
 					'about',
 					'clear',
 					'help',
-					'search'
+					'search',
+					'theme default',
+					'theme matrix',
+					'theme dracula',
+					'theme cyberpunk',
+					'theme light',
+					'crt on',
+					'crt off',
+					'sound on',
+					'sound off',
+					'matrix',
+					'history'
 				];
+
+				// Theme and CRT Management helper functions
+				function setTheme(themeName) {
+					if (terminalWindow) {
+						terminalWindow.setAttribute('data-theme', themeName);
+						try {
+							localStorage.setItem('term_theme', themeName);
+						} catch (e) {}
+					}
+				}
+
+				// Restore theme
+				try {
+					const savedTheme = localStorage.getItem('term_theme');
+					if (savedTheme) {
+						setTheme(savedTheme);
+					}
+				} catch (e) {}
 
 				// Restore terminal output from sessionStorage if exists
 				try {
@@ -439,9 +737,14 @@
 					}
 				} catch (e) {}
 
+				// Click-to-focus terminal
 				if (terminalWindow) {
 					terminalWindow.addEventListener('click', function () {
-						input.focus();
+						if (matrixInterval) {
+							abortActiveCommand();
+						} else {
+							input.focus();
+						}
 					});
 				}
 
@@ -486,6 +789,7 @@
 				input.addEventListener('input', function () {
 					updateInputText();
 					updateGhostText();
+					TerminalSound.playClick();
 				});
 
 				// Mobile swipe-to-complete coordinates
@@ -519,15 +823,169 @@
 
 				const promptText = 'visitor@christran.io:~$';
 
+				// Asynchronous commands logic
+				let activeAnimationTimeout = null;
+				let isCommandRunning = false;
+
+				function animateOutputLines(lines, delay, index = 0, onComplete) {
+					if (index >= lines.length) {
+						isCommandRunning = false;
+						if (onComplete) onComplete();
+						input.focus();
+						return;
+					}
+
+					isCommandRunning = true;
+					const line = lines[index];
+					if (line.indexOf('__HTML__') === 0) {
+						appendLine('<span class="term-response">' + line.slice(7) + '</span>');
+					} else {
+						appendLine('<span class="term-response">' + escapeHtmlWithBreaks(line) + '</span>');
+					}
+
+					activeAnimationTimeout = setTimeout(function () {
+						animateOutputLines(lines, delay, index + 1, onComplete);
+					}, delay);
+				}
+
+				function abortActiveCommand() {
+					if (activeAnimationTimeout) {
+						clearTimeout(activeAnimationTimeout);
+						activeAnimationTimeout = null;
+					}
+					if (isCommandRunning) {
+						appendLine('<span class="term-response" style="color: #ff5f56;">^C (aborted)</span>');
+						isCommandRunning = false;
+					}
+					stopMatrixRain();
+					input.focus();
+				}
+
+				// Matrix Canvas Rain Animation
+				let matrixInterval = null;
+				function startMatrixRain() {
+					const canvas = document.getElementById('terminal-matrix-canvas');
+					if (!canvas) return;
+
+					canvas.style.display = 'block';
+					const body = canvas.parentElement;
+					
+					// Set sizes
+					const width = body.clientWidth;
+					const height = body.clientHeight;
+					canvas.width = width;
+					canvas.height = height;
+
+					const ctx = canvas.getContext('2d');
+					const fontSize = 14;
+					const columns = Math.floor(width / fontSize);
+					const drops = [];
+
+					for (let i = 0; i < columns; i++) {
+						drops[i] = Math.random() * -100;
+					}
+
+					const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄ";
+
+					function draw() {
+						ctx.fillStyle = 'rgba(0, 0, 0, 0.06)';
+						ctx.fillRect(0, 0, width, height);
+
+						ctx.fillStyle = '#39ff14';
+						ctx.font = fontSize + 'px monospace';
+
+						for (let i = 0; i < drops.length; i++) {
+							const char = chars[Math.floor(Math.random() * chars.length)];
+							ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+
+							if (drops[i] * fontSize > height && Math.random() > 0.975) {
+								drops[i] = 0;
+							}
+							drops[i]++;
+						}
+					}
+
+					if (output) output.style.visibility = 'hidden';
+					const inputLine = document.querySelector('.terminal-input-line');
+					if (inputLine) inputLine.style.visibility = 'hidden';
+
+					matrixInterval = setInterval(draw, 33);
+				}
+
+				function stopMatrixRain() {
+					if (!matrixInterval) return;
+					clearInterval(matrixInterval);
+					matrixInterval = null;
+
+					const canvas = document.getElementById('terminal-matrix-canvas');
+					if (canvas) {
+						canvas.style.display = 'none';
+					}
+
+					if (output) output.style.visibility = 'visible';
+					const inputLine = document.querySelector('.terminal-input-line');
+					if (inputLine) inputLine.style.visibility = 'visible';
+				}
+
+				// Sudo crash effect
+				function triggerFakeCrash() {
+					isCommandRunning = true;
+					const lines = [
+						'WARNING: RUNNING SYSTEM DESTRUCTION AS ROOT...',
+						'Deleting /sys/kernel/debug...',
+						'Deleting /bin/bash...',
+						'Deleting /lib/libc.so.6...',
+						'Deleting /etc/passwd...',
+						'Deleting /var/log/syslog...',
+						'Deleting /home/chris...',
+						'rm: cannot remove root directory \'/\'',
+						'SYSTEM ERROR: kernel panic - not syncing: Attempted to kill init! exitcode=0x00000007',
+						'--------------------------------------------------',
+						'!!! MOCK KERNEL PANIC: CORE DUMPED !!!',
+						'SYSTEM RESTORE IN PROGRESS... REBOOTING IN 3 SECONDS...',
+					];
+
+					TerminalSound.playError();
+
+					animateOutputLines(lines, 180, 0, function () {
+						setTimeout(function () {
+							output.innerHTML = '';
+							appendLine('<span class="term-prompt">visitor@christran.io:~$</span>type a command and press Enter. try <code>help</code> or <code>ls</code>');
+							TerminalSound.playStartup();
+							isCommandRunning = false;
+						}, 3000);
+					});
+				}
+
 				const commands = {
 					whoami: function () {
 						return 'chris\n\nNetwork Engineer in the SF Bay Area. IT infrastructure, security, and turning caffeine into configs.';
 					},
 					'ping skills': function () {
-						return 'PING skills.chris.local (10.0.0.42) 56(84) bytes of data.\n64 bytes from skills: icmp_seq=1 ttl=64 time=0.042 ms\n--- skills.chris.local ping statistics ---\n1 packets transmitted, 1 received, 0% packet loss\n\nKey skills: networking, security, automation, and way too many tabs of documentation.';
+						const lines = [
+							'PING skills.chris.local (10.0.0.42) 56(84) bytes of data.',
+							'64 bytes from 10.0.0.42: icmp_seq=1 ttl=64 time=0.042 ms',
+							'64 bytes from 10.0.0.42: icmp_seq=2 ttl=64 time=0.049 ms',
+							'64 bytes from 10.0.0.42: icmp_seq=3 ttl=64 time=0.038 ms',
+							'--- skills.chris.local ping statistics ---',
+							'3 packets transmitted, 3 received, 0% packet loss',
+							'__HTML__' + '<br>Key skills:<br>  <b>Networking</b>: routing, switching, firewall, VPN, DNS, DHCP<br>  <b>Security</b>: hardening, monitoring, incident response<br>  <b>Automation</b>: Python, Ansible, Bash, APIs<br>  <b>Cloud/Infra</b>: AWS, Cloudflare Workers, GitHub CI/CD'
+						];
+						return { type: 'async', lines: lines, delay: 400 };
 					},
 					'traceroute career': function () {
-						return 'traceroute to career (192.168.1.1), 30 hops max\n 1  foothill.edu (1.2 ms)\n 2  ucsd.edu (4.8 ms)\n 3  amazon.com (8.4 ms)\n 4  santaclaracounty.gov (12.1 ms)\n 5  microsoft.com (18.7 ms)\n 6  autochlor.com (22.3 ms)\n 7  wgu.edu (28.9 ms)\n\nDestination reached. Next hop: whatever I\'m building next!';
+						const lines = [
+							'traceroute to career (192.168.1.1), 30 hops max',
+							'__HTML__' + ' 1  <a href="https://foothill.edu" target="_blank" rel="noopener noreferrer">foothill.edu</a> (1.2 ms)',
+							'__HTML__' + ' 2  <a href="https://ucsd.edu" target="_blank" rel="noopener noreferrer">ucsd.edu</a> (4.8 ms)',
+							'__HTML__' + ' 3  <a href="https://amazon.com" target="_blank" rel="noopener noreferrer">amazon.com</a> (8.4 ms)',
+							'__HTML__' + ' 4  <a href="https://santaclaracounty.gov" target="_blank" rel="noopener noreferrer">santaclaracounty.gov</a> (12.1 ms)',
+							'__HTML__' + ' 5  <a href="https://microsoft.com" target="_blank" rel="noopener noreferrer">microsoft.com</a> (18.7 ms)',
+							'__HTML__' + ' 6  <a href="https://www.autochlor.com" target="_blank" rel="noopener noreferrer">autochlor.com</a> (22.3 ms)',
+							'__HTML__' + ' 7  <a href="https://wgu.edu" target="_blank" rel="noopener noreferrer">wgu.edu</a> (28.9 ms)',
+							'Destination reached. Next hop: whatever I\'m building next!'
+						];
+						return { type: 'async', lines: lines, delay: 350 };
 					},
 					ls: function () {
 						return '__HTML__' + 'skills  certs  contact  portfolio  resume  about<br><br>Tip: try <code>cat resume</code>, <code>certs</code>, or <code>contact</code>.';
@@ -553,11 +1011,123 @@
 					'cat resume': function () {
 						return '__HTML__' + 'Network Engineer · Security · Automation. Full resume: <a href="/resume">/resume</a>';
 					},
+					cat: function (args) {
+						if (!args || args.trim() === '') {
+							return 'Usage: cat <file>\nExample: cat resume';
+						}
+						const file = args.trim().toLowerCase();
+						if (file === 'resume') {
+							return commands['resume']();
+						} else if (file === 'skills') {
+							return commands['skills']();
+						} else if (file === 'certs') {
+							return commands['certs']();
+						} else if (file === 'contact') {
+							return commands['contact']();
+						} else if (file === 'about') {
+							return commands['about']();
+						} else if (file === 'portfolio' || file === 'projects') {
+							return commands['portfolio']();
+						} else {
+							return 'cat: ' + args + ': No such file or directory';
+						}
+					},
+					theme: function (args) {
+						if (!args || args.trim() === '') {
+							return 'Usage: theme <name>\nAvailable themes: default, matrix, dracula, cyberpunk, light';
+						}
+						const requestedTheme = args.trim().toLowerCase();
+						const validThemes = ['default', 'matrix', 'dracula', 'cyberpunk', 'light'];
+						if (validThemes.indexOf(requestedTheme) === -1) {
+							return 'Unknown theme: ' + args + '\nAvailable themes: default, matrix, dracula, cyberpunk, light';
+						}
+						setTheme(requestedTheme);
+						return 'Theme changed to ' + requestedTheme;
+					},
+					crt: function (args) {
+						const termWidget = document.getElementById('terminal-widget');
+						if (!termWidget) return 'Error: widget not found.';
+						let action = '';
+						if (args) {
+							action = args.trim().toLowerCase();
+						}
+						let isCrtOn = termWidget.classList.contains('crt-mode');
+						if (action === 'on') {
+							termWidget.classList.add('crt-mode');
+							isCrtOn = true;
+						} else if (action === 'off') {
+							termWidget.classList.remove('crt-mode');
+							isCrtOn = false;
+						} else {
+							isCrtOn = termWidget.classList.toggle('crt-mode');
+						}
+						try {
+							localStorage.setItem('term_crt', String(isCrtOn));
+						} catch (e) {}
+						return 'CRT monitor display ' + (isCrtOn ? 'enabled' : 'disabled');
+					},
+					sound: function (args) {
+						let action = '';
+						if (args) {
+							action = args.trim().toLowerCase();
+						}
+						let enabled = TerminalSound.isSoundEnabled();
+						if (action === 'on') {
+							TerminalSound.setSoundEnabled(true);
+							enabled = true;
+						} else if (action === 'off') {
+							TerminalSound.setSoundEnabled(false);
+							enabled = false;
+						} else {
+							enabled = !enabled;
+							TerminalSound.setSoundEnabled(enabled);
+						}
+						if (enabled) {
+							TerminalSound.playStartup();
+						}
+						return 'Terminal sound effects ' + (enabled ? 'enabled' : 'disabled');
+					},
+					matrix: function () {
+						startMatrixRain();
+						return { type: 'async', lines: ['Loading code rain matrix... (Press any key or click to exit)'], delay: 100 };
+					},
+					history: function () {
+						if (history.length === 0) {
+							return 'No commands in history.';
+						}
+						return history.map((cmd, i) => `  ${i + 1}  ${cmd}`).join('\n');
+					},
+					sudo: function (args) {
+						if (!args || args.trim() === '') {
+							return 'visitor is not in the sudoers file. This incident will be reported.';
+						}
+						const query = args.trim().toLowerCase();
+						if (query.indexOf('rm -rf') !== -1) {
+							triggerFakeCrash();
+							return { type: 'async', lines: [], delay: 0 };
+						}
+						return 'visitor is not in the sudoers file. This incident will be reported.';
+					},
 					about: function () {
 						return '__HTML__' + 'More about me: <a href="/about">/about</a>';
 					},
 					help: function () {
-						return 'Available commands:\n  \u2002whoami              — who is Chris?\n  \u2002ping skills        — probe my skills\n  \u2002traceroute career  — path of my career\n  \u2002search <query>     — search blog posts & projects\n  \u2002ls                  — list areas to explore\n  \u2002certs               — certifications\n  \u2002skills              — technical skills\n  \u2002contact             — LinkedIn, GitHub, resume\n  \u2002portfolio           — projects & apps\n  \u2002resume / cat resume — resume summary\n  \u2002about               — about page\n  \u2002clear               — clear the screen';
+						return 'Available commands:\n' +
+							'  whoami              — who is Chris?\n' +
+							'  ping skills        — probe my skills (animated)\n' +
+							'  traceroute career  — path of my career (animated)\n' +
+							'  search <query>     — search blog posts & projects\n' +
+							'  ls                  — list areas to explore\n' +
+							'  cat <file>          — output file contents (e.g. cat skills)\n' +
+							'  theme <name>        — switch theme (default, matrix, dracula, cyberpunk, light)\n' +
+							'  crt <on/off>        — toggle CRT monitor scanlines overlay\n' +
+							'  sound <on/off>      — toggle retro sound effects\n' +
+							'  matrix              — enter matrix digital rain mode\n' +
+							'  history             — show command history\n' +
+							'  clear               — clear the screen\n\n' +
+							'Shortcuts:\n' +
+							'  Ctrl + L            — clear screen\n' +
+							'  Ctrl + C            — abort active command / exit matrix rain';
 					},
 					search: function (args) {
 						if (!args || args.trim() === '') {
@@ -666,6 +1236,7 @@
 						} else if (baseCmd === 'search') {
 							resolvedCmdKey = 'search';
 						} else {
+							TerminalSound.playError();
 							appendLine('<span class="term-response">bash: ' + escapeHtml(baseCmd) + ': command not found. Try `help`</span>');
 							return;
 						}
@@ -682,6 +1253,10 @@
 						}).catch((err) => {
 							appendLine('<span class="term-response" style="color: #ff5f56;">Error running command.</span>');
 						});
+					} else if (result && result.type === 'async') {
+						if (result.lines.length > 0) {
+							animateOutputLines(result.lines, result.delay);
+						}
 					} else {
 						handleCommandResult(resolvedCmdKey, result);
 					}
@@ -715,8 +1290,6 @@
 					}
 				} catch (e) {}
 				let historyIndex = -1;
-
-				// Removed old duplicate autocompleteCandidates definition to avoid redeclared block-scoped variable
 
 				function handleTabComplete() {
 					const val = input.value;
@@ -759,8 +1332,28 @@
 					}
 				}
 
+				// Exit matrix rain on any keypress
+				document.addEventListener('keydown', function (e) {
+					if (matrixInterval) {
+						e.preventDefault();
+						abortActiveCommand();
+					}
+				});
+
 				input.addEventListener('keydown', function (e) {
-					if (e.key === 'Tab') {
+					// Block input actions during running async command
+					if (isCommandRunning && e.key !== 'c' && !e.ctrlKey) {
+						e.preventDefault();
+						return;
+					}
+
+					if (e.ctrlKey && e.key.toLowerCase() === 'l') {
+						e.preventDefault();
+						runCommand('clear');
+					} else if (e.ctrlKey && e.key.toLowerCase() === 'c') {
+						e.preventDefault();
+						abortActiveCommand();
+					} else if (e.key === 'Tab') {
 						e.preventDefault();
 						if (ghostText && ghostText.textContent) {
 							acceptAutocomplete();
@@ -830,12 +1423,95 @@
 					}
 				});
 
+				// Dragging window helper
+				function makeDraggable(winWidget, winTitlebar) {
+					let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+					
+					winTitlebar.addEventListener('mousedown', dragMouseDown);
+					winTitlebar.addEventListener('touchstart', dragTouchStart, { passive: false });
+
+					function dragMouseDown(e) {
+						if (winWidget.classList.contains('maximized')) return;
+						e.preventDefault();
+						pos3 = e.clientX;
+						pos4 = e.clientY;
+						document.addEventListener('mouseup', closeDragElement);
+						document.addEventListener('mousemove', elementDrag);
+					}
+
+					function dragTouchStart(e) {
+						if (winWidget.classList.contains('maximized')) return;
+						pos3 = e.touches[0].clientX;
+						pos4 = e.touches[0].clientY;
+						document.addEventListener('touchend', closeDragElement);
+						document.addEventListener('touchmove', elementTouchDrag, { passive: false });
+					}
+
+					function elementDrag(e) {
+						e.preventDefault();
+						pos1 = pos3 - e.clientX;
+						pos2 = pos4 - e.clientY;
+						pos3 = e.clientX;
+						pos4 = e.clientY;
+						
+						let newTop = winWidget.offsetTop - pos2;
+						let newLeft = winWidget.offsetLeft - pos1;
+						
+						const maxLeft = window.innerWidth - winWidget.clientWidth;
+						const maxTop = window.innerHeight - winWidget.clientHeight;
+						
+						newLeft = Math.max(0, Math.min(newLeft, maxLeft));
+						newTop = Math.max(0, Math.min(newTop, maxTop));
+
+						winWidget.style.top = newTop + "px";
+						winWidget.style.left = newLeft + "px";
+						winWidget.style.bottom = "auto";
+						winWidget.style.right = "auto";
+					}
+
+					function elementTouchDrag(e) {
+						e.preventDefault();
+						pos1 = pos3 - e.touches[0].clientX;
+						pos2 = pos4 - e.touches[0].clientY;
+						pos3 = e.touches[0].clientX;
+						pos4 = e.touches[0].clientY;
+						
+						let newTop = winWidget.offsetTop - pos2;
+						let newLeft = winWidget.offsetLeft - pos1;
+						
+						const maxLeft = window.innerWidth - winWidget.clientWidth;
+						const maxTop = window.innerHeight - winWidget.clientHeight;
+						
+						newLeft = Math.max(0, Math.min(newLeft, maxLeft));
+						newTop = Math.max(0, Math.min(newTop, maxTop));
+
+						winWidget.style.top = newTop + "px";
+						winWidget.style.left = newLeft + "px";
+						winWidget.style.bottom = "auto";
+						winWidget.style.right = "auto";
+					}
+
+					function closeDragElement() {
+						document.removeEventListener('mouseup', closeDragElement);
+						document.removeEventListener('mousemove', elementDrag);
+						document.removeEventListener('touchend', closeDragElement);
+						document.removeEventListener('touchmove', elementTouchDrag);
+					}
+				}
+
 				// Terminal widget trigger & close logic
 				const trigger = document.getElementById('terminal-trigger');
 				const widget = document.getElementById('terminal-widget');
 				const dotClose = document.getElementById('terminal-dot-close');
+				const dotMinimize = document.getElementById('terminal-dot-minimize');
+				const dotMaximize = document.getElementById('terminal-dot-maximize');
+				const titlebar = document.getElementById('terminal-titlebar');
 				const triggerIcon = trigger ? trigger.querySelector('.trigger-icon-svg') : null;
 				const closeIcon = trigger ? trigger.querySelector('.close-icon-svg') : null;
+
+				if (widget && titlebar) {
+					makeDraggable(widget, titlebar);
+				}
 
 				function toggleTerminal() {
 					if (!widget || !trigger) return;
@@ -845,6 +1521,7 @@
 						sessionStorage.setItem('term_open', String(isOpen));
 						if (isOpen) {
 							sessionStorage.setItem('term_open_path', window.location.pathname);
+							TerminalSound.playStartup();
 						} else {
 							sessionStorage.removeItem('term_open_path');
 						}
@@ -852,7 +1529,6 @@
 					if (isOpen) {
 						if (triggerIcon) triggerIcon.style.display = 'none';
 						if (closeIcon) closeIcon.style.display = 'block';
-						// Focus input immediately on desktop, with a slight delay on mobile
 						if (window.innerWidth > 640) {
 							input.focus();
 						} else {
@@ -864,11 +1540,47 @@
 						if (triggerIcon) triggerIcon.style.display = 'block';
 						if (closeIcon) closeIcon.style.display = 'none';
 						input.blur();
+						abortActiveCommand();
 					}
 				}
 
 				if (trigger) {
 					trigger.addEventListener('click', toggleTerminal);
+				}
+
+				// Minimize button action
+				if (dotMinimize) {
+					dotMinimize.addEventListener('click', function (e) {
+						e.stopPropagation();
+						widget.classList.toggle('minimized');
+						if (!widget.classList.contains('minimized')) {
+							input.focus();
+						}
+					});
+				}
+
+				// Maximize button action
+				if (dotMaximize) {
+					dotMaximize.addEventListener('click', function (e) {
+						e.stopPropagation();
+						widget.classList.toggle('maximized');
+						if (widget.classList.contains('maximized')) {
+							widget.dataset.prevTop = widget.style.top;
+							widget.dataset.prevLeft = widget.style.left;
+							widget.dataset.prevRight = widget.style.right;
+							widget.dataset.prevBottom = widget.style.bottom;
+							widget.style.top = '';
+							widget.style.left = '';
+							widget.style.right = '';
+							widget.style.bottom = '';
+						} else {
+							widget.style.top = widget.dataset.prevTop || '';
+							widget.style.left = widget.dataset.prevLeft || '';
+							widget.style.right = widget.dataset.prevRight || '';
+							widget.style.bottom = widget.dataset.prevBottom || '';
+						}
+						input.focus();
+					});
 				}
 
 				// Restore terminal open state on page load
@@ -880,7 +1592,6 @@
 						trigger.setAttribute('aria-expanded', 'true');
 						if (triggerIcon) triggerIcon.style.display = 'none';
 						if (closeIcon) closeIcon.style.display = 'block';
-						// Scroll to the bottom of the output
 						const body = output.parentElement;
 						if (body) {
 							body.scrollTop = body.scrollHeight;
@@ -891,6 +1602,18 @@
 					}
 				} catch (e) {}
 
+				// Restore CRT mode on page load
+				try {
+					const crtSaved = localStorage.getItem('term_crt');
+					if (crtSaved === 'true') {
+						widget.classList.add('crt-mode');
+					} else if (crtSaved === 'false') {
+						widget.classList.remove('crt-mode');
+					} else {
+						widget.classList.add('crt-mode'); // default CRT to on
+					}
+				} catch (e) {}
+
 				if (dotClose) {
 					dotClose.addEventListener('click', function (e) {
 						e.stopPropagation();
@@ -898,13 +1621,26 @@
 					});
 				}
 
-				// Click outside to close (desktop only, to avoid issues on mobile tap interactions)
+				// Click outside to close (desktop only)
 				document.addEventListener('click', function (event) {
 					if (!widget || !trigger) return;
 					if (widget.classList.contains('open') && 
 						!widget.contains(event.target) && 
 						!trigger.contains(event.target)) {
 						toggleTerminal();
+					}
+				});
+
+				// Normalize position on window resize if window bounds shrink
+				window.addEventListener('resize', function () {
+					if (widget && !widget.classList.contains('maximized')) {
+						const rect = widget.getBoundingClientRect();
+						if (rect.right > window.innerWidth || rect.bottom > window.innerHeight) {
+							widget.style.top = '';
+							widget.style.left = '';
+							widget.style.bottom = '';
+							widget.style.right = '';
+						}
 					}
 				});
 			});
