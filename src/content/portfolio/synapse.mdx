@@ -1,6 +1,6 @@
 ---
 title: "sYnapse"
-description: "A unified agentic trading platform acting as a secure multi-broker gateway. Integrates with Alpaca (equities) and Tradovate (futures) API endpoints to manage account positions, place custom market/limit orders, and orchestrate autonomous strategy execution running entirely on Cloudflare Workers and Durable Objects."
+description: "A unified agentic trading platform acting as a secure multi-broker gateway (Alpaca, Tradovate). Features backtesting and live bot execution for advanced quantitative strategies, including MACD crossover, Donchian breakouts, Z-Score mean reversion, and Congressional political trade sentiment tracking."
 category: "app"
 tags: ["Algorithmic Trading", "Finance", "Authentication", "Durable Objects"]
 techStack: ["Cloudflare Workers", "React", "D1 Database", "Durable Objects", "OpenAuth.js", "Vite"]
@@ -65,6 +65,15 @@ order: 2
 	<li><strong>Durable WebSockets</strong> — Maintains constant, low-latency socket connections to broker data streams using Cloudflare Durable Objects.</li>
 	<li><strong>State Management</strong> — Logs orders, trades, and strategy metrics into a serverless SQL database (D1) for analytics.</li>
 	<li><strong>Single Sign-On (SSO)</strong> — Seamless authentication integration using the shared domain's sYnID provider.</li>
+	<li><strong>Strategy Backtesting</strong> — Historical backtesting engine that simulates performance, returns trades, equity curves, metrics, and visualizes indicators.</li>
+</ul>
+
+<h2>Supported Strategies</h2>
+<ul>
+	<li><strong>MACD Crossover (<code>macd_crossover</code>)</strong> — Computes fast/slow EMAs and a signal line, triggering signals on crossover events.</li>
+	<li><strong>Donchian Channel Breakout (<code>donchian_breakout</code>)</strong> — Computes rolling high/low bounds, buying breakouts on the upper channel and selling on the lower channel.</li>
+	<li><strong>Z-Score Mean Reversion (<code>zscore_reversion</code>)</strong> — Measures standard deviations from SMA to buy oversold assets (Z-Score &lt; -2.0) and sell overbought ones (Z-Score &gt; 2.0).</li>
+	<li><strong>Congressional Political Trades (<code>political_trades</code>)</strong> — Automates positions based on US House and Senate STOCK Act filings, synced via S3 to SQLite/D1 to build a custom Congressional Sentiment Index (CSI).</li>
 </ul>
 
 <h2>Technical Organization</h2>

@@ -1,9 +1,9 @@
 ---
 title: "sYnX"
-description: "A modern task management application for organizing and tracking personal and professional tasks. Features an intuitive interface, priority levels, due dates, and progress tracking to stay productive."
+description: "A modern task management application featuring public/collaborative list sharing, nested subtasks, recurring tasks, theme customization, and smart web notifications. Built with Cloudflare Workers Assets, Remix, and Cloudflare D1."
 category: "app"
 tags: ["Task Management", "Productivity", "Web App"]
-techStack: ["Cloudflare Workers", "KV Storage", "TypeScript"]
+techStack: ["Cloudflare Workers", "D1 Database", "Remix", "TypeScript"]
 image: "/img/projects/synx.jpg"
 liveUrl: "https://synx.christran.io"
 featured: false
@@ -11,7 +11,7 @@ order: 5
 ---
 
 <p>
-	<strong>sYnX</strong> is a fast, responsive task management application designed to organize and track personal and professional responsibilities. Built as a serverless static asset application utilizing the Remix framework, it provides an intuitive user interface with robust offline-first caching and KV-backed server persistence.
+	<strong>sYnX</strong> is a fast, collaborative task management application designed to organize and track personal and professional responsibilities. Built as a serverless static asset application utilizing the Remix framework, it provides an intuitive user interface with robust offline-first caching and Cloudflare D1 database persistence.
 </p>
 
 <h2>Technical Stack</h2>
@@ -44,7 +44,7 @@ order: 5
 		<table class="spec-table">
 			<tbody>
 				<tr><td class="spec-label">Hosting</td><td>Cloudflare Workers Assets (Static + Dynamic routing)</td></tr>
-				<tr><td class="spec-label">Database</td><td>Cloudflare Workers KV (KeyValue Storage)</td></tr>
+				<tr><td class="spec-label">Database</td><td>Cloudflare D1 (Serverless SQL)</td></tr>
 				<tr><td class="spec-label">Proxy binding</td><td>Cloudflare Developer Platform (Remix Dev Proxy)</td></tr>
 			</tbody>
 		</table>
@@ -54,22 +54,24 @@ order: 5
 <div class="lab-note">
 	<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
 	<span>
-		<strong>Remix Dev Proxy Binding:</strong> The developer setup utilizes Cloudflare's Dev Proxy to dynamically bridge bindings (such as the <code>TO_DO_LIST</code> KV namespace) directly into the local Remix Vite server during development.
+		<strong>Cloudflare D1 Database Binding:</strong> The developer setup utilizes Cloudflare's Dev Proxy to dynamically bridge bindings (such as the <code>synx-db</code> D1 database) directly into the local Remix Vite server during development.
 	</span>
 </div>
 
 <h2>Core Features</h2>
 <ul>
-	<li><strong>Task Organization</strong> — Add, remove, edit, and categorize items based on priority levels and due dates.</li>
-	<li><strong>Remix Routing</strong> — Utilizes Remix's nested routers to update specific sections of the dashboard instantly without full page refreshes.</li>
-	<li><strong>Workers KV Persistence</strong> — High-speed reads and writes to global KV storage ensure task states load near-instantly regardless of location.</li>
-	<li><strong>Cloudflare Assets</strong> — Deploys static assets globally, serving client files directly from Cloudflare's edge CDN.</li>
+	<li><strong>Collaborative Sharing</strong> — Share task lists as Private, View-Only, or Collaborative for team coordination.</li>
+	<li><strong>Nested Subtasks</strong> — Break down tasks into single-level subtask checklists.</li>
+	<li><strong>Recurring Tasks</strong> — Automate repeating chores with Daily, Weekly, and Monthly recurrence periods.</li>
+	<li><strong>Search & Sorting Options</strong> — Instantly filter tasks and sort by Priority, Due Date, Alphabetical, or Date Created.</li>
+	<li><strong>Theme Customizer</strong> — Toggle between Midnight Indigo, Emerald Forest, Sunset Rose, and Cyberpunk Neon dark themes.</li>
+	<li><strong>Smart Web Notifications</strong> — Local browser pushes and synced email/SMS/Discord notification integrations for task reminders.</li>
 </ul>
 
 <div class="tech-tags">
 	<span class="tag">Remix</span>
 	<span class="tag">Cloudflare Workers Assets</span>
-	<span class="tag">Workers KV</span>
+	<span class="tag">Cloudflare D1</span>
 	<span class="tag">TypeScript</span>
 	<span class="tag">Vite</span>
 	<span class="tag">React</span>
