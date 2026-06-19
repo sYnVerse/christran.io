@@ -1,3 +1,12 @@
 # Redirect sitemap.xml to the Astro-generated sitemap index
 /sitemap.xml /sitemap-0.xml 301
 /synx https://synx.christran.io 301
+/to-do https://synx.christran.io 301
+/to-do-list https://synx.christran.io 301
+/illusyn https://illusyn.christran.io 301
+/tools https://tools.christran.io 301
+/synapse https://synapse.christran.io 301
+/f1 https://f1-wiki.christran.io 301
+/auth https://auth.christran.io 301
+/llm https://llm.christran.io 301
+/chat https://chat.christran.io 301
