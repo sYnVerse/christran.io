@@ -1532,6 +1532,9 @@
 				function toggleTerminal() {
 					if (!widget || !trigger) return;
 					const isOpen = widget.classList.toggle('open');
+					if (isOpen && widget.classList.contains('minimized')) {
+						widget.classList.remove('minimized');
+					}
 					trigger.setAttribute('aria-expanded', String(isOpen));
 					try {
 						sessionStorage.setItem('term_open', String(isOpen));
