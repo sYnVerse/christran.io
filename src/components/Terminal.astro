@@ -871,8 +871,13 @@
 					const canvas = document.getElementById('terminal-matrix-canvas');
 					if (!canvas) return;
 
-					canvas.style.display = 'block';
 					const body = canvas.parentElement;
+					if (body) {
+						body.scrollTop = 0;
+						body.style.overflowY = 'hidden';
+					}
+
+					canvas.style.display = 'block';
 					
 					// Set sizes
 					const width = body.clientWidth;
@@ -909,9 +914,9 @@
 						}
 					}
 
-					if (output) output.style.visibility = 'hidden';
+					if (output) output.style.display = 'none';
 					const inputLine = document.querySelector('.terminal-input-line');
-					if (inputLine) inputLine.style.visibility = 'hidden';
+					if (inputLine) inputLine.style.display = 'none';
 
 					matrixInterval = setInterval(draw, 33);
 				}
@@ -926,9 +931,15 @@
 						canvas.style.display = 'none';
 					}
 
-					if (output) output.style.visibility = 'visible';
+					const body = document.getElementById('terminal-body');
+					if (body) {
+						body.style.overflowY = '';
+						body.scrollTop = body.scrollHeight;
+					}
+
+					if (output) output.style.display = 'block';
 					const inputLine = document.querySelector('.terminal-input-line');
-					if (inputLine) inputLine.style.visibility = 'visible';
+					if (inputLine) inputLine.style.display = 'flex';
 				}
 
 				// Sudo crash effect
