@@ -722,8 +722,8 @@ const latestPosts = (await getCollection('blog'))
 		</nav>
 		
 		<main class="scroll-journey">
-			<!-- Stage 1: Tagline -->
-			<section class="journey-stage stage-tagline">
+			<!-- Stage 1-3: Tagline Container Wrapper -->
+			<div class="tagline-container-wrapper">
 				<div class="stage-sticky">
 					<div class="hero-content">
 						<h1 class="tagline-parallax" aria-label="Engineering, Security, Automation">
@@ -740,7 +740,10 @@ const latestPosts = (await getCollection('blog'))
 						</div>
 					</div>
 				</div>
-			</section>
+				<section class="journey-stage stage-tagline-1" style="margin-top: -100vh;"></section>
+				<section class="journey-stage stage-tagline-2"></section>
+				<section class="journey-stage stage-tagline-3"></section>
+			</div>
 
 			<!-- Stage 2: Intro -->
 			<section class="journey-stage stage-intro">
@@ -806,6 +809,7 @@ const latestPosts = (await getCollection('blog'))
 				}
 
 				const tagline = document.querySelector('.tagline-parallax');
+				const taglineCard = tagline ? tagline.closest('.hero-content') : null;
 				const stages = document.querySelectorAll('.journey-stage');
 				const scrollIndicator = document.querySelector('.scroll-indicator');
 				const body = document.body;
@@ -832,20 +836,75 @@ const latestPosts = (await getCollection('blog'))
 				// Run immediately to calculate on load
 				handleResize();
 
+				let snapRafId = null;
+
+				const cancelSnap = () => {
+					if (snapRafId) {
+						cancelAnimationFrame(snapRafId);
+						snapRafId = null;
+					}
+				};
+
+				const smoothScrollTo = (targetY, duration = 650) => {
+					cancelSnap(); // Cancel any active snap first
+
+					const startY = window.scrollY;
+					const difference = targetY - startY;
+					if (Math.abs(difference) < 5) return;
+
+					const startTime = performance.now();
+
+					// EaseOutExpo curve: starts fast, decelerates extremely smoothly (Apple-style)
+					const easeOutExpo = (t) => {
+						return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+					};
+
+					const animateScroll = (currentTime) => {
+						const elapsedTime = currentTime - startTime;
+						const progress = Math.min(elapsedTime / duration, 1);
+						const ease = easeOutExpo(progress);
+
+						window.scrollTo(0, startY + difference * ease);
+
+						if (progress < 1) {
+							snapRafId = requestAnimationFrame(animateScroll);
+						} else {
+							snapRafId = null;
+						}
+					};
+
+					snapRafId = requestAnimationFrame(animateScroll);
+				};
+
+				const onInteraction = () => {
+					cancelSnap();
+				};
+
+				// Cancel snap animation if user scrolls or interacts manually
+				window.addEventListener('wheel', onInteraction, { passive: true });
+				window.addEventListener('touchstart', onInteraction, { passive: true });
+				window.addEventListener('mousedown', onInteraction, { passive: true });
+
 				// Add dot click event listeners for desktop navigation
 				const dots = document.querySelectorAll('.scroll-nav-dot');
 				dots.forEach((dot, index) => {
 					dot.addEventListener('click', () => {
-						const stageElement = stages[index];
+						// Map dot index to stages index:
+						// dot 0 (Home) -> stage 0
+						// dot 1 (About) -> stage 3
+						// dot 2 (Projects) -> stage 4
+						// dot 3 (Blog) -> stage 5
+						const stageIndex = index === 0 ? 0 : index + 2;
+						const stageElement = stages[stageIndex];
 						if (stageElement) {
-							if (index === 0) {
-								window.scrollTo({ top: 0, behavior: 'smooth' });
+							if (stageIndex === 0) {
+								smoothScrollTo(0, 800);
 							} else {
 								const offsetTop = stageElement.offsetTop;
 								const stageHeight = stageElement.offsetHeight;
 								const scrollRange = stageHeight - viewportHeight;
 								const targetY = offsetTop + 0.35 * scrollRange;
-								window.scrollTo({ top: targetY, behavior: 'smooth' });
+								smoothScrollTo(targetY, 800);
 							}
 						}
 					});
@@ -854,6 +913,79 @@ const latestPosts = (await getCollection('blog'))
 				let targetScrollY = window.scrollY;
 				let currentScrollY = window.scrollY;
 				let rafId = null;
+
+				let lastScrollY = window.scrollY;
+				let scrollDirection = 'down';
+				let scrollTimeout = null;
+				let scrollStartYSnap = window.scrollY;
+
+				const getStageRanges = () => {
+					return Array.from(stages).map((stage, index) => {
+						const offsetTop = stage.offsetTop;
+						const stageHeight = stage.offsetHeight;
+						const scrollRange = stageHeight - viewportHeight;
+						return {
+							index,
+							offsetTop,
+							scrollRange,
+							target: index === 0 ? 0 : offsetTop + 0.35 * scrollRange,
+							stableStart: index === 0 ? 0 : offsetTop + 0.15 * scrollRange,
+							stableEnd: index === stages.length - 1 ? offsetTop + scrollRange : offsetTop + 0.85 * scrollRange
+						};
+					});
+				};
+
+				const handleScrollEnd = () => {
+					scrollTimeout = null;
+					const scrollY = window.scrollY;
+					
+					// Calculate scroll direction based on net movement of the entire gesture
+					const netDelta = scrollY - scrollStartYSnap;
+					if (Math.abs(netDelta) > 10) {
+						scrollDirection = netDelta > 0 ? 'down' : 'up';
+					}
+					
+					// 1. Check if the user is at/near the bottom of the page (footer area)
+					const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+					if (scrollY >= maxScroll - 60) {
+						return; // Do not snap if viewing the footer
+					}
+
+					const ranges = getStageRanges();
+					
+					// 2. Find the closest stage target
+					let closestStageIndex = 0;
+					let minDistance = Infinity;
+					ranges.forEach((r, idx) => {
+						const dist = Math.abs(scrollY - r.target);
+						if (dist < minDistance) {
+							minDistance = dist;
+							closestStageIndex = idx;
+						}
+					});
+
+					let targetY = null;
+					const SNAP_THRESHOLD = 150; // Distance in pixels within which we snap to the closest stage
+
+					if (minDistance <= SNAP_THRESHOLD) {
+						// Close to a stage, snap directly to it
+						targetY = ranges[closestStageIndex].target;
+					} else {
+						// In a transition zone, snap based on scroll direction
+						if (scrollDirection === 'down') {
+							const nextIndex = Math.min(ranges.length - 1, closestStageIndex + (scrollY > ranges[closestStageIndex].target ? 1 : 0));
+							targetY = ranges[nextIndex].target;
+						} else {
+							const prevIndex = Math.max(0, closestStageIndex - (scrollY < ranges[closestStageIndex].target ? 1 : 0));
+							targetY = ranges[prevIndex].target;
+						}
+					}
+
+					// 3. Smoothly scroll to the target using custom premium easing
+					if (targetY !== null && Math.abs(scrollY - targetY) > 5) {
+						smoothScrollTo(targetY, 700);
+					}
+				};
 
 				const updateStyles = () => {
 					// Smooth interpolation (lerp)
@@ -883,9 +1015,11 @@ const latestPosts = (await getCollection('blog'))
 							}
 						});
 
+						const activeDotIndex = activeIndex >= 3 ? activeIndex - 2 : 0;
+
 						const dots = document.querySelectorAll('.scroll-nav-dot');
 						dots.forEach((dot, index) => {
-							if (index === activeIndex) {
+							if (index === activeDotIndex) {
 								dot.classList.add('active');
 							} else {
 								dot.classList.remove('active');
@@ -894,7 +1028,7 @@ const latestPosts = (await getCollection('blog'))
 
 						const navHint = document.getElementById('scroll-nav-hint');
 						if (navHint) {
-							if (activeIndex === stages.length - 1) {
+							if (activeDotIndex === dots.length - 1) {
 								navHint.classList.add('hidden');
 							} else {
 								navHint.classList.remove('hidden');
@@ -902,24 +1036,19 @@ const latestPosts = (await getCollection('blog'))
 						}
 					}
 
-					// Calculate bg-opacity based on Stage 1 (index 0) progress
-					const stage1 = stages[0];
+					// Calculate bg-opacity based on tagline wrapper (first 3 stages) progress
 					let bgOpacity = 0;
-					if (stage1 && !isMobile) {
-						const rect1 = stage1.getBoundingClientRect();
-						const scrollRange1 = stage1.offsetHeight - viewportHeight;
-						let p1 = 0;
-						if (scrollRange1 > 0) {
-							p1 = -rect1.top / scrollRange1;
-							p1 = Math.min(1, Math.max(0, p1));
-						}
+					if (!isMobile) {
+						// Overall progress for the tagline zone (which spans 6 * viewportHeight in scroll range)
+						const taglineScrollRange = 6 * viewportHeight;
+						const pTagline = taglineScrollRange > 0 ? Math.min(1, Math.max(0, currentScrollY / taglineScrollRange)) : 0;
 
-						// Background opacity fades out at the end of Stage 1 (p1 > 0.85)
-						if (p1 < 0.85) {
-							const factor = p1 / 0.85;
+						// Background opacity fades out at the end of the tagline wrapper (pTagline > 0.85)
+						if (pTagline < 0.85) {
+							const factor = pTagline / 0.85;
 							bgOpacity = 0.25 + factor * 0.15;
 						} else {
-							const factor = (p1 - 0.85) / 0.15;
+							const factor = (pTagline - 0.85) / 0.15;
 							bgOpacity = 0.40 * (1 - factor);
 						}
 
@@ -933,8 +1062,104 @@ const latestPosts = (await getCollection('blog'))
 						}
 					}
 
+					// Get scroll ranges and progress for tagline stages
+					let p0 = 0;
+					let p1 = 0;
+					let p2 = 0;
+
+					if (!isMobile) {
+						stages.forEach((stage, index) => {
+							if (index >= 3) return;
+							const rect = stage.getBoundingClientRect();
+							const stageHeight = stage.offsetHeight;
+							const scrollRange = stageHeight - viewportHeight;
+							let p = 0;
+							if (scrollRange > 0) {
+								p = -rect.top / scrollRange;
+								p = Math.min(1, Math.max(0, p));
+							}
+							if (index === 0) p0 = p;
+							if (index === 1) p1 = p;
+							if (index === 2) p2 = p;
+						});
+					}
+
+					let opacity1 = 1;
+					let opacity2 = 0;
+					let opacity3 = 0;
+					
+					if (!isMobile) {
+						// Line 2 starts entering as Stage 0 finishes, and is fully visible in Stage 1
+						if (p0 >= 0.85 && p1 === 0) {
+							opacity2 = (p0 - 0.85) / 0.15;
+						} else if (p1 > 0) {
+							opacity2 = 1;
+						}
+
+						// Line 3 starts entering as Stage 1 finishes, and is fully visible in Stage 2
+						if (p1 >= 0.85 && p2 === 0) {
+							opacity3 = (p1 - 0.85) / 0.15;
+						} else if (p2 > 0) {
+							opacity3 = 1;
+						}
+					}
+
+					let translate1 = 0;
+					let translate2 = 0;
+					let translate3 = 0;
+
+					if (!isMobile && !prefersReducedMotion) {
+						const taglineScrollRange = 6 * viewportHeight;
+						const pTagline = taglineScrollRange > 0 ? Math.min(1, Math.max(0, currentScrollY / taglineScrollRange)) : 0;
+						const pEased = 1 - Math.pow(1 - pTagline, 3);
+						translate1 = pEased * -80 * translateMultiplier;
+						translate2 = pEased * -80 * translateMultiplier;
+						translate3 = pEased * -80 * translateMultiplier;
+					}
+
+					if (tagline) {
+						tagline.style.setProperty('--translate-1', `${translate1}px`);
+						tagline.style.setProperty('--translate-2', `${translate2}px`);
+						tagline.style.setProperty('--translate-3', `${translate3}px`);
+
+						tagline.style.setProperty('--opacity-1', `${opacity1}`);
+						tagline.style.setProperty('--opacity-2', `${opacity2}`);
+						tagline.style.setProperty('--opacity-3', `${opacity3}`);
+					}
+
+					if (scrollIndicator) {
+						const indicatorOpacity = Math.max(0, 1 - currentScrollY / 150);
+						scrollIndicator.style.setProperty('--scroll-indicator-opacity', `${indicatorOpacity}`);
+					}
+
+					// Animate tagline container (hero-content) exit at the end of Stage 2 (index 2)
+					let taglineOpacity = 1;
+					let taglineTranslate = 0;
+					let taglineBlur = 0;
+
+					if (!isMobile && p2 > 0.85) {
+						const factor = (p2 - 0.85) / 0.15;
+						taglineOpacity = 1 - factor;
+						taglineTranslate = factor * -40;
+						taglineBlur = factor * 8;
+					}
+
+					if (prefersReducedMotion) {
+						taglineTranslate = 0;
+						taglineBlur = 0;
+					}
+
+					if (taglineCard) {
+						taglineCard.style.setProperty('--stage-opacity', `${taglineOpacity}`);
+						taglineCard.style.setProperty('--stage-translate', `${taglineTranslate}px`);
+						taglineCard.style.setProperty('--stage-blur', `${taglineBlur}px`);
+					}
+
+					// Card animations for stages 3, 4, 5 (About, Projects, Blog)
 					stages.forEach((stage, index) => {
-						const card = stage.querySelector('.journey-card') || stage.querySelector('.hero-content');
+						if (index < 3) return;
+
+						const card = stage.querySelector('.journey-card');
 						if (!card) return;
 
 						if (isMobile) {
@@ -953,98 +1178,44 @@ const latestPosts = (await getCollection('blog'))
 							p = Math.min(1, Math.max(0, p));
 						}
 
-						if (index === 0) {
-							// Stage 1 tagline sequential animations
-							const pEased = 1 - Math.pow(1 - p, 3);
-							const opacity1 = 1;
-							const pLine2 = Math.min(1, Math.max(0, (pEased - 0.15) / 0.35));
-							const opacity2 = pLine2;
-							const pLine3 = Math.min(1, Math.max(0, (pEased - 0.45) / 0.35));
-							const opacity3 = pLine3;
+						let opacity = 0;
+						let translate = 40;
+						let blur = 8;
 
-							let translate1 = 0;
-							let translate2 = 0;
-							let translate3 = 0;
-							if (!prefersReducedMotion) {
-								translate1 = pEased * -80 * translateMultiplier;
-								translate2 = pEased * -80 * translateMultiplier;
-								translate3 = pEased * -80 * translateMultiplier;
-							}
-
-							if (tagline) {
-								tagline.style.setProperty('--translate-1', `${translate1}px`);
-								tagline.style.setProperty('--translate-2', `${translate2}px`);
-								tagline.style.setProperty('--translate-3', `${translate3}px`);
-
-								tagline.style.setProperty('--opacity-1', `${opacity1}`);
-								tagline.style.setProperty('--opacity-2', `${opacity2}`);
-								tagline.style.setProperty('--opacity-3', `${opacity3}`);
-							}
-
-							if (scrollIndicator) {
-								const indicatorOpacity = Math.max(0, 1 - currentScrollY / 150);
-								scrollIndicator.style.setProperty('--scroll-indicator-opacity', `${indicatorOpacity}`);
-							}
-
-							// Fade out Stage 1 content as it exits (p > 0.85)
-							let opacity = 1;
-							let translate = 0;
-							let blur = 0;
-							if (p > 0.85) {
-								const factor = (p - 0.85) / 0.15;
-								opacity = 1 - factor;
-								translate = factor * -40;
-								blur = factor * 8;
-							}
-							if (prefersReducedMotion) {
-								translate = 0;
-								blur = 0;
-							}
-							card.style.setProperty('--stage-opacity', `${opacity}`);
-							card.style.setProperty('--stage-translate', `${translate}px`);
-							card.style.setProperty('--stage-blur', `${blur}px`);
-
+						if (p < 0.15) {
+							// Entering stage (fade-in, slide-up, unblur)
+							const factor = p / 0.15;
+							opacity = factor;
+							translate = 40 - (factor * 40);
+							blur = 8 - (factor * 8);
+						} else if (p >= 0.15 && p <= 0.85) {
+							// Active stage (stable)
+							opacity = 1;
+							translate = 0;
+							blur = 0;
 						} else {
-							// Stage 2, 3, 4: Card animations
-							let opacity = 0;
-							let translate = 40;
-							let blur = 8;
-
-							if (p < 0.15) {
-								// Entering stage (fade-in, slide-up, unblur)
-								const factor = p / 0.15;
-								opacity = factor;
-								translate = 40 - (factor * 40);
-								blur = 8 - (factor * 8);
-							} else if (p >= 0.15 && p <= 0.85) {
-								// Active stage (stable)
+							// Exiting stage (fade-out, slide-up/away, blur)
+							const factor = (p - 0.85) / 0.15;
+							if (index === stages.length - 1) {
+								// Last stage stays active as it rolls into footer
 								opacity = 1;
 								translate = 0;
 								blur = 0;
 							} else {
-								// Exiting stage (fade-out, slide-up/away, blur)
-								const factor = (p - 0.85) / 0.15;
-								if (index === stages.length - 1) {
-									// Last stage stays active as it rolls into footer
-									opacity = 1;
-									translate = 0;
-									blur = 0;
-								} else {
-									opacity = 1 - factor;
-									translate = factor * -40;
-									blur = factor * 8;
-								}
+								opacity = 1 - factor;
+								translate = factor * -40;
+								blur = factor * 8;
 							}
-
-							if (prefersReducedMotion) {
-								translate = 0;
-								blur = 0;
-							}
-
-							card.style.setProperty('--stage-opacity', `${opacity}`);
-							card.style.setProperty('--stage-translate', `${translate}px`);
-							card.style.setProperty('--stage-blur', `${blur}px`);
 						}
+
+						if (prefersReducedMotion) {
+							translate = 0;
+							blur = 0;
+						}
+
+						card.style.setProperty('--stage-opacity', `${opacity}`);
+						card.style.setProperty('--stage-translate', `${translate}px`);
+						card.style.setProperty('--stage-blur', `${blur}px`);
 					});
 
 					// Continue loop if not settled
@@ -1070,6 +1241,11 @@ const latestPosts = (await getCollection('blog'))
 								card.style.removeProperty('--stage-blur');
 							}
 						});
+						if (taglineCard) {
+							taglineCard.style.removeProperty('--stage-opacity');
+							taglineCard.style.removeProperty('--stage-translate');
+							taglineCard.style.removeProperty('--stage-blur');
+						}
 						if (tagline) {
 							tagline.style.removeProperty('--translate-1');
 							tagline.style.removeProperty('--translate-2');
@@ -1085,13 +1261,27 @@ const latestPosts = (await getCollection('blog'))
 							cancelAnimationFrame(rafId);
 							rafId = null;
 						}
+						if (scrollTimeout) {
+							clearTimeout(scrollTimeout);
+							scrollTimeout = null;
+						}
 						return;
 					}
 
-					targetScrollY = window.scrollY;
+					const currentY = window.scrollY;
+					lastScrollY = currentY;
+					targetScrollY = currentY;
 					if (!rafId) {
 						rafId = requestAnimationFrame(updateStyles);
 					}
+
+					// Track start of scroll gesture
+					if (!scrollTimeout) {
+						scrollStartYSnap = currentY;
+					} else {
+						clearTimeout(scrollTimeout);
+					}
+					scrollTimeout = setTimeout(handleScrollEnd, 450);
 				};
 
 				const onScroll = handleScroll;
@@ -1103,9 +1293,16 @@ const latestPosts = (await getCollection('blog'))
 				cleanupParallax = () => {
 					window.removeEventListener('scroll', onScroll);
 					window.removeEventListener('resize', onResize);
+					window.removeEventListener('wheel', onInteraction);
+					window.removeEventListener('touchstart', onInteraction);
+					window.removeEventListener('mousedown', onInteraction);
 					if (rafId) {
 						cancelAnimationFrame(rafId);
 					}
+					if (scrollTimeout) {
+						clearTimeout(scrollTimeout);
+					}
+					cancelSnap();
 				};
 
 				// Trigger layout position immediately
