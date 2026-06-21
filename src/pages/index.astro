@@ -196,6 +196,13 @@ const latestPosts = (await getCollection('blog'))
 					height: auto !important;
 					position: static !important;
 				}
+				/* Hide desktop-only scroll-trigger sections and neutralize the -100vh inline margin */
+				.stage-tagline-1,
+				.stage-tagline-2,
+				.stage-tagline-3 {
+					display: none !important;
+					margin-top: 0 !important;
+				}
 				.stage-sticky {
 					height: auto !important;
 					position: static !important;
