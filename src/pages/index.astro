@@ -94,7 +94,10 @@ const latestPosts = (await getCollection('blog'))
 			.home-page::before {
 				content: '';
 				position: fixed;
-				inset: -40px; /* Prevents edge gaps during background translations */
+				top: -40px;
+				left: -40px;
+				right: -40px;
+				bottom: -200px; /* Prevents edge gaps at bottom during background translations */
 				background-image: url('../assets/img/network-bg.webp');
 				background-size: cover;
 				background-position: center;
@@ -1062,7 +1065,7 @@ const latestPosts = (await getCollection('blog'))
 						body.style.setProperty('--bg-opacity', `${bgOpacity}`);
 
 						if (!prefersReducedMotion) {
-							const bgTranslate = currentScrollY * -0.15;
+							const bgTranslate = currentScrollY * -0.08;
 							const bgScale = 1 + currentScrollY * 0.00015;
 							body.style.setProperty('--bg-translate', `${bgTranslate}px`);
 							body.style.setProperty('--bg-scale', `${bgScale}`);
