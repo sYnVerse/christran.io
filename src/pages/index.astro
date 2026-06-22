@@ -972,7 +972,7 @@ const latestPosts = (await getCollection('blog'))
 					});
 
 					let targetY = null;
-					const SNAP_THRESHOLD = 150; // Distance in pixels within which we snap to the closest stage
+					const SNAP_THRESHOLD = 50; // Distance in pixels within which we snap to the closest stage
 
 					if (minDistance <= SNAP_THRESHOLD) {
 						// Close to a stage, snap directly to it
