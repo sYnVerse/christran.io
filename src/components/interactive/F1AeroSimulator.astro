@@ -947,5 +947,69 @@
 
 		// Initial render
 		updateDisplay();
+
+		// WebMCP Tool Registration for F1 Aerodynamics Simulator
+		const modelContext = (document as any).modelContext || (typeof navigator !== 'undefined' && (navigator as any).modelContext);
+		if (modelContext && typeof modelContext.registerTool === 'function') {
+			if ((window as any).f1AeroController) {
+				(window as any).f1AeroController.abort();
+			}
+			const controller = new AbortController();
+			(window as any).f1AeroController = controller;
+
+			modelContext.registerTool({
+				name: 'f1_simulate_aero',
+				description: 'Simulate Formula 1 aerodynamics drag and downforce forces based on active aero mode (X-Mode for low drag, Z-Mode for high downforce) and vehicle speed.',
+				inputSchema: {
+					type: 'object',
+					properties: {
+						mode: {
+							type: 'string',
+							enum: ['x', 'z'],
+							description: 'Aerodynamic mode: "x" for low drag X-Mode, "z" for high downforce Z-Mode'
+						},
+						speed: {
+							type: 'integer',
+							minimum: 80,
+							maximum: 360,
+							description: 'Vehicle speed in km/h'
+						}
+					},
+					required: ['mode', 'speed']
+				},
+				execute: async ({ mode, speed }) => {
+					// 1. Update UI controls
+					if (speedInput) {
+						speedInput.value = String(speed);
+					}
+					setMode(mode as 'x' | 'z');
+
+					// 2. Perform direct math calculation to get immediate precise results
+					const v = speed / 3.6;
+					const RHO = 1.225;
+					const AREA = 1.5;
+					const params = modes[mode as 'x' | 'z'];
+					const dragForce = 0.5 * RHO * params.cd * AREA * v * v;
+					const downforce = 0.5 * RHO * params.cl * AREA * v * v;
+					const ldRatio = params.cl / params.cd;
+					const frontPct = Math.round(params.balance);
+					const rearPct = 100 - frontPct;
+
+					return JSON.stringify({
+						aeroMode: mode === 'x' ? 'X-Mode (Low Drag)' : 'Z-Mode (High Downforce)',
+						speedKmh: speed,
+						dragCoefficientCd: params.cd,
+						downforceCoefficientCl: params.cl,
+						dragForceNewtons: Math.round(dragForce),
+						downforceNewtons: Math.round(downforce),
+						liftToDragRatio: parseFloat(ldRatio.toFixed(2)),
+						aerodynamicBalance: {
+							frontPercent: frontPct,
+							rearPercent: rearPct
+						}
+					});
+				}
+			}, { signal: controller.signal });
+		}
 	});
 </script>

@@ -865,6 +865,87 @@
 
 		// Initial calculation
 		calculate();
+
+		// WebMCP Tool Registration for LLM Hardware Calculator
+		const modelContext = (document as any).modelContext || (typeof navigator !== 'undefined' && (navigator as any).modelContext);
+		if (modelContext && typeof modelContext.registerTool === 'function') {
+			if ((window as any).llmCalcController) {
+				(window as any).llmCalcController.abort();
+			}
+			const controller = new AbortController();
+			(window as any).llmCalcController = controller;
+
+			modelContext.registerTool({
+				name: 'llm_calculate_hardware',
+				description: 'Estimate VRAM memory requirements and suggested GPU hardware for self-hosting an LLM based on model parameters, quantization bit precision, and context length.',
+				inputSchema: {
+					type: 'object',
+					properties: {
+						modelSize: {
+							type: 'string',
+							enum: ["1B", "3B", "7B", "8B", "13B", "14B", "30B", "34B", "70B", "72B", "180B", "405B"],
+							description: 'Model parameter count in billions (e.g. 7B, 70B)'
+						},
+						quantization: {
+							type: 'integer',
+							enum: [16, 8, 5, 4],
+							description: 'Quantization bits precision (16 for FP16, 8 for Q8, 5 for Q5, 4 for Q4)'
+						},
+						contextLength: {
+							type: 'integer',
+							enum: [2048, 4096, 8192, 16384, 32768, 65536, 131072],
+							description: 'Maximum context length window in tokens'
+						}
+					},
+					required: ['modelSize', 'quantization', 'contextLength']
+				},
+				execute: async ({ modelSize, quantization, contextLength }) => {
+					// 1. Map modelSize string (e.g. "70B") to slider index
+					const numericVal = parseInt(modelSize, 10);
+					const idx = MODEL_SIZES.indexOf(numericVal);
+					if (idx === -1) {
+						throw new Error(`Invalid model size: ${modelSize}. Supported sizes: ${MODEL_SIZES.map(s => s + 'B').join(', ')}`);
+					}
+
+					// 2. Set UI values
+					slider.value = String(idx);
+					currentQuant = quantization;
+					contextSelect.value = String(contextLength);
+
+					// Update active pill
+					pills.forEach(pill => {
+						const p = pill as HTMLElement;
+						if (parseInt(p.dataset.quant || '') === quantization) {
+							p.classList.add('active');
+							p.setAttribute('aria-checked', 'true');
+						} else {
+							p.classList.remove('active');
+							p.setAttribute('aria-checked', 'false');
+						}
+					});
+
+					// 3. Trigger calculation
+					calculate();
+
+					// 4. Extract results
+					const wGB = valWeights?.textContent || '';
+					const kvGB = valKv?.textContent || '';
+					const oGB = valOverhead?.textContent || '';
+					const totalText = totalVram?.textContent || '0';
+					const recName = hwName?.textContent || '';
+					const recNote = hwNote?.textContent || '';
+
+					return JSON.stringify({
+						modelWeightsMemory: wGB,
+						kvCacheMemory: kvGB,
+						activationOverheadMemory: oGB,
+						totalVramRequired: `${totalText} GB`,
+						recommendedHardware: recName,
+						recommendationDetails: recNote
+					});
+				}
+			}, { signal: controller.signal });
+		}
 	}
 
 	// Initialize on DOM ready and on Astro page navigation

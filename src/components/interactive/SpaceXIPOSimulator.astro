@@ -778,6 +778,76 @@
 
 		// Initial calculation
 		updateResults();
+
+		// WebMCP Tool Registration for SpaceX IPO Simulator
+		const modelContext = (document as any).modelContext || (typeof navigator !== 'undefined' && (navigator as any).modelContext);
+		if (modelContext && typeof modelContext.registerTool === 'function') {
+			if ((window as any).spacexIpoController) {
+				(window as any).spacexIpoController.abort();
+			}
+			const controller = new AbortController();
+			(window as any).spacexIpoController = controller;
+
+			modelContext.registerTool({
+				name: 'spacex_simulate_ipo',
+				description: 'Model the public market debut of SpaceX, estimating float market cap, share price, index weighting, passive buying pressure, and expected daily price volatility.',
+				inputSchema: {
+					type: 'object',
+					properties: {
+						valuation: {
+							type: 'integer',
+							minimum: 500,
+							maximum: 2000,
+							description: 'Total SpaceX company valuation in billions of USD (e.g. 500 for $500B, 1250 for $1.25T, 2000 for $2T)'
+						},
+						publicFloat: {
+							type: 'number',
+							minimum: 1.0,
+							maximum: 20.0,
+							description: 'Percentage of shares floated to the public (1% to 20%)'
+						},
+						scenario: {
+							type: 'string',
+							enum: ['normal', 'bull', 'bear'],
+							description: 'Market trading scenario: "normal" for baseline, "bull" for Starship success catalyst, "bear" for rocket launch delay/failure'
+						}
+					},
+					required: ['valuation', 'publicFloat', 'scenario']
+				},
+				execute: async ({ valuation, publicFloat, scenario }) => {
+					// 1. Update UI controls
+					valuationSlider.value = String(valuation);
+					floatSlider.value = String(publicFloat);
+					setScenario(scenario as Scenario);
+
+					// 2. Trigger calculation update
+					updateResults();
+
+					// 3. Extract results
+					const floatMcap = floatMcapEl?.textContent || '';
+					const sharePrice = sharePriceEl?.textContent || '';
+					const ndxWeight = ndxWeightEl?.textContent || '';
+					const etfPressure = etfPressureEl?.textContent || '';
+					const volRating = volBadge?.textContent || '';
+					const priceImpact = priceImpactEl?.textContent || '';
+					const priceImpactDesc = impactDescEl?.textContent || '';
+					const isVolatilityWarning = warningCallout && warningCallout.classList.contains('visible');
+
+					return JSON.stringify({
+						companyValuation: `$${(valuation / 1000).toFixed(2)}T`,
+						publicFloatPercent: `${publicFloat}%`,
+						marketScenario: scenario.toUpperCase(),
+						floatMarketCap: floatMcap,
+						impliedSharePrice: sharePrice,
+						nasdaq100Weight: ndxWeight,
+						passiveEtfPressure: etfPressure,
+						volatilityScore: volRating,
+						volatilityWarning: isVolatilityWarning ? 'Float below 5% — extreme volatility risk. Thin order books can cause violent price swings on minimal volume.' : 'Normal volatility levels',
+						dailyPriceImpact: `${priceImpact} (${priceImpactDesc})`
+					});
+				}
+			}, { signal: controller.signal });
+		}
 	}
 
 	// Initialize on DOM ready

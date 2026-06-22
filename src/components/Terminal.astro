@@ -1678,5 +1678,72 @@
 						}
 					}
 				});
+
+				// WebMCP Tool Registration for Interactive Terminal
+				const modelContext = (document as any).modelContext || (typeof navigator !== 'undefined' && (navigator as any).modelContext);
+				if (modelContext && typeof modelContext.registerTool === 'function') {
+					if ((window as any).terminalToolController) {
+						(window as any).terminalToolController.abort();
+					}
+					const controller = new AbortController();
+					(window as any).terminalToolController = controller;
+
+					modelContext.registerTool({
+						name: 'run_terminal_command',
+						description: 'Execute a command in the interactive retro terminal widget (e.g. `help`, `about`, `skills`, `projects`, `certs`, `clear`, `theme matrix`) and return the console output.',
+						inputSchema: {
+							type: 'object',
+							properties: {
+								command: {
+									type: 'string',
+									description: 'The command to execute (e.g. `help`, `about`, `skills`, `theme`, `clear`)'
+								}
+							},
+							required: ['command']
+						},
+						execute: async ({ command }) => {
+							// 1. Ensure terminal is open and visible
+							const isTerminalOpen = widget && widget.classList.contains('open');
+							if (!isTerminalOpen) {
+								toggleTerminal();
+							}
+							if (widget && widget.classList.contains('minimized')) {
+								widget.classList.remove('minimized');
+							}
+
+							// 2. Count current child elements of the output to track new lines
+							const previousLinesCount = output.children.length;
+
+							// 3. Set input value and run command
+							if (input) {
+								(input as HTMLInputElement).value = command;
+							}
+							runCommand(command);
+
+							// 4. Poll for completion if it's an async command
+							const waitForCompletion = () => {
+								return new Promise((resolve) => {
+									const check = () => {
+										if (!isCommandRunning) {
+											resolve(null);
+										} else {
+											setTimeout(check, 100);
+										}
+									};
+									check();
+								});
+							};
+							await waitForCompletion();
+
+							// 5. Extract only the newly added lines
+							// If output was cleared (e.g. clear command), previousLinesCount will be higher, so get everything
+							const currentLines = Array.from(output.children);
+							const newLines = currentLines.length < previousLinesCount ? currentLines : currentLines.slice(previousLinesCount);
+							const responseText = newLines.map(line => line.textContent || '').join('\n');
+
+							return responseText;
+						}
+					}, { signal: controller.signal });
+				}
 			});
 		</script>

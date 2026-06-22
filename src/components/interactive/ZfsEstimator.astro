@@ -792,6 +792,86 @@
 
     // Initial calculation
     calculate();
+
+    // WebMCP Tool Registration for ZFS Capacity Estimation
+    const modelContext = (document as any).modelContext || (typeof navigator !== 'undefined' && (navigator as any).modelContext);
+    if (modelContext && typeof modelContext.registerTool === 'function') {
+      if ((window as any).zfsEstimatorController) {
+        (window as any).zfsEstimatorController.abort();
+      }
+      const controller = new AbortController();
+      (window as any).zfsEstimatorController = controller;
+
+      modelContext.registerTool({
+        name: 'zfs_estimate_capacity',
+        description: 'Calculate raw capacity, usable capacity, fault tolerance, and parity overhead for a ZFS pool based on drive count, drive size, and RAID level.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            driveCount: {
+              type: 'integer',
+              minimum: 2,
+              maximum: 24,
+              description: 'Number of drives in the pool'
+            },
+            driveSize: {
+              type: 'integer',
+              enum: [2, 4, 8, 12, 16, 18, 20, 22, 24],
+              description: 'Size of each drive in TB'
+            },
+            raidLevel: {
+              type: 'string',
+              enum: ['mirror', 'raidz1', 'raidz2', 'raidz3'],
+              description: 'ZFS RAID level layout configuration'
+            }
+          },
+          required: ['driveCount', 'driveSize', 'raidLevel']
+        },
+        execute: async ({ driveCount, driveSize, raidLevel }) => {
+          // 1. Update UI controls
+          setDriveCount(driveCount);
+          driveSizeSelect.value = String(driveSize);
+          
+          // Select the pill
+          pills.forEach(pill => {
+            const p = pill as HTMLElement;
+            if (p.dataset.raid === raidLevel) {
+              p.classList.add('zfs-pill--active');
+              p.setAttribute('aria-checked', 'true');
+            } else {
+              p.classList.remove('zfs-pill--active');
+              p.setAttribute('aria-checked', 'false');
+            }
+          });
+          selectedRaid = raidLevel;
+
+          // 2. Trigger calculation
+          calculate();
+
+          // 3. Extract results
+          const rawVal = rawCapEl?.textContent || '0';
+          const usableVal = usableCapEl?.textContent || '0';
+          const usableTibVal = usableTibEl?.textContent || '';
+          const parityVal = parityEl?.textContent || '0';
+          const faultVal = faultEl?.textContent || '0';
+          const minDrivesVal = minDrivesEl?.textContent || '0';
+          const isValid = !validationEl || validationEl.style.display === 'none';
+
+          if (!isValid) {
+            throw new Error(`Invalid ZFS configuration: ${selectedRaid.toUpperCase()} requires at least ${minDrivesVal} drives. You selected ${driveCount}.`);
+          }
+
+          return JSON.stringify({
+            rawCapacityTB: parseFloat(rawVal),
+            usableCapacityTB: parseFloat(usableVal),
+            usableCapacityText: `${usableVal} TB ${usableTibVal}`.trim(),
+            parityOverheadPercent: parseFloat(parityVal),
+            faultToleranceDrives: parseInt(faultVal, 10),
+            minDrivesRequired: parseInt(minDrivesVal, 10)
+          });
+        }
+      }, { signal: controller.signal });
+    }
   }
 
   // Run on initial load

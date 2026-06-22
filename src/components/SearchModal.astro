@@ -369,6 +369,86 @@
 			}
 		}
 	});
+
+	// WebMCP Tool Registration for Website Search
+	const modelContext = (document as any).modelContext || (typeof navigator !== 'undefined' && (navigator as any).modelContext);
+	if (modelContext && typeof modelContext.registerTool === 'function') {
+		if ((window as any).searchModalController) {
+			(window as any).searchModalController.abort();
+		}
+		const controller = new AbortController();
+		(window as any).searchModalController = controller;
+
+		modelContext.registerTool({
+			name: 'search_website',
+			description: 'Search the website index for blog posts and portfolio projects matching a query string.',
+			inputSchema: {
+				type: 'object',
+				properties: {
+					query: {
+						type: 'string',
+						description: 'The search term or query string to look for'
+					}
+				},
+				required: ['query']
+			},
+			execute: async ({ query }) => {
+				// 1. Ensure search index is loaded
+				await loadSearchIndex();
+				
+				// 2. Open search modal if closed
+				openModal();
+				
+				// 3. Put query in input and execute search
+				if (input) {
+					input.value = query;
+				}
+				performSearch(query);
+
+				// 4. Extract results directly from index
+				if (!searchIndex) {
+					throw new Error('Search index failed to load.');
+				}
+
+				const cleanQuery = query.trim().toLowerCase();
+				if (cleanQuery === '') {
+					return JSON.stringify({ results: [] });
+				}
+
+				const matches = searchIndex
+					.map(item => {
+						let score = 0;
+						const titleIdx = item.title.toLowerCase().indexOf(cleanQuery);
+						const descIdx = item.description.toLowerCase().indexOf(cleanQuery);
+						const bodyIdx = item.body ? item.body.toLowerCase().indexOf(cleanQuery) : -1;
+						const matchedTags = item.tags ? item.tags.filter((t: string) => t.toLowerCase().includes(cleanQuery)).length : 0;
+
+						if (titleIdx === 0) score += 100;
+						else if (titleIdx > 0) score += 80;
+						if (descIdx !== -1) score += 40;
+						if (matchedTags > 0) score += 30 * matchedTags;
+						if (bodyIdx !== -1) score += 10;
+
+						return { item, score };
+					})
+					.filter(match => match.score > 0)
+					.sort((a, b) => b.score - a.score)
+					.map(match => ({
+						title: match.item.title,
+						description: match.item.description,
+						url: match.item.url,
+						type: match.item.type,
+						tags: match.item.tags || []
+					}));
+
+				return JSON.stringify({
+					query: query,
+					totalResultsCount: matches.length,
+					results: matches.slice(0, 10)
+				});
+			}
+		}, { signal: controller.signal });
+	}
 </script>
 
 <style>
