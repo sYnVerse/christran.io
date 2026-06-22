@@ -1213,68 +1213,87 @@
 				}
 
 				function runCommand(cmd) {
-					const trimmed = cmd.trim();
-					if (trimmed === '') return;
-
-					// Print the prompt and entered command immediately
-					appendLine('<span class="term-prompt">' + promptText + '</span>' + escapeHtml(cmd));
-
-					// Parse command and arguments
-					const parts = trimmed.split(/\s+/);
-					const baseCmd = parts[0].toLowerCase();
-					const cmdArgs = parts.slice(1).join(' ');
-
-					// Determine canonical command name (with alias support)
-					let canonical = baseCmd;
-					if (baseCmd === 'tr' || baseCmd === 'tracert') {
-						canonical = 'traceroute';
-					} else if (baseCmd === 'certifications') {
-						canonical = 'certs';
-					}
-
-					// Let's match the exact key first (for multi-word static commands like 'ping skills')
-					const fullLower = trimmed.toLowerCase();
-					let resolvedCmdKey = '';
-					
-					if (commands[fullLower] !== undefined) {
-						resolvedCmdKey = fullLower;
-					} else if (commands[canonical] !== undefined) {
-						resolvedCmdKey = canonical;
-					}
-
-					if (resolvedCmdKey === '') {
-						// Custom alias checking for special cases
-						if (fullLower === 'tr' || fullLower === 'tracert' || fullLower === 'tracert career') {
-							resolvedCmdKey = 'traceroute career';
-						} else if (fullLower === 'ping') {
-							resolvedCmdKey = 'ping skills';
-						} else if (baseCmd === 'search') {
-							resolvedCmdKey = 'search';
-						} else {
-							TerminalSound.playError();
-							appendLine('<span class="term-response">bash: ' + escapeHtml(baseCmd) + ': command not found. Try `help`</span>');
+					return new Promise((resolve) => {
+						const trimmed = cmd.trim();
+						if (trimmed === '') {
+							resolve();
 							return;
 						}
-					}
 
-					const response = commands[resolvedCmdKey];
-					const result = typeof response === 'function' ? response(cmdArgs) : response;
+						// Print the prompt and entered command immediately
+						appendLine('<span class="term-prompt">' + promptText + '</span>' + escapeHtml(cmd));
 
-					if (result === undefined) return;
+						// Parse command and arguments
+						const parts = trimmed.split(/\s+/);
+						const baseCmd = parts[0].toLowerCase();
+						const cmdArgs = parts.slice(1).join(' ');
 
-					if (result instanceof Promise) {
-						result.then((resolvedResult) => {
-							handleCommandResult(resolvedCmdKey, resolvedResult);
-						}).catch((err) => {
-							appendLine('<span class="term-response" style="color: #ff5f56;">Error running command.</span>');
-						});
-					} else if (result && result.type === 'async') {
-						if (result.lines.length > 0) {
-							animateOutputLines(result.lines, result.delay);
+						// Determine canonical command name (with alias support)
+						let canonical = baseCmd;
+						if (baseCmd === 'tr' || baseCmd === 'tracert') {
+							canonical = 'traceroute';
+						} else if (baseCmd === 'certifications') {
+							canonical = 'certs';
 						}
-					} else {
-						handleCommandResult(resolvedCmdKey, result);
-					}
+
+						// Let's match the exact key first (for multi-word static commands like 'ping skills')
+						const fullLower = trimmed.toLowerCase();
+						let resolvedCmdKey = '';
+						
+						if (commands[fullLower] !== undefined) {
+							resolvedCmdKey = fullLower;
+						} else if (commands[canonical] !== undefined) {
+							resolvedCmdKey = canonical;
+						}
+
+						if (resolvedCmdKey === '') {
+							// Custom alias checking for special cases
+							if (fullLower === 'tr' || fullLower === 'tracert' || fullLower === 'tracert career') {
+								resolvedCmdKey = 'traceroute career';
+							} else if (fullLower === 'ping') {
+								resolvedCmdKey = 'ping skills';
+							} else if (baseCmd === 'search') {
+								resolvedCmdKey = 'search';
+							} else {
+								TerminalSound.playError();
+								appendLine('<span class="term-response">bash: ' + escapeHtml(baseCmd) + ': command not found. Try `help`</span>');
+								resolve();
+								return;
+							}
+						}
+
+						const response = commands[resolvedCmdKey];
+						const result = typeof response === 'function' ? response(cmdArgs) : response;
+
+						if (result === undefined) {
+							resolve();
+							return;
+						}
+
+						if (result instanceof Promise) {
+							isCommandRunning = true;
+							result.then((resolvedResult) => {
+								handleCommandResult(resolvedCmdKey, resolvedResult);
+								isCommandRunning = false;
+								resolve();
+							}).catch((err) => {
+								appendLine('<span class="term-response" style="color: #ff5f56;">Error running command.</span>');
+								isCommandRunning = false;
+								resolve();
+							});
+						} else if (result && result.type === 'async') {
+							if (result.lines.length > 0) {
+								animateOutputLines(result.lines, result.delay, 0, () => {
+									resolve();
+								});
+							} else {
+								resolve();
+							}
+						} else {
+							handleCommandResult(resolvedCmdKey, result);
+							resolve();
+						}
+					});
 				}
 
 				function handleCommandResult(cmdKey, result) {
@@ -1679,30 +1698,29 @@
 					}
 				});
 
-				// WebMCP Tool Registration for Interactive Terminal
-				const modelContext = (document as any).modelContext || (typeof navigator !== 'undefined' && (navigator as any).modelContext);
+				// WebMCP Tool Registration for Retro Terminal Widget
+				const modelContext = document.modelContext || (typeof navigator !== 'undefined' && navigator.modelContext);
 				if (modelContext && typeof modelContext.registerTool === 'function') {
-					if ((window as any).terminalToolController) {
-						(window as any).terminalToolController.abort();
+					if (window.terminalToolController) {
+						window.terminalToolController.abort();
 					}
 					const controller = new AbortController();
-					(window as any).terminalToolController = controller;
+					window.terminalToolController = controller;
 
 					modelContext.registerTool({
 						name: 'run_terminal_command',
-						description: 'Execute a command in the interactive retro terminal widget (e.g. `help`, `about`, `skills`, `projects`, `certs`, `clear`, `theme matrix`) and return the console output.',
+						description: 'Execute a command in the interactive retro terminal widget and return the console output.',
 						inputSchema: {
 							type: 'object',
 							properties: {
 								command: {
 									type: 'string',
-									description: 'The command to execute (e.g. `help`, `about`, `skills`, `theme`, `clear`)'
+									description: 'The command to execute in the terminal (e.g. `help`, `about`, `skills`, `projects`, `clear`, `contact`, `theme`, `sound`, `matrix`, `neofetch`, `traceroute career`)'
 								}
 							},
 							required: ['command']
 						},
 						execute: async ({ command }) => {
-							// 1. Ensure terminal is open and visible
 							const isTerminalOpen = widget && widget.classList.contains('open');
 							if (!isTerminalOpen) {
 								toggleTerminal();
@@ -1710,40 +1728,27 @@
 							if (widget && widget.classList.contains('minimized')) {
 								widget.classList.remove('minimized');
 							}
-
-							// 2. Count current child elements of the output to track new lines
 							const previousLinesCount = output.children.length;
-
-							// 3. Set input value and run command
-							if (input) {
-								(input as HTMLInputElement).value = command;
+							
+							// Put command in history so the retro terminal behaves naturally
+							if (command.trim() !== '') {
+								if (history.length === 0 || history[history.length - 1] !== command) {
+									history.push(command);
+									try {
+										sessionStorage.setItem('term_history', JSON.stringify(history));
+									} catch (e) {}
+								}
+								historyIndex = -1;
 							}
-							runCommand(command);
-
-							// 4. Poll for completion if it's an async command
-							const waitForCompletion = () => {
-								return new Promise((resolve) => {
-									const check = () => {
-										if (!isCommandRunning) {
-											resolve(null);
-										} else {
-											setTimeout(check, 100);
-										}
-									};
-									check();
-								});
-							};
-							await waitForCompletion();
-
-							// 5. Extract only the newly added lines
-							// If output was cleared (e.g. clear command), previousLinesCount will be higher, so get everything
+							
+							await runCommand(command);
+							
 							const currentLines = Array.from(output.children);
 							const newLines = currentLines.length < previousLinesCount ? currentLines : currentLines.slice(previousLinesCount);
-							const responseText = newLines.map(line => line.textContent || '').join('\n');
-
-							return responseText;
+							return newLines.map(line => line.textContent || '').join('\n');
 						}
 					}, { signal: controller.signal });
 				}
+
 			});
 		</script>
