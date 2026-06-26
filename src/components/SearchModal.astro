@@ -61,324 +61,75 @@
 </div>
 
 <script>
-	let searchIndex: any[] | null = null;
-	let modalOpen = false;
-	let activeIndex = -1;
-	let resultItems: HTMLElement[] = [];
-	let lastActiveElement: HTMLElement | null = null;
+	let searchInstance: any = null;
+	let loadingSearch = false;
 
-	const modal = document.getElementById('search-modal');
-	const container = document.getElementById('search-modal-container');
-	const input = document.getElementById('search-input') as HTMLInputElement;
-	const closeBtn = document.getElementById('search-close-btn');
-	const resultsWrapper = document.getElementById('search-results-wrapper');
-	const suggestions = document.getElementById('search-suggestions');
-	const resultsContainer = document.getElementById('search-results');
-	const emptyState = document.getElementById('search-empty-state');
-	const queryDisplay = document.getElementById('search-query-display');
-
-	// Lazy load search index
-	async function loadSearchIndex() {
-		if (searchIndex) return;
+	const loadSearch = async () => {
+		if (searchInstance) return searchInstance;
+		if (loadingSearch) {
+			return new Promise((resolve) => {
+				const check = setInterval(() => {
+					if (searchInstance) {
+						clearInterval(check);
+						resolve(searchInstance);
+					}
+				}, 50);
+			});
+		}
+		loadingSearch = true;
 		try {
-			const res = await fetch('/search-index.json');
-			if (!res.ok) throw new Error('Failed to fetch search index');
-			searchIndex = await res.json();
+			const searchModule = await import('../scripts/search.ts');
+			searchInstance = searchModule.initSearch();
+			loadingSearch = false;
+			return searchInstance;
 		} catch (err) {
-			console.error('Error loading search index:', err);
+			console.error('Failed to dynamically load search script:', err);
+			loadingSearch = false;
+			return null;
 		}
-	}
+	};
 
-	function openModal(triggerElement: HTMLElement | null = null) {
-		if (modalOpen || !modal || !input) return;
-		
-		lastActiveElement = triggerElement || document.activeElement as HTMLElement;
-		modal.classList.add('open');
-		modal.setAttribute('aria-hidden', 'false');
-		document.body.style.overflow = 'hidden';
-		modalOpen = true;
-
-		// Focus the input with a tiny delay to ensure animation starts
-		setTimeout(() => {
-			input.focus();
-		}, 50);
-
-		// Load index immediately on open
-		loadSearchIndex();
-	}
-
-	function closeModal() {
-		if (!modalOpen || !modal) return;
-
-		modal.classList.remove('open');
-		modal.setAttribute('aria-hidden', 'true');
-		document.body.style.overflow = '';
-		modalOpen = false;
-		activeIndex = -1;
-
-		if (input) {
-			input.value = '';
-			performSearch('');
-		}
-
-		// Restore focus
-		if (lastActiveElement) {
-			lastActiveElement.focus();
-		}
-	}
-
-	function escapeRegExp(string: string) {
-		return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-	}
-
-	function highlightText(text: string, query: string): string {
-		if (!query) return text;
-		const escapedQuery = escapeRegExp(query);
-		const regex = new RegExp(`(${escapedQuery})`, 'gi');
-		return text.replace(regex, '<mark class="search-highlight">$1</mark>');
-	}
-
-	function performSearch(query: string) {
-		if (!searchIndex || !resultsContainer || !suggestions || !emptyState || !queryDisplay) return;
-
-		const cleanQuery = query.trim().toLowerCase();
-
-		if (cleanQuery === '') {
-			suggestions.style.display = 'block';
-			resultsContainer.style.display = 'none';
-			emptyState.style.display = 'none';
-			activeIndex = -1;
-			resultItems = [];
-			return;
-		}
-
-		// Search scoring and filtering
-		const matches = searchIndex
-			.map(item => {
-				let score = 0;
-				const titleIdx = item.title.toLowerCase().indexOf(cleanQuery);
-				const descIdx = item.description.toLowerCase().indexOf(cleanQuery);
-				const bodyIdx = item.body ? item.body.toLowerCase().indexOf(cleanQuery) : -1;
-				
-				// Calculate matched tags count
-				const matchedTags = item.tags ? item.tags.filter((t: string) => t.toLowerCase().includes(cleanQuery)).length : 0;
-
-				if (titleIdx === 0) score += 100; // starts with query
-				else if (titleIdx > 0) score += 80;  // contains query in title
-				
-				if (descIdx !== -1) score += 40;     // contains query in description
-				if (matchedTags > 0) score += 30 * matchedTags; // contains query in tags
-				if (bodyIdx !== -1) score += 10;     // contains query in body
-
-				return { item, score };
-			})
-			.filter(match => match.score > 0)
-			.sort((a, b) => b.score - a.score);
-
-		if (matches.length === 0) {
-			suggestions.style.display = 'none';
-			resultsContainer.style.display = 'none';
-			queryDisplay.textContent = query;
-			emptyState.style.display = 'flex';
-			activeIndex = -1;
-			resultItems = [];
-			return;
-		}
-
-		suggestions.style.display = 'none';
-		emptyState.style.display = 'none';
-		resultsContainer.style.display = 'block';
-
-		// Group results
-		const blogs = matches.filter(m => m.item.type === 'blog');
-		const projects = matches.filter(m => m.item.type === 'project');
-
-		let html = '';
-
-		if (blogs.length > 0) {
-			html += `<div class="results-section">
-				<p class="section-title">Blog Posts (${blogs.length})</p>
-				<ul class="results-list">`;
-			blogs.forEach(match => {
-				const dateStr = match.item.date ? new Date(match.item.date).toLocaleDateString(undefined, {
-					year: 'numeric',
-					month: 'short',
-					day: 'numeric'
-				}) : '';
-				html += `
-					<li>
-						<a href="${match.item.url}" class="result-card" data-search-item>
-							<div class="result-card-header">
-								<span class="result-title">${highlightText(match.item.title, query)}</span>
-								${dateStr ? `<span class="result-date">${dateStr}</span>` : ''}
-							</div>
-							<p class="result-desc">${highlightText(match.item.description, query)}</p>
-						</a>
-					</li>
-				`;
-			});
-			html += `</ul></div>`;
-		}
-
-		if (projects.length > 0) {
-			html += `<div class="results-section">
-				<p class="section-title">Portfolio Projects (${projects.length})</p>
-				<ul class="results-list">`;
-			projects.forEach(match => {
-				const tagsHtml = match.item.tags ? match.item.tags.slice(0, 3).map((t: string) => `<span class="result-tag">${t}</span>`).join('') : '';
-				html += `
-					<li>
-						<a href="${match.item.url}" class="result-card" data-search-item>
-							<div class="result-card-header">
-								<span class="result-title">${highlightText(match.item.title, query)}</span>
-								<span class="result-badge">Project</span>
-							</div>
-							<p class="result-desc">${highlightText(match.item.description, query)}</p>
-							${tagsHtml ? `<div class="result-tags">${tagsHtml}</div>` : ''}
-						</a>
-					</li>
-				`;
-			});
-			html += `</ul></div>`;
-		}
-
-		resultsContainer.innerHTML = html;
-
-		// Update result items reference for keyboard navigation
-		resultItems = Array.from(resultsContainer.querySelectorAll('[data-search-item]')) as HTMLElement[];
-		activeIndex = -1;
-	}
-
-	function updateActiveItem(direction: 'up' | 'down') {
-		if (resultItems.length === 0) return;
-
-		// Remove active class from previous active item
-		if (activeIndex >= 0 && activeIndex < resultItems.length) {
-			resultItems[activeIndex].classList.remove('active');
-		}
-
-		if (direction === 'down') {
-			activeIndex = (activeIndex + 1) % resultItems.length;
-		} else {
-			activeIndex = (activeIndex - 1 + resultItems.length) % resultItems.length;
-		}
-
-		const newActiveItem = resultItems[activeIndex];
-		newActiveItem.classList.add('active');
-
-		// Scroll into view if needed
-		newActiveItem.scrollIntoView({ block: 'nearest' });
-	}
-
-	// Register event listeners
-	document.addEventListener('click', (e) => {
+	// 1. Listen for clicks on the search trigger
+	document.addEventListener('click', async (e) => {
 		const target = e.target as HTMLElement;
 		const trigger = target.closest('.search-trigger');
 		if (trigger) {
 			e.preventDefault();
-			openModal(trigger as HTMLElement);
+			const search = await loadSearch();
+			if (search) {
+				search.open(trigger as HTMLElement);
+			}
 		}
 	});
 
-	if (modal) {
-		modal.addEventListener('click', (e) => {
-			if (e.target === modal) {
-				closeModal();
-			}
-		});
-	}
-
-	if (closeBtn) {
-		closeBtn.addEventListener('click', closeModal);
-	}
-
-	if (input) {
-		input.addEventListener('input', (e) => {
-			const val = (e.target as HTMLInputElement).value;
-			performSearch(val);
-		});
-
-		input.addEventListener('focus', loadSearchIndex);
-	}
-
-	// Setup prefetch on hovering trigger button
+	// 2. Setup prefetch on hovering search trigger
 	document.addEventListener('mouseover', (e) => {
 		const target = e.target as HTMLElement;
 		if (target.closest('.search-trigger')) {
-			loadSearchIndex();
+			loadSearch();
 		}
-	});
+	}, { passive: true });
 
-	// Global Keyboard Shortcuts
-	document.addEventListener('keydown', (e) => {
-		// Cmd+K or Ctrl+K to open
+	// 3. Setup keydown listener for keyboard shortcuts (Ctrl+K / Cmd+K)
+	document.addEventListener('keydown', async (e) => {
 		if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
 			e.preventDefault();
-			if (modalOpen) {
-				closeModal();
-			} else {
-				openModal();
-			}
-		}
-
-		if (!modalOpen) return;
-
-		// Escape to close
-		if (e.key === 'Escape') {
-			e.preventDefault();
-			closeModal();
-		}
-
-		// ArrowDown / ArrowUp to navigate results
-		if (e.key === 'ArrowDown') {
-			e.preventDefault();
-			updateActiveItem('down');
-		}
-
-		if (e.key === 'ArrowUp') {
-			e.preventDefault();
-			updateActiveItem('up');
-		}
-
-		// Enter to navigate to selected result
-		if (e.key === 'Enter') {
-			if (activeIndex >= 0 && activeIndex < resultItems.length) {
-				e.preventDefault();
-				resultItems[activeIndex].click();
-			}
-		}
-
-		// Focus trapping
-		if (e.key === 'Tab') {
-			const focusableElements = Array.from(container?.querySelectorAll('input, button, [data-search-item]') || []) as HTMLElement[];
-			if (focusableElements.length === 0) return;
-
-			const first = focusableElements[0];
-			const last = focusableElements[focusableElements.length - 1];
-
-			if (e.shiftKey) {
-				if (document.activeElement === first) {
-					e.preventDefault();
-					last.focus();
-				}
-			} else {
-				if (document.activeElement === last) {
-					e.preventDefault();
-					first.focus();
+			const search = await loadSearch();
+			if (search) {
+				const modal = document.getElementById('search-modal');
+				const modalOpen = modal && modal.classList.contains('open');
+				if (modalOpen) {
+					search.close();
+				} else {
+					search.open();
 				}
 			}
 		}
 	});
 
-	// WebMCP Tool Registration for Website Search
+	// 4. WebMCP Tool Registration (Eagerly registered so agents can see the tool)
 	const modelContext = (document as any).modelContext || (typeof navigator !== 'undefined' && (navigator as any).modelContext);
 	if (modelContext && typeof modelContext.registerTool === 'function') {
-		if ((window as any).searchModalController) {
-			(window as any).searchModalController.abort();
-		}
-		const controller = new AbortController();
-		(window as any).searchModalController = controller;
-
 		modelContext.registerTool({
 			name: 'search_website',
 			description: 'Search the website index for blog posts and portfolio projects matching a query string.',
@@ -392,62 +143,14 @@
 				},
 				required: ['query']
 			},
-			execute: async ({ query }) => {
-				// 1. Ensure search index is loaded
-				await loadSearchIndex();
-				
-				// 2. Open search modal if closed
-				openModal();
-				
-				// 3. Put query in input and execute search
-				if (input) {
-					input.value = query;
+			execute: async ({ query }: { query: string }) => {
+				const search = await loadSearch();
+				if (search) {
+					return search.executeFromAgent(query);
 				}
-				performSearch(query);
-
-				// 4. Extract results directly from index
-				if (!searchIndex) {
-					throw new Error('Search index failed to load.');
-				}
-
-				const cleanQuery = query.trim().toLowerCase();
-				if (cleanQuery === '') {
-					return JSON.stringify({ results: [] });
-				}
-
-				const matches = searchIndex
-					.map(item => {
-						let score = 0;
-						const titleIdx = item.title.toLowerCase().indexOf(cleanQuery);
-						const descIdx = item.description.toLowerCase().indexOf(cleanQuery);
-						const bodyIdx = item.body ? item.body.toLowerCase().indexOf(cleanQuery) : -1;
-						const matchedTags = item.tags ? item.tags.filter((t: string) => t.toLowerCase().includes(cleanQuery)).length : 0;
-
-						if (titleIdx === 0) score += 100;
-						else if (titleIdx > 0) score += 80;
-						if (descIdx !== -1) score += 40;
-						if (matchedTags > 0) score += 30 * matchedTags;
-						if (bodyIdx !== -1) score += 10;
-
-						return { item, score };
-					})
-					.filter(match => match.score > 0)
-					.sort((a, b) => b.score - a.score)
-					.map(match => ({
-						title: match.item.title,
-						description: match.item.description,
-						url: match.item.url,
-						type: match.item.type,
-						tags: match.item.tags || []
-					}));
-
-				return JSON.stringify({
-					query: query,
-					totalResultsCount: matches.length,
-					results: matches.slice(0, 10)
-				});
+				throw new Error('Search module could not be initialized.');
 			}
-		}, { signal: controller.signal });
+		});
 	}
 </script>
 
