@@ -30,7 +30,10 @@ const { title, description, image = '/blog-placeholder-1.jpg', loadKatex = false
 
 <!-- KaTeX stylesheet for math formula rendering -->
 {loadKatex && (
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.47/dist/katex.min.css">
+	<>
+		<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.47/dist/katex.min.css">
+	</>
 )}
 
 <!-- Canonical URL -->
