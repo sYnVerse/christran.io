@@ -14,8 +14,9 @@ type Props = CollectionEntry<'blog'>;
 
 const post = Astro.props;
 const { Content } = await render(post);
+const hasMath = post.body ? post.body.includes('$$') : false;
 ---
 
-<BlogPost {...post.data}>
+<BlogPost {...post.data} loadKatex={hasMath}>
 	<Content />
 </BlogPost>

@@ -41,7 +41,16 @@ const hasImage = imagePath && images[imagePath];
 	<a href={primaryUrl} class="card-image-link" target={project.liveUrl ? '_blank' : undefined} rel={project.liveUrl ? 'noopener noreferrer' : undefined}>
 		<div class="card-image">
 			{hasImage ? (
-				<Image src={images[imagePath]()} alt={project.title} width={600} height={340} quality={80} format="webp" />
+				<Image 
+					src={images[imagePath]()} 
+					alt={project.title} 
+					width={600} 
+					height={340} 
+					widths={[280, 360, 480, 600, 720]}
+					sizes="(max-width: 360px) 280px, (max-width: 640px) 440px, 350px"
+					quality={80} 
+					format="webp" 
+				/>
 			) : (
 				<div class="card-image-placeholder">
 					<span>{project.title[0]}</span>

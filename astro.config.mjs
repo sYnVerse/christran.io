@@ -14,6 +14,7 @@ const isCloudflareDeployment = !!process.env.CF_PAGES || !!process.env.CF_BUILD;
 const siteUrl = "https://christran.io";
 
 // Read and parse public/_redirects to add to sitemap
+/** @type {string[]} */
 let redirectUrls = [];
 try {
   const redirectsPath = new URL("./public/_redirects", import.meta.url);

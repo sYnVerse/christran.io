@@ -7,9 +7,11 @@ import FormattedDate from '../components/FormattedDate.astro';
 import { Image } from 'astro:assets';
 import CodeBlock from '../components/CodeBlock.astro';
 
-type Props = CollectionEntry<'blog'>['data'];
+type Props = CollectionEntry<'blog'>['data'] & {
+	loadKatex?: boolean;
+};
 
-const { title, description, pubDate, updatedDate, heroImage, tags } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, tags, loadKatex = false } = Astro.props;
 
 // Dynamically resolve optimized blog hero images from src/assets/img/blog/
 const images = import.meta.glob<{ default: ImageMetadata }>('/src/assets/img/blog/*.{jpeg,jpg,png,gif,webp}');
@@ -23,7 +25,7 @@ if (imagePath && !hasImage) {
 
 <html lang="en">
 	<head>
-		<BaseHead title={title} description={description} />
+		<BaseHead title={title} description={description} loadKatex={loadKatex} />
 		<style>
 			main {
 				width: calc(100% - 2em);

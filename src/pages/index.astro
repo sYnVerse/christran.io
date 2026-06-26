@@ -6,6 +6,12 @@ import ProjectCard from '../components/ProjectCard.astro';
 import BlogCard from '../components/BlogCard.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 import { getCollection } from 'astro:content';
+import { getImage } from 'astro:assets';
+
+import networkBgMobile from '../assets/img/network-bg-mobile.webp';
+import networkBgDesktop from '../assets/img/network-bg-desktop.webp';
+import networkBgUltrawide from '../assets/img/network-bg-ultrawide.webp';
+import networkBgDefault from '../assets/img/network-bg.webp';
 
 const portfolio = await getCollection('portfolio');
 const featured = portfolio
@@ -20,12 +26,21 @@ const featured = portfolio
 const latestPosts = (await getCollection('blog'))
 	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
 	.slice(0, 3);
+
+const optimizedMobileBg = await getImage({ src: networkBgMobile, format: 'webp', width: 720, quality: 65 });
+const optimizedDesktopBg = await getImage({ src: networkBgDesktop, format: 'webp', width: 1440, quality: 65 });
+const optimizedUltrawideBg = await getImage({ src: networkBgUltrawide, format: 'webp', width: 2048, quality: 65 });
+const optimizedDefaultBg = await getImage({ src: networkBgDefault, format: 'webp', width: 1024, quality: 65 });
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<link rel="preload" as="image" href={optimizedMobileBg.src} media="(max-width: 768px) and (orientation: portrait)" fetchpriority="high" />
+		<link rel="preload" as="image" href={optimizedDesktopBg.src} media="(min-aspect-ratio: 1.2/1)" fetchpriority="high" />
+		<link rel="preload" as="image" href={optimizedUltrawideBg.src} media="(min-aspect-ratio: 2/1)" fetchpriority="high" />
+		<link rel="preload" as="image" href={optimizedDefaultBg.src} media="(min-width: 769px) and (max-aspect-ratio: 1.2/1)" fetchpriority="high" />
 		<noscript>
 			<style>
 				.hero-wrapper {
@@ -74,7 +89,12 @@ const latestPosts = (await getCollection('blog'))
 		  }
 		}
 		</script>
-		<style>
+		<style define:vars={{
+			mobileBgUrl: `url(${optimizedMobileBg.src})`,
+			desktopBgUrl: `url(${optimizedDesktopBg.src})`,
+			ultrawideBgUrl: `url(${optimizedUltrawideBg.src})`,
+			defaultBgUrl: `url(${optimizedDefaultBg.src})`
+		}}>
 			.home-page {
 				min-height: 100vh;
 				position: relative;
@@ -98,7 +118,7 @@ const latestPosts = (await getCollection('blog'))
 				left: -40px;
 				right: -40px;
 				bottom: -200px; /* Prevents edge gaps at bottom during background translations */
-				background-image: url('../assets/img/network-bg.webp');
+				background-image: var(--defaultBgUrl);
 				background-size: cover;
 				background-position: center;
 				image-rendering: -webkit-optimize-contrast;
@@ -112,19 +132,19 @@ const latestPosts = (await getCollection('blog'))
 			/* Widescreen Laptops/Desktops (16:9 / 16:10) */
 			@media (min-aspect-ratio: 1.2/1) {
 				.home-page::before {
-					background-image: url('../assets/img/network-bg-desktop.webp');
+					background-image: var(--desktopBgUrl);
 				}
 			}
 			/* Ultrawide Monitors (21:9 / 32:9) */
 			@media (min-aspect-ratio: 2/1) {
 				.home-page::before {
-					background-image: url('../assets/img/network-bg-ultrawide.webp');
+					background-image: var(--ultrawideBgUrl);
 				}
 			}
 			/* Mobile Portrait Screens */
 			@media (max-width: 768px) and (orientation: portrait) {
 				.home-page::before {
-					background-image: url('../assets/img/network-bg-mobile.webp');
+					background-image: var(--mobileBgUrl);
 				}
 			}
 			/* Scroll Journey container styles */
