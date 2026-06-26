@@ -34,3 +34,8 @@ pgp-key-private.txt
 tools/blog-generator/.env
 tools/blog-generator/data/
 
+#graphify
+graphify-out/
+
+#cursor
+.cursor/
