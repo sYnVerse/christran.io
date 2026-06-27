@@ -62,6 +62,50 @@ async function getExistingPostsContext() {
   }
 }
 
+const TEXT_MODEL_CHAIN = [
+  'gemini-3.5-flash',
+  'gemini-3-flash-preview',
+  'gemini-2.5-flash',
+  'gemini-2.0-flash',
+  'gemini-3.1-flash-lite',
+  'gemini-2.5-flash-lite',
+  'gemini-2.0-flash-lite',
+];
+
+function isRateLimitError(error) {
+  const message = (error?.message || String(error)).toLowerCase();
+  const status = error?.status || error?.statusCode || error?.cause?.status;
+  if (status === 429) return true;
+  return message.includes('resource_exhausted') ||
+    message.includes('resource has been exhausted') ||
+    message.includes('too many requests') ||
+    message.includes(' 429 ') ||
+    message.includes(': 429');
+}
+
+async function generateGeminiText(prompt, isJson = false) {
+  let lastError;
+  for (let i = 0; i < TEXT_MODEL_CHAIN.length; i++) {
+    const modelName = TEXT_MODEL_CHAIN[i];
+    try {
+      const genAI = new GoogleGenerativeAI(geminiKey);
+      const generationConfig = isJson ? { responseMimeType: 'application/json' } : {};
+      const model = genAI.getGenerativeModel({ model: modelName, generationConfig });
+      const result = await model.generateContent(prompt);
+      console.log(`Text generated successfully using model: ${modelName}`);
+      return result;
+    } catch (error) {
+      lastError = error;
+      if (isRateLimitError(error) && i < TEXT_MODEL_CHAIN.length - 1) {
+        console.warn(`Rate limit hit on ${modelName}, stepping down to ${TEXT_MODEL_CHAIN[i + 1]}...`);
+        continue;
+      }
+      throw error;
+    }
+  }
+  throw lastError;
+}
+
 // Helper to retry async operations (like API requests) with exponential backoff
 async function retryCall(fn, retries = 3, delayMs = 2000) {
   try {
@@ -82,14 +126,9 @@ async function run() {
   
   try {
     const existingPosts = await getExistingPostsContext();
-    const genAI = new GoogleGenerativeAI(geminiKey);
-    const model = genAI.getGenerativeModel({ 
-      model: "gemini-flash-latest",
-      generationConfig: { responseMimeType: "application/json" }
-    });
 
     
-    const contextText = existingPosts.length > 0 
+    const contextText = existingPosts.length > 0
       ? `Here are some of the existing blog posts on the site for reference:\n${existingPosts.map(p => `- Title: "${p.title}"\n  Description: "${p.description}"\n  Tags: ${JSON.stringify(p.tags)}`).join('\n')}`
       : 'The blog is new and does not have any posts yet.';
 
@@ -121,7 +160,7 @@ async function run() {
     }
     Do not return any other text, markdown formatting, or HTML wrap outside the JSON object itself. Make sure the JSON is perfectly valid.`;
 
-    const result = await retryCall(() => model.generateContent(prompt));
+    const result = await retryCall(() => generateGeminiText(prompt, true));
     const text = result.response.text();
 
     
