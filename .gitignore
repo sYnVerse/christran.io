@@ -35,7 +35,6 @@ tools/blog-generator/.env
 tools/blog-generator/data/
 
 #graphify
-graphify-out/
-
-#cursor
-.cursor/
+graphify-out/cost.json
+graphify-out/cache
+graphify-out/*-*/

@@ -1,0 +1,596 @@
+{
+  "communities": {
+    "0": [
+      "astro_assets",
+      "astro_content",
+      "blog_slug",
+      "blog_slug_getstaticpaths",
+      "c_users_chris_documents_github_christran_io_src_assets_img_network_bg_desktop_webp",
+      "c_users_chris_documents_github_christran_io_src_assets_img_network_bg_mobile_webp",
+      "c_users_chris_documents_github_christran_io_src_assets_img_network_bg_ultrawide_webp",
+      "c_users_chris_documents_github_christran_io_src_assets_img_network_bg_webp",
+      "c_users_chris_documents_github_christran_io_src_components_codeblock_astro",
+      "c_users_chris_documents_github_christran_io_src_components_footer_astro",
+      "c_users_chris_documents_github_christran_io_src_components_formatteddate_astro",
+      "c_users_chris_documents_github_christran_io_src_components_header_astro",
+      "c_users_chris_documents_github_christran_io_src_consts",
+      "c_users_chris_documents_github_christran_io_src_styles_global_css",
+      "components_basehead",
+      "components_basehead_canonicalurl",
+      "components_blogcard",
+      "components_projectcard",
+      "layouts_blogpost",
+      "pages_index",
+      "pages_index_featured",
+      "pages_index_if",
+      "pages_index_latestposts"
+    ],
+    "1": [
+      "package",
+      "package_cloudflare",
+      "package_cloudflare_categories",
+      "package_cloudflare_dash",
+      "package_cloudflare_icon_urls",
+      "package_cloudflare_label",
+      "package_cloudflare_preview_image_url",
+      "package_cloudflare_products",
+      "package_description",
+      "package_devdependencies",
+      "package_devdependencies_sharp",
+      "package_devdependencies_wrangler",
+      "package_name",
+      "package_scripts",
+      "package_scripts_astro",
+      "package_scripts_build",
+      "package_scripts_cf_typegen",
+      "package_scripts_check",
+      "package_scripts_deploy",
+      "package_scripts_dev",
+      "package_scripts_preview",
+      "package_type"
+    ],
+    "2": [
+      "portfolio_f1_fandom_app",
+      "portfolio_f1_fandom_cron_sync",
+      "portfolio_f1_fandom_doc",
+      "portfolio_f1_wiki_app",
+      "portfolio_f1_wiki_doc",
+      "portfolio_f1_wiki_scribunto_lua",
+      "portfolio_homelab_autochlor",
+      "portfolio_homelab_bonded_network",
+      "portfolio_homelab_cloud_storage_mount",
+      "portfolio_homelab_doc",
+      "portfolio_homelab_lab",
+      "portfolio_syntinel_app",
+      "portfolio_syntinel_doc",
+      "portfolio_syntinel_lucent",
+      "portfolio_syntinel_simulation_failover",
+      "public_resume_autochlor",
+      "public_resume_foothill",
+      "public_resume_fortinet",
+      "public_resume_resume",
+      "public_resume_santaclara",
+      "public_resume_ucsd",
+      "public_resume_wgu"
+    ],
+    "3": [
+      "portfolio_illusyn_illusyn",
+      "portfolio_synapse_synapse",
+      "portfolio_synid_synid",
+      "portfolio_syntinel_syntinel",
+      "portfolio_synx_synx",
+      "projects_illusyn_genesis_ui_layout",
+      "projects_illusyn_prompt_generator",
+      "projects_illusyn_visual",
+      "projects_synapse_gateway_health_panel",
+      "projects_synapse_visual",
+      "projects_synid_app_launcher_portal",
+      "projects_synid_visual",
+      "projects_syntinel_3d_globe_visualizer",
+      "projects_syntinel_visual",
+      "projects_synx_visual",
+      "projects_synx_workspace_layout"
+    ],
+    "4": [
+      "blog_active_aero_and_z_mode_inside_the_2026_f1_aerodynamics_engineering_challenge_fail_safes",
+      "blog_active_aero_and_z_mode_inside_the_2026_f1_aerodynamics_engineering_challenge_post",
+      "blog_active_aero_and_z_mode_inside_the_2026_f1_aerodynamics_engineering_challenge_transient_flow",
+      "blog_active_aero_and_z_mode_inside_the_2026_f1_aerodynamics_engineering_challenge_x_mode",
+      "blog_active_aero_and_z_mode_inside_the_2026_f1_aerodynamics_engineering_challenge_z_mode",
+      "blog_active_aero_f1_hero",
+      "blog_f1_2026_changes_active_aero",
+      "blog_f1_2026_changes_post",
+      "blog_f1_2026_changes_power_unit",
+      "blog_monaco_gp_boredom",
+      "blog_monaco_gp_post",
+      "blog_monaco_gp_proposals",
+      "blog_the_telemetry_of_speed_building_a_real_time_f1_data_pipeline_inputs",
+      "blog_the_telemetry_of_speed_building_a_real_time_f1_data_pipeline_pipeline",
+      "blog_the_telemetry_of_speed_building_a_real_time_f1_data_pipeline_post"
+    ],
+    "5": [
+      "blog_beyond_nas_building_a_future_proof_zfs_home_lab_server_hardware",
+      "blog_beyond_nas_building_a_future_proof_zfs_home_lab_server_hero",
+      "blog_beyond_nas_building_a_future_proof_zfs_home_lab_server_post",
+      "blog_beyond_nas_building_a_future_proof_zfs_home_lab_server_zfs",
+      "blog_hosting_private_llms_on_your_home_lab_hardware",
+      "blog_hosting_private_llms_on_your_home_lab_post",
+      "blog_hosting_private_llms_on_your_home_lab_stack",
+      "blog_infrastructure_as_code_for_mortals_declarative_home_lab_management_with_terraform_and_ansible_pipeline",
+      "blog_infrastructure_as_code_for_mortals_declarative_home_lab_management_with_terraform_and_ansible_post",
+      "blog_nix_os_post",
+      "blog_nix_os_reproducibility",
+      "blog_plex_post",
+      "blog_plex_upgrade"
+    ],
+    "6": [
+      "components_searchmodal",
+      "components_searchmodal_loadsearch",
+      "scripts_search",
+      "scripts_search_closemodal",
+      "scripts_search_escaperegexp",
+      "scripts_search_executefromagent",
+      "scripts_search_highlighttext",
+      "scripts_search_initsearch",
+      "scripts_search_loadsearchindex",
+      "scripts_search_openmodal",
+      "scripts_search_performsearch",
+      "scripts_search_resultitems",
+      "scripts_search_updateactiveitem"
+    ],
+    "7": [
+      "blog_generator_instructions_guide",
+      "blog_trading_spacex_ipo_doc",
+      "blog_trading_spacex_ipo_float_dynamics",
+      "blog_trading_spacex_ipo_nasdaq_inclusion",
+      "blog_trading_spacex_ipo_spacex",
+      "blog_trading_spacex_ipo_starlink",
+      "blog_trading_spacex_ipo_sympathy_trade",
+      "public_index_dashboard",
+      "public_index_draft_editor",
+      "public_index_git_publisher",
+      "public_index_hero_image",
+      "public_index_ideas_generator"
+    ],
+    "8": [
+      "portfolio_chat_app",
+      "portfolio_chat_doc",
+      "portfolio_chat_durable_sql_storage",
+      "portfolio_synapse_app",
+      "portfolio_synapse_doc",
+      "portfolio_synapse_multi_broker_hedging",
+      "portfolio_synid_app",
+      "portfolio_synid_doc",
+      "portfolio_synid_shared_domain_autologin",
+      "portfolio_synx_app",
+      "portfolio_synx_dev_proxy_bindings",
+      "portfolio_synx_doc"
+    ],
+    "9": [
+      "blog_hosting_private_llms_on_your_home_lab_hardware_setup",
+      "blog_hosting_private_llms_on_your_home_lab_image",
+      "blog_hosting_private_llms_on_your_home_lab_llama_3",
+      "blog_hosting_private_llms_on_your_home_lab_offline_privacy",
+      "blog_hosting_private_llms_on_your_home_lab_self_hosted_llm",
+      "blog_plex_jellyfin_image",
+      "blog_plex_jellyfin_jellyfin_media_server",
+      "blog_plex_jellyfin_overseerr_discovery",
+      "blog_plex_jellyfin_plex_media_server",
+      "blog_plex_jellyfin_servarr_suite"
+    ],
+    "10": [
+      "blog_spacex_ipo_equation_image",
+      "blog_spacex_ipo_equation_off_world_ai_compute",
+      "blog_spacex_ipo_equation_spacex_valuation",
+      "blog_spacex_ipo_equation_starlink_optical_network",
+      "blog_spacex_ipo_equation_xai_compute_hub",
+      "blog_spacex_ipo_nasdaq_low_float_fast_track_market_cap",
+      "blog_spacex_ipo_nasdaq_low_float_image",
+      "blog_spacex_ipo_nasdaq_low_float_nasdaq_low_float_rules",
+      "blog_spacex_ipo_nasdaq_low_float_risk_hype_cycle"
+    ],
+    "11": [
+      "package_dependencies",
+      "package_dependencies_astro",
+      "package_dependencies_astrojs_cloudflare",
+      "package_dependencies_astrojs_mdx",
+      "package_dependencies_astrojs_rss",
+      "package_dependencies_astrojs_sitemap",
+      "package_dependencies_rehype_katex",
+      "package_dependencies_remark_math",
+      "package_dependencies_typescript"
+    ],
+    "12": [
+      "spacex_ipo_equation_orbital_data_center",
+      "spacex_ipo_equation_spacex",
+      "spacex_ipo_equation_starlink",
+      "spacex_ipo_equation_starship",
+      "spacex_ipo_equation_xai",
+      "tesla_fsd_ai_drivr",
+      "tesla_fsd_elon_musk",
+      "tesla_fsd_fsd",
+      "tesla_fsd_tesla"
+    ],
+    "13": [
+      "blog_beyond_the_prompt_architecting_clean_code_in_the_age_of_ai_assistants_architecture",
+      "blog_beyond_the_prompt_architecting_clean_code_in_the_age_of_ai_assistants_hero",
+      "blog_beyond_the_prompt_architecting_clean_code_in_the_age_of_ai_assistants_post",
+      "blog_beyond_the_prompt_architecting_clean_code_in_the_age_of_ai_assistants_tdd",
+      "blog_google_antigravity_ide_concepts",
+      "blog_google_antigravity_ide_post"
+    ],
+    "14": [
+      "blog_f1_2026_concept_active_aerodynamics",
+      "blog_f1_2026_concept_image",
+      "blog_f1_2026_concept_monaco_circuit",
+      "blog_monaco_gp_fairmont_hairpin",
+      "blog_monaco_gp_image",
+      "blog_monaco_gp_monaco_grand_prix"
+    ],
+    "15": [
+      "portfolio_ai_chat_app",
+      "portfolio_ai_chat_doc",
+      "portfolio_ai_chat_sse_streaming",
+      "portfolio_illusyn_app",
+      "portfolio_illusyn_doc",
+      "portfolio_illusyn_edge_storage"
+    ],
+    "16": [
+      "portfolio_f1_wiki_f1_fandom_wiki",
+      "projects_f1_wiki_drivers_standings_panel",
+      "projects_f1_wiki_gp_hub_layout",
+      "projects_f1_wiki_team_standings_panel",
+      "projects_f1_wiki_visual"
+    ],
+    "17": [
+      "portfolio_homelab_enterprise_home_lab",
+      "projects_homelab_poweredge_hosts",
+      "projects_homelab_rack_infrastructure",
+      "projects_homelab_unifi_switch",
+      "projects_homelab_visual"
+    ],
+    "18": [
+      "blog_google_antigravity_agent_memory",
+      "blog_google_antigravity_image",
+      "blog_google_antigravity_multi_agent_system",
+      "blog_google_antigravity_task_manager"
+    ],
+    "19": [
+      "blog_tesla_fsd_subscription_fsd_beta_delays",
+      "blog_tesla_fsd_subscription_fsd_subscription",
+      "blog_tesla_fsd_subscription_image",
+      "blog_tesla_fsd_subscription_tesla_fsd"
+    ],
+    "20": [
+      "blog_the_telemetry_of_finance_preparing_spacex_enterprise_software_for_a_public_debut_post",
+      "blog_the_telemetry_of_finance_preparing_spacex_enterprise_software_for_a_public_debut_security",
+      "blog_the_telemetry_of_finance_preparing_spacex_enterprise_software_for_a_public_debut_sox",
+      "blog_the_telemetry_of_finance_preparing_spacex_enterprise_software_for_a_public_debut_warpdrive"
+    ],
+    "21": [
+      "blog_wgu_competency_model",
+      "blog_wgu_hero",
+      "blog_wgu_post",
+      "blog_wgu_time_management"
+    ],
+    "22": [
+      "readme_ai_blog_generator",
+      "readme_cloudflare_deployments",
+      "readme_overview",
+      "readme_performance_ux"
+    ],
+    "23": [
+      "blog_elon_doge_department_of_government_efficiency",
+      "blog_elon_doge_image",
+      "blog_elon_doge_musk_doge_role"
+    ],
+    "24": [
+      "blog_nasdaq_spacex_low_float",
+      "blog_nasdaq_spacex_post",
+      "blog_nasdaq_spacex_systemic_risk"
+    ],
+    "25": [
+      "claude_graphify",
+      "graphify_rules",
+      "graphify_workflow"
+    ],
+    "26": [
+      "img_ctlogo1_logo",
+      "img_ctlogo2_logo",
+      "public_favicon_ct_monogram"
+    ],
+    "27": [
+      "astro_config",
+      "astro_config_redirecturls"
+    ],
+    "28": [
+      "blog_musk_leaves_doge_post",
+      "blog_musk_leaves_doge_recalib"
+    ],
+    "29": [
+      "blog_nix_os_image",
+      "blog_nix_os_nix_os_system"
+    ],
+    "30": [
+      "blog_the_telemetry_of_finance_preparing_spacex_enterprise_software_for_a_public_debut",
+      "blog_trading_spacex_ipo"
+    ],
+    "31": [
+      "img_synid_favicon_icon",
+      "img_synid_logo_logo"
+    ],
+    "32": [
+      "projects_ai_chat",
+      "projects_chat"
+    ],
+    "33": [
+      "public_auth_policy",
+      "public_auth_registration_flow"
+    ],
+    "34": [
+      "worker_configuration_d_durableobject",
+      "worker_configuration_d_durableobjectbranded"
+    ],
+    "35": [
+      "worker_configuration_d_rpctarget",
+      "worker_configuration_d_rpctargetbranded"
+    ],
+    "36": [
+      "worker_configuration_d_workerentrypoint",
+      "worker_configuration_d_workerentrypointbranded"
+    ],
+    "37": [
+      "worker_configuration_d_workflowentrypoint",
+      "worker_configuration_d_workflowentrypointbranded"
+    ],
+    "38": [
+      "img_chris_portrait"
+    ],
+    "39": [
+      "img_profile"
+    ],
+    "40": [
+      "pages_rss_xml_get"
+    ],
+    "41": [
+      "pages_search_index_json_get"
+    ],
+    "42": [
+      "projects_f1_fandom"
+    ],
+    "43": [
+      "worker_configuration_d_entrypointbranded"
+    ],
+    "44": [
+      "worker_configuration_d_nonretryableerror"
+    ],
+    "45": [
+      "worker_configuration_d_pipeline"
+    ],
+    "46": [
+      "worker_configuration_d_pipelinebatchmetadata"
+    ],
+    "47": [
+      "worker_configuration_d_pipelinerecord"
+    ],
+    "48": [
+      "worker_configuration_d_pipelinetransformationentrypoint"
+    ],
+    "49": [
+      "worker_configuration_d_provider"
+    ],
+    "50": [
+      "worker_configuration_d_rpcstub"
+    ],
+    "51": [
+      "worker_configuration_d_stub"
+    ],
+    "52": [
+      "worker_configuration_d_stubable"
+    ],
+    "53": [
+      "worker_configuration_d_workflowbackoff"
+    ],
+    "54": [
+      "worker_configuration_d_workflowdelayduration"
+    ],
+    "55": [
+      "worker_configuration_d_workflowdurationlabel"
+    ],
+    "56": [
+      "worker_configuration_d_workflowevent"
+    ],
+    "57": [
+      "worker_configuration_d_workflowsleepduration"
+    ],
+    "58": [
+      "worker_configuration_d_workflowstep"
+    ],
+    "59": [
+      "worker_configuration_d_workflowstepconfig"
+    ],
+    "60": [
+      "worker_configuration_d_workflowstepevent"
+    ],
+    "61": [
+      "worker_configuration_d_workflowtimeoutduration"
+    ]
+  },
+  "cohesion": {
+    "0": 0.1225296442687747,
+    "1": 0.09090909090909091,
+    "2": 0.09523809523809523,
+    "3": 0.14166666666666666,
+    "4": 0.1523809523809524,
+    "5": 0.16666666666666666,
+    "6": 0.24358974358974358,
+    "7": 0.16666666666666666,
+    "8": 0.16666666666666666,
+    "9": 0.2,
+    "10": 0.2222222222222222,
+    "11": 0.2222222222222222,
+    "12": 0.25,
+    "13": 0.3333333333333333,
+    "14": 0.3333333333333333,
+    "15": 0.3333333333333333,
+    "16": 0.4,
+    "17": 0.4,
+    "18": 0.5,
+    "19": 0.5,
+    "20": 0.5,
+    "21": 0.5,
+    "22": 0.5,
+    "23": 0.6666666666666666,
+    "24": 0.6666666666666666,
+    "25": 0.6666666666666666,
+    "26": 1.0,
+    "27": 1.0,
+    "28": 1.0,
+    "29": 1.0,
+    "30": 1.0,
+    "31": 1.0,
+    "32": 1.0,
+    "33": 1.0,
+    "34": 1.0,
+    "35": 1.0,
+    "36": 1.0,
+    "37": 1.0,
+    "38": 1.0,
+    "39": 1.0,
+    "40": 1.0,
+    "41": 1.0,
+    "42": 1.0,
+    "43": 1.0,
+    "44": 1.0,
+    "45": 1.0,
+    "46": 1.0,
+    "47": 1.0,
+    "48": 1.0,
+    "49": 1.0,
+    "50": 1.0,
+    "51": 1.0,
+    "52": 1.0,
+    "53": 1.0,
+    "54": 1.0,
+    "55": 1.0,
+    "56": 1.0,
+    "57": 1.0,
+    "58": 1.0,
+    "59": 1.0,
+    "60": 1.0,
+    "61": 1.0
+  },
+  "gods": [
+    {
+      "id": "scripts_search",
+      "label": "../scripts/search.ts",
+      "degree": 12
+    },
+    {
+      "id": "public_resume_resume",
+      "label": "Christopher Tran's Resume",
+      "degree": 8
+    },
+    {
+      "id": "package_scripts",
+      "label": "scripts",
+      "degree": 8
+    },
+    {
+      "id": "blog_active_aero_and_z_mode_inside_the_2026_f1_aerodynamics_engineering_challenge_post",
+      "label": "F1 2026: Active Aero and Z-Mode",
+      "degree": 7
+    },
+    {
+      "id": "blog_trading_spacex_ipo_doc",
+      "label": "Trading the SpaceX IPO Blog Post",
+      "degree": 7
+    },
+    {
+      "id": "portfolio_homelab_lab",
+      "label": "Enterprise Home Lab",
+      "degree": 7
+    },
+    {
+      "id": "package_cloudflare",
+      "label": "cloudflare",
+      "degree": 7
+    },
+    {
+      "id": "blog_beyond_nas_building_a_future_proof_zfs_home_lab_server_post",
+      "label": "Building a ZFS Home Lab Server",
+      "degree": 6
+    },
+    {
+      "id": "public_index_dashboard",
+      "label": "Blog Creator Admin Dashboard",
+      "degree": 6
+    },
+    {
+      "id": "portfolio_synapse_app",
+      "label": "sYnapse Agentic Trading Gateway",
+      "degree": 5
+    }
+  ],
+  "surprises": [
+    {
+      "source": "Enterprise Home Lab",
+      "target": "Auto-Chlor System",
+      "source_files": [
+        "src/content/portfolio/homelab.mdx",
+        "public/resume.pdf"
+      ],
+      "confidence": "INFERRED",
+      "relation": "references",
+      "why": "inferred connection - not explicitly stated in source; crosses file types (doc \u2194 paper); connects across different repos/directories; peripheral node `Auto-Chlor System` unexpectedly reaches hub `Enterprise Home Lab`"
+    },
+    {
+      "source": "Christopher Tran's Resume",
+      "target": "F1 Fandom Wiki Integration",
+      "source_files": [
+        "public/resume.pdf",
+        "src/content/portfolio/f1-wiki.mdx"
+      ],
+      "confidence": "INFERRED",
+      "relation": "references",
+      "why": "inferred connection - not explicitly stated in source; crosses file types (doc \u2194 paper); connects across different repos/directories"
+    },
+    {
+      "source": "Christopher Tran's Resume",
+      "target": "Enterprise Home Lab",
+      "source_files": [
+        "public/resume.pdf",
+        "src/content/portfolio/homelab.mdx"
+      ],
+      "confidence": "INFERRED",
+      "relation": "references",
+      "why": "inferred connection - not explicitly stated in source; crosses file types (doc \u2194 paper); connects across different repos/directories"
+    },
+    {
+      "source": "F1 2026: Active Aero and Z-Mode",
+      "target": "F1 Active Aerodynamics Hero Image",
+      "source_files": [
+        "src/content/blog/active-aero-and-z-mode-inside-the-2026-f1-aerodynamics-engineering-challenge.mdx",
+        "src/assets/img/blog/active-aero-f1.png"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "crosses file types (doc \u2194 image); peripheral node `F1 Active Aerodynamics Hero Image` unexpectedly reaches hub `F1 2026: Active Aero and Z-Mode`"
+    },
+    {
+      "source": "Building a ZFS Home Lab Server",
+      "target": "ZFS Home Lab Server Hero Image",
+      "source_files": [
+        "src/content/blog/beyond-nas-building-a-future-proof-zfs-home-lab-server.mdx",
+        "src/assets/img/blog/beyond-nas-building-a-future-proof-zfs-home-lab-server.webp"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "crosses file types (doc \u2194 image); peripheral node `ZFS Home Lab Server Hero Image` unexpectedly reaches hub `Building a ZFS Home Lab Server`"
+    }
+  ],
+  "tokens": {
+    "input": 4737,
+    "output": 1708
+  }
+}
