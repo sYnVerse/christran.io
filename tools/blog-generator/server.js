@@ -62,24 +62,125 @@ console.log(`- Resend API Key: ${hasResendKey ? 'Present' : 'MISSING'}`);
 console.log(`- User Email: ${userEmail || 'MISSING'}`);
 console.log(`- Sender Email: ${senderEmail}`);
 
-// Helper to get Gemini Client
-function getGeminiModel() {
+const TEXT_MODEL_CHAIN = [
+  'gemini-3.5-flash',
+  'gemini-3-flash-preview',
+  'gemini-2.5-flash',
+  'gemini-2.0-flash',
+  'gemini-3.1-flash-lite',
+  'gemini-2.5-flash-lite',
+  'gemini-2.0-flash-lite',
+];
+
+const IMAGE_MODEL_CHAIN = [
+  'gemini-3.1-flash-image',
+  'gemini-3-pro-image',
+  'gemini-2.5-flash-image',
+];
+
+function isRateLimitError(error) {
+  const message = (error?.message || String(error)).toLowerCase();
+  const status = error?.status || error?.statusCode || error?.cause?.status;
+  if (status === 429) return true;
+  return message.includes('resource_exhausted') ||
+    message.includes('resource has been exhausted') ||
+    message.includes('too many requests') ||
+    message.includes(' 429 ') ||
+    message.includes(': 429');
+}
+
+async function generateGeminiText(prompt, isJson = false) {
   if (!process.env.GEMINI_API_KEY) {
     throw new Error('GEMINI_API_KEY is not set in environment variables.');
   }
-  const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-  return genAI.getGenerativeModel({
-    model: "gemini-3.5-flash",
-    generationConfig: { responseMimeType: "application/json" }
-  });
+
+  let lastError;
+  for (let i = 0; i < TEXT_MODEL_CHAIN.length; i++) {
+    const modelName = TEXT_MODEL_CHAIN[i];
+    try {
+      const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+      const generationConfig = isJson ? { responseMimeType: 'application/json' } : {};
+      const model = genAI.getGenerativeModel({ model: modelName, generationConfig });
+      const result = await model.generateContent(prompt);
+      console.log(`Text generated successfully using model: ${modelName}`);
+      return result;
+    } catch (error) {
+      lastError = error;
+      if (isRateLimitError(error) && i < TEXT_MODEL_CHAIN.length - 1) {
+        console.warn(`Rate limit hit on ${modelName}, stepping down to ${TEXT_MODEL_CHAIN[i + 1]}...`);
+        continue;
+      }
+      throw error;
+    }
+  }
+  throw lastError;
+}
+
+async function generateAIImageBuffer(promptText) {
+  if (!process.env.GEMINI_API_KEY) {
+    throw new Error('GEMINI_API_KEY is not set in environment variables.');
+  }
+
+  let lastError;
+  for (let i = 0; i < IMAGE_MODEL_CHAIN.length; i++) {
+    const modelName = IMAGE_MODEL_CHAIN[i];
+    try {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${process.env.GEMINI_API_KEY}`;
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: promptText }] }],
+          generationConfig: {
+            responseModalities: ['IMAGE'],
+            imageConfig: { aspectRatio: '16:9' },
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        const error = new Error(`Gemini Image API error (${modelName}): ${response.status} ${response.statusText} - ${errorText}`);
+        error.status = response.status;
+        if (isRateLimitError(error) && i < IMAGE_MODEL_CHAIN.length - 1) {
+          console.warn(`Rate limit hit on ${modelName}, stepping down to ${IMAGE_MODEL_CHAIN[i + 1]}...`);
+          continue;
+        }
+        throw error;
+      }
+
+      const data = await response.json();
+      const parts = data.candidates?.[0]?.content?.parts || [];
+      for (const part of parts) {
+        if (part.inlineData?.data) {
+          console.log(`Image generated successfully using model: ${modelName}`);
+          return Buffer.from(part.inlineData.data, 'base64');
+        }
+      }
+      throw new Error(`No image data in response from ${modelName}`);
+    } catch (error) {
+      lastError = error;
+      if (isRateLimitError(error) && i < IMAGE_MODEL_CHAIN.length - 1) {
+        console.warn(`Rate limit hit on ${modelName}, stepping down to ${IMAGE_MODEL_CHAIN[i + 1]}...`);
+        continue;
+      }
+      throw error;
+    }
+  }
+  throw lastError;
+}
+
+// Helper to get Gemini Client (wrapper with rate-limit fallback)
+function getGeminiModel() {
+  return {
+    generateContent: (prompt) => generateGeminiText(prompt, true),
+  };
 }
 
 function getGeminiTextModel() {
-  if (!process.env.GEMINI_API_KEY) {
-    throw new Error('GEMINI_API_KEY is not set in environment variables.');
-  }
-  const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-  return genAI.getGenerativeModel({ model: "gemini-3.5-flash" });
+  return {
+    generateContent: (prompt) => generateGeminiText(prompt, false),
+  };
 }
 
 
@@ -267,7 +368,7 @@ async function sendIdeasEmail(ideas) {
   });
 }
 
-// Generate a WebP hero image using Google's Imagen 3 API
+// Generate a WebP hero image using Gemini image models with fallback chain
 async function generateImagenHeroImage(title, description, slug) {
   if (!process.env.GEMINI_API_KEY) {
     console.warn('Skipping image generation: GEMINI_API_KEY missing.');
@@ -276,47 +377,12 @@ async function generateImagenHeroImage(title, description, slug) {
 
   const promptText = `A professional, high-quality modern blog header illustration. Title: "${title}". Description: "${description}". Sleek vector graphic, minimalist digital art style, dark background with vibrant glowing accents of neon purple and deep cyan. No text, no words, no letters, no typography, no logos.`;
 
-  console.log(`Generating AI Hero Image using Imagen 4 for slug: ${slug}...`);
+  console.log(`Generating AI Hero Image for slug: ${slug}...`);
   try {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${process.env.GEMINI_API_KEY}`;
-
-    const response = await retryCall(async () => {
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          instances: [
-            { prompt: promptText }
-          ],
-          parameters: {
-            sampleCount: 1,
-            aspectRatio: '16:9',
-            outputMimeType: 'image/jpeg'
-          }
-        })
-      });
-
-      if (!res.ok) {
-        const errorText = await res.text();
-        throw new Error(`Imagen API error: ${res.status} ${res.statusText} - ${errorText}`);
-      }
-      return res;
-    });
-
-
-    const data = await response.json();
-    if (!data.predictions || data.predictions.length === 0 || !data.predictions[0].bytesBase64Encoded) {
-      throw new Error('Invalid response payload from Imagen API: predictions empty or missing base64 bytes.');
-    }
-
-    const base64Bytes = data.predictions[0].bytesBase64Encoded;
-    const buffer = Buffer.from(base64Bytes, 'base64');
+    const buffer = await retryCall(() => generateAIImageBuffer(promptText));
     const filename = `${slug}.webp`;
     const outputPath = path.join(ASSETS_IMG_PATH, filename);
 
-    // Use sharp to convert to optimized WebP format
     console.log(`Converting generated image to optimized WebP at: ${outputPath}`);
     await sharp(buffer)
       .webp({ quality: 85 })
@@ -325,7 +391,7 @@ async function generateImagenHeroImage(title, description, slug) {
     console.log(`✅ AI Hero Image successfully generated and saved: /img/${filename}`);
     return `/img/${filename}`;
   } catch (error) {
-    console.error('❌ Google Imagen 4 API failed:', error.message);
+    console.error('❌ Gemini image generation failed:', error.message);
     console.log('🔄 Falling back to free high-quality stock photo via LoremFlickr...');
     try {
       const fallbackUrl = 'https://loremflickr.com/1024/576/technology,coding,hardware,minimalist';
@@ -774,13 +840,13 @@ app.get('/api/images/suggest', async (req, res) => {
     if (pexelsRes.status === 'fulfilled') suggestions.push(...pexelsRes.value);
     if (unsplashRes.status === 'fulfilled') suggestions.push(...unsplashRes.value);
 
-    // Include Google Imagen 4 generator card
+    // Include Gemini image generator card
     suggestions.push({
       id: 'imagen_4_option',
-      source: 'Imagen 4',
+      source: 'Gemini Image',
       requires_generation: true,
       url: '/img/google-antigravity.png',
-      photographer: 'Google Imagen AI'
+      photographer: 'Google Gemini AI'
     });
 
     res.json({
@@ -793,7 +859,7 @@ app.get('/api/images/suggest', async (req, res) => {
   }
 });
 
-// Explicitly generate a preview image with Google's Imagen 4
+// Explicitly generate a preview image with Gemini image models
 app.post('/api/images/generate-imagen', async (req, res) => {
   try {
     const { title, description, slug } = req.body;
@@ -807,39 +873,9 @@ app.post('/api/images/generate-imagen', async (req, res) => {
 
     const promptText = `A professional, high-quality modern blog header illustration. Title: "${title}". Description: "${description || ''}". Sleek vector graphic, minimalist digital art style, dark background with vibrant glowing accents of neon purple and deep cyan. No text, no words, no letters, no typography, no logos.`;
 
-    console.log(`Generating AI Hero Image using Imagen 4 for slug: ${slug}...`);
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${process.env.GEMINI_API_KEY}`;
+    console.log(`Generating AI Hero Image for slug: ${slug}...`);
+    const buffer = await retryCall(() => generateAIImageBuffer(promptText));
 
-    const response = await retryCall(async () => {
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          instances: [{ prompt: promptText }],
-          parameters: {
-            sampleCount: 1,
-            aspectRatio: '16:9',
-            outputMimeType: 'image/jpeg'
-          }
-        })
-      });
-
-      if (!res.ok) {
-        const errorText = await res.text();
-        throw new Error(`Imagen API error: ${res.status} ${res.statusText} - ${errorText}`);
-      }
-      return res;
-    });
-
-    const data = await response.json();
-    if (!data.predictions || data.predictions.length === 0 || !data.predictions[0].bytesBase64Encoded) {
-      throw new Error('Invalid response payload from Imagen API: predictions empty or missing base64.');
-    }
-
-    const base64Bytes = data.predictions[0].bytesBase64Encoded;
-    const buffer = Buffer.from(base64Bytes, 'base64');
-
-    // Save to temp image in DATA_DIR
     const tempFilename = `temp-${slug}-${Date.now()}.webp`;
     const tempOutputPath = path.join(DATA_DIR, tempFilename);
 
@@ -847,7 +883,7 @@ app.post('/api/images/generate-imagen', async (req, res) => {
       .webp({ quality: 85 })
       .toFile(tempOutputPath);
 
-    console.log(`✅ Imagen 4 temporary image saved: ${tempOutputPath}`);
+    console.log(`✅ Gemini temporary image saved: ${tempOutputPath}`);
 
     res.json({
       success: true,
@@ -855,7 +891,7 @@ app.post('/api/images/generate-imagen', async (req, res) => {
       tempPath: tempFilename
     });
   } catch (error) {
-    console.error('❌ Google Imagen 4 API failed:', error.message);
+    console.error('❌ Gemini image generation failed:', error.message);
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -873,7 +909,7 @@ app.post('/api/images/select', async (req, res) => {
 
     console.log(`Saving selected hero image from source: "${source}" for slug: "${slug}"`);
 
-    if (source === 'Imagen 4' && tempPath) {
+    if ((source === 'Imagen 4' || source === 'Gemini Image') && tempPath) {
       const fullTempPath = path.join(DATA_DIR, tempPath);
       if (fs.existsSync(fullTempPath)) {
         fs.copyFileSync(fullTempPath, finalOutputPath);

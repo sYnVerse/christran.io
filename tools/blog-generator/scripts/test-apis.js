@@ -46,62 +46,100 @@ async function testGemini() {
 
 async function testImagen() {
   if (!geminiKey) {
-    console.error('❌ Skipping Imagen test (API key missing).');
+    console.error('❌ Skipping image generation test (API key missing).');
     return false;
   }
-  
-  try {
-    console.log('🎨 Testing Imagen 4 Image Generation API...');
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${geminiKey}`;
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
 
-      body: JSON.stringify({
-        instances: [
-          { prompt: 'A simple stylized yellow banana on a clean purple background, digital art vector style' }
-        ],
-        parameters: {
-          sampleCount: 1,
-          aspectRatio: '16:9',
-          outputMimeType: 'image/jpeg'
+  const IMAGE_MODEL_CHAIN = [
+    'gemini-3.1-flash-image',
+    'gemini-3-pro-image',
+    'gemini-2.5-flash-image',
+  ];
+
+  function isRateLimitError(error) {
+    const message = (error?.message || String(error)).toLowerCase();
+    const status = error?.status || error?.statusCode || error?.cause?.status;
+    if (status === 429) return true;
+    return message.includes('resource_exhausted') ||
+      message.includes('resource has been exhausted') ||
+      message.includes('too many requests') ||
+      message.includes(' 429 ') ||
+      message.includes(': 429');
+  }
+
+  try {
+    console.log('🎨 Testing Gemini Image Generation API (gemini-3.1-flash-image)...');
+    const promptText = 'A simple stylized yellow banana on a clean purple background, digital art vector style';
+
+    let buffer;
+    let usedModel;
+    for (let i = 0; i < IMAGE_MODEL_CHAIN.length; i++) {
+      const modelName = IMAGE_MODEL_CHAIN[i];
+      try {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${geminiKey}`;
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: promptText }] }],
+            generationConfig: {
+              responseModalities: ['IMAGE'],
+              imageConfig: { aspectRatio: '16:9' },
+            },
+          }),
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          const error = new Error(`Gemini Image API error (${modelName}): ${response.status} ${response.statusText} - ${errorText}`);
+          error.status = response.status;
+          if (isRateLimitError(error) && i < IMAGE_MODEL_CHAIN.length - 1) {
+            console.warn(`Rate limit hit on ${modelName}, stepping down to ${IMAGE_MODEL_CHAIN[i + 1]}...`);
+            continue;
+          }
+          throw error;
         }
-      })
-    });
-    
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Imagen API error: ${response.status} ${response.statusText} - ${errorText}`);
+
+        const data = await response.json();
+        const parts = data.candidates?.[0]?.content?.parts || [];
+        for (const part of parts) {
+          if (part.inlineData?.data) {
+            buffer = Buffer.from(part.inlineData.data, 'base64');
+            usedModel = modelName;
+            break;
+          }
+        }
+        if (buffer) break;
+        throw new Error(`No image data in response from ${modelName}`);
+      } catch (error) {
+        if (isRateLimitError(error) && i < IMAGE_MODEL_CHAIN.length - 1) {
+          console.warn(`Rate limit hit on ${modelName}, stepping down to ${IMAGE_MODEL_CHAIN[i + 1]}...`);
+          continue;
+        }
+        throw error;
+      }
     }
-    
-    const data = await response.json();
-    if (!data.predictions || data.predictions.length === 0 || !data.predictions[0].bytesBase64Encoded) {
-      throw new Error('Predictions payload empty or missing base64 bytes.');
+
+    if (!buffer) {
+      throw new Error('All image models failed to return image data.');
     }
-    
-    const base64Bytes = data.predictions[0].bytesBase64Encoded;
-    const buffer = Buffer.from(base64Bytes, 'base64');
-    
-    // Ensure data folder exists
+
     const dataFolder = path.join(__dirname, '../data');
     if (!fs.existsSync(dataFolder)) {
       fs.mkdirSync(dataFolder, { recursive: true });
     }
-    
+
     const testOutputPath = path.join(dataFolder, 'test-image.webp');
-    
-    // Use sharp to convert to optimized WebP format
+
     await sharp(buffer)
       .webp({ quality: 85 })
       .toFile(testOutputPath);
-      
-    console.log(`✅ Imagen 4 successfully generated and saved test WebP image to: ${testOutputPath}`);
+
+    console.log(`✅ ${usedModel} successfully generated and saved test WebP image to: ${testOutputPath}`);
 
     return true;
   } catch (error) {
-    console.error(`❌ Imagen API Error:`, error.message);
+    console.error(`❌ Gemini Image API Error:`, error.message);
     console.log('🔄 Falling back to free high-quality stock photo via LoremFlickr...');
     try {
       const fallbackUrl = 'https://loremflickr.com/1024/576/technology,coding,hardware,minimalist';
