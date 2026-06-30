@@ -195,19 +195,19 @@
     "semantic_hash": "4f3d254ee01d31e5fef7d9c9c4ecc56e"
   },
   "tools/blog-generator/scripts/send-ideas.js": {
-    "mtime": 1780966498.094168,
-    "ast_hash": "d5999022bd7c4bfc8f49e5633690ff42",
-    "semantic_hash": "d5999022bd7c4bfc8f49e5633690ff42"
+    "mtime": 1782579162.5312295,
+    "ast_hash": "d5e2c52dcb353387b3663dcd6878ea22",
+    "semantic_hash": ""
   },
   "tools/blog-generator/scripts/test-apis.js": {
-    "mtime": 1780764054.6459618,
-    "ast_hash": "c6f2c691a3b179555a7feceabd0d730e",
-    "semantic_hash": "c6f2c691a3b179555a7feceabd0d730e"
+    "mtime": 1782579162.5423777,
+    "ast_hash": "d227a5cecf900f2b8cd2531f27f5e24a",
+    "semantic_hash": ""
   },
   "tools/blog-generator/server.js": {
-    "mtime": 1781566728.1492243,
-    "ast_hash": "5b21d2277f202f8275c95b726bc560bb",
-    "semantic_hash": "5b21d2277f202f8275c95b726bc560bb"
+    "mtime": 1782579162.5533915,
+    "ast_hash": "43f7faba59d98f679b22db3daa530d56",
+    "semantic_hash": ""
   },
   "tsconfig.json": {
     "mtime": 1780201807.1832452,
@@ -350,9 +350,9 @@
     "semantic_hash": "10c1f5a4c968c34f9b5595ee4402285b"
   },
   "src/content/portfolio/f1-fandom.mdx": {
-    "mtime": 1782079195.5961251,
-    "ast_hash": "fe19b05d5ab4cdee834c982559bc28a1",
-    "semantic_hash": "fe19b05d5ab4cdee834c982559bc28a1"
+    "mtime": 1782797460.150711,
+    "ast_hash": "fe4b90248022735736728ea40adcc9db",
+    "semantic_hash": ""
   },
   "src/content/portfolio/f1-wiki.mdx": {
     "mtime": 1781568624.6107645,
@@ -612,6 +612,16 @@
   "CLAUDE.md": {
     "mtime": 1782520318.594641,
     "ast_hash": "8a6643a420fdad6bfb583523bc6cef16",
+    "semantic_hash": ""
+  },
+  "tools/blog-generator/scratch/list-models.js": {
+    "mtime": 1782574245.14838,
+    "ast_hash": "c18ca06f83e6ab0ba2a9abf69f840bf4",
+    "semantic_hash": ""
+  },
+  "tools/blog-generator/scratch/test-image-gen.js": {
+    "mtime": 1782574270.1720586,
+    "ast_hash": "ec610d013775346456e396bbeaead840",
     "semantic_hash": ""
   }
 }

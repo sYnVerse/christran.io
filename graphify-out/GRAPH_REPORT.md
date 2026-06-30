@@ -5,12 +5,12 @@
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1211 nodes · 1286 edges · 104 communities (77 shown, 27 thin omitted)
+- 1208 nodes · 1283 edges · 104 communities (77 shown, 27 thin omitted)
 - Extraction: 96% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 48 edges (avg confidence: 0.87)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `5a4ddb21`
+- Built from commit: `a0548c91`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -146,8 +146,8 @@ Cohesion: 0.06
 Nodes (30): cloudflare, categories, dash, icon_urls, label, preview_image_url, products, dependencies (+22 more)
 
 ### Community 2 - "F1 Active Aerodynamics Challenge"
-Cohesion: 0.10
-Nodes (22): F1 Wiki Automator, Automated Cron Synchronization, F1 Wiki Automator Project Documentation, F1 Fandom Wiki Integration, F1 Fandom Wiki Project Documentation, Scribunto Lua Scripting, Auto-Chlor System, 10G/20G Bonded Network Backbone (+14 more)
+Cohesion: 0.11
+Nodes (19): F1 Fandom Wiki Integration, F1 Fandom Wiki Project Documentation, Scribunto Lua Scripting, Auto-Chlor System, 10G/20G Bonded Network Backbone, rclone Cloud Storage Mount, Enterprise Home Lab Documentation, Enterprise Home Lab (+11 more)
 
 ### Community 3 - "ZFS Storage and Homelab Provisioning"
 Cohesion: 0.14
@@ -382,24 +382,24 @@ Cohesion: 0.47
 Nodes (5): __dirname, __filename, run(), testRESTImageGen(), testSDKImageGen()
 
 ## Knowledge Gaps
-- **824 isolated node(s):** `redirectUrls`, `name`, `description`, `label`, `products` (+819 more)
+- **823 isolated node(s):** `redirectUrls`, `name`, `description`, `label`, `products` (+818 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **27 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `../components/Header.astro` connect `Enterprise Homelab Infrastructure` to `Home Server and Self-Hosted Media`?**
-  _High betweenness centrality (0.002) - this node is a cross-community bridge._
 - **Why does `../components/Footer.astro` connect `Enterprise Homelab Infrastructure` to `Cloudflare Workers Pipeline Batch Metadata`?**
   _High betweenness centrality (0.002) - this node is a cross-community bridge._
+- **Why does `../components/Header.astro` connect `Enterprise Homelab Infrastructure` to `Home Server and Self-Hosted Media`?**
+  _High betweenness centrality (0.002) - this node is a cross-community bridge._
 - **What connects `redirectUrls`, `name`, `description` to the rest of the system?**
-  _853 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _851 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Enterprise Homelab Infrastructure` be split into smaller, more focused modules?**
   _Cohesion score 0.06352941176470588 - nodes in this community are weakly interconnected._
 - **Should `AI Art Studio and Workspace UI` be split into smaller, more focused modules?**
   _Cohesion score 0.06451612903225806 - nodes in this community are weakly interconnected._
 - **Should `F1 Active Aerodynamics Challenge` be split into smaller, more focused modules?**
-  _Cohesion score 0.09523809523809523 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.1111111111111111 - nodes in this community are weakly interconnected._
 - **Should `ZFS Storage and Homelab Provisioning` be split into smaller, more focused modules?**
   _Cohesion score 0.14166666666666666 - nodes in this community are weakly interconnected._
