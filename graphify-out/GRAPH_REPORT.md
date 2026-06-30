@@ -1,16 +1,16 @@
-# Graph Report - christran.io  (2026-06-26)
+# Graph Report - christran.io  (2026-06-29)
 
 ## Corpus Check
-- 81 files · ~2,318,549 words
+- 83 files · ~2,319,548 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1195 nodes · 1267 edges · 102 communities (77 shown, 25 thin omitted)
-- Extraction: 96% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 49 edges (avg confidence: 0.87)
+- 1211 nodes · 1286 edges · 104 communities (77 shown, 27 thin omitted)
+- Extraction: 96% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 48 edges (avg confidence: 0.87)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `3d7151ab`
+- Built from commit: `5a4ddb21`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -101,6 +101,8 @@
 - [[_COMMUNITY_Community 84|Community 84]]
 - [[_COMMUNITY_Community 85|Community 85]]
 - [[_COMMUNITY_Community 101|Community 101]]
+- [[_COMMUNITY_Community 102|Community 102]]
+- [[_COMMUNITY_Community 103|Community 103]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `christran.io` - 11 edges
@@ -133,7 +135,7 @@
 - **Elon Musk Business Ecosystem** — spacex_ipo_equation_spacex, tesla_fsd_tesla, spacex_ipo_equation_xai [INFERRED 0.90]
 - **Orbital Infrastructure Components** — spacex_ipo_equation_starship, spacex_ipo_equation_starlink, spacex_ipo_equation_orbital_data_center [EXTRACTED 0.95]
 
-## Communities (102 total, 25 thin omitted)
+## Communities (104 total, 27 thin omitted)
 
 ### Community 0 - "Enterprise Homelab Infrastructure"
 Cohesion: 0.06
@@ -180,8 +182,8 @@ Cohesion: 0.22
 Nodes (9): SpaceX IPO Valuation Equation Diagram, Off-World AI Compute, SpaceX Trillion Dollar Valuation, Starlink Optical Network, xAI Compute Hub, Fast-Track Market Capitalization, SpaceX Nasdaq IPO Low Float Rules Chart, Nasdaq-100 Low-Float Rules (+1 more)
 
 ### Community 11 - "AI Chat and Edge Storage Stack"
-Cohesion: 0.10
-Nodes (23): app, ASSETS_IMG_PATH, BLOG_CONTENT_PATH, DATA_DIR, __dirname, execPromise, __filename, generateBlogIdeas() (+15 more)
+Cohesion: 0.09
+Nodes (28): app, ASSETS_IMG_PATH, BLOG_CONTENT_PATH, DATA_DIR, __dirname, execPromise, __filename, generateAIImageBuffer() (+20 more)
 
 ### Community 12 - "F1 Wiki Automation Scripts"
 Cohesion: 0.25
@@ -234,10 +236,6 @@ Nodes (3): Department of Government Efficiency (DOGE), Elon Musk DOGE Office Ima
 ### Community 24 - "SpaceX IPO Blog Visuals"
 Cohesion: 0.67
 Nodes (3): NASDAQ Low-Float Loophole, NASDAQ Low-Float Rules and SpaceX IPO, Index Systemic Risk
-
-### Community 25 - "sYnID Identity Branding"
-Cohesion: 0.50
-Nodes (3): graphify, Graphify Rules, Graphify Workflow
 
 ### Community 26 - "Chat App Screenshots"
 Cohesion: 1.00
@@ -316,8 +314,8 @@ Cohesion: 0.32
 Nodes (8): generateImagen4(), loadIdeas(), renderCurrentImagePreview(), renderIdeas(), renderSuggestions(), searchImageSuggestions(), selectImage(), updateIcons()
 
 ### Community 57 - "Community 57"
-Cohesion: 0.32
-Nodes (7): BLOG_CONTENT_PATH, DATA_DIR, __dirname, __filename, getExistingPostsContext(), retryCall(), run()
+Cohesion: 0.24
+Nodes (10): BLOG_CONTENT_PATH, DATA_DIR, __dirname, __filename, generateGeminiText(), getExistingPostsContext(), isRateLimitError(), retryCall() (+2 more)
 
 ### Community 58 - "Community 58"
 Cohesion: 0.29
@@ -379,10 +377,14 @@ Nodes (3): Body, Request, Response
 Cohesion: 0.67
 Nodes (3): ByteLengthQueuingStrategy, CountQueuingStrategy, QueuingStrategy
 
+### Community 102 - "Community 102"
+Cohesion: 0.47
+Nodes (5): __dirname, __filename, run(), testRESTImageGen(), testSDKImageGen()
+
 ## Knowledge Gaps
-- **817 isolated node(s):** `redirectUrls`, `name`, `description`, `label`, `products` (+812 more)
+- **824 isolated node(s):** `redirectUrls`, `name`, `description`, `label`, `products` (+819 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **25 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **27 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
@@ -392,7 +394,7 @@ _Questions this graph is uniquely positioned to answer:_
 - **Why does `../components/Footer.astro` connect `Enterprise Homelab Infrastructure` to `Cloudflare Workers Pipeline Batch Metadata`?**
   _High betweenness centrality (0.002) - this node is a cross-community bridge._
 - **What connects `redirectUrls`, `name`, `description` to the rest of the system?**
-  _846 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _853 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Enterprise Homelab Infrastructure` be split into smaller, more focused modules?**
   _Cohesion score 0.06352941176470588 - nodes in this community are weakly interconnected._
 - **Should `AI Art Studio and Workspace UI` be split into smaller, more focused modules?**
