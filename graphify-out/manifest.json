@@ -623,5 +623,15 @@
     "mtime": 1782574270.1720586,
     "ast_hash": "ec610d013775346456e396bbeaead840",
     "semantic_hash": ""
+  },
+  "src/content/blog/graphify.mdx": {
+    "mtime": 1782799367.353377,
+    "ast_hash": "c9ac9f0da1c99ae2521087e260f14d4f",
+    "semantic_hash": ""
+  },
+  "src/assets/img/blog/graphify.webp": {
+    "mtime": 1782798400.54,
+    "ast_hash": "53c53c49dcde4b2252ec759eacc7616a",
+    "semantic_hash": ""
   }
 }
