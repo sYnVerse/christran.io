@@ -38,9 +38,9 @@
       "source_file": "src/content/blog/graphify.mdx",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "blog_graphify",
       "community": 104,
-      "norm_label": "graphify.mdx"
+      "norm_label": "graphify.mdx",
+      "id": "blog_graphify"
     },
     {
       "label": "The Token Bottleneck: Why Naive Folder-Shoving Fails",
@@ -48,9 +48,9 @@
       "source_file": "src/content/blog/graphify.mdx",
       "source_location": "L20",
       "_origin": "ast",
-      "id": "blog_graphify_the_token_bottleneck_why_naive_folder_shoving_fails",
       "community": 104,
-      "norm_label": "the token bottleneck: why naive folder-shoving fails"
+      "norm_label": "the token bottleneck: why naive folder-shoving fails",
+      "id": "blog_graphify_the_token_bottleneck_why_naive_folder_shoving_fails"
     },
     {
       "label": "1. The \"Lost in the Middle\" Phenomenon",
@@ -58,9 +58,9 @@
       "source_file": "src/content/blog/graphify.mdx",
       "source_location": "L26",
       "_origin": "ast",
-      "id": "blog_graphify_1_the_lost_in_the_middle_phenomenon",
       "community": 104,
-      "norm_label": "1. the \"lost in the middle\" phenomenon"
+      "norm_label": "1. the \"lost in the middle\" phenomenon",
+      "id": "blog_graphify_1_the_lost_in_the_middle_phenomenon"
     },
     {
       "label": "2. High Latency and Token Exhaustion",
@@ -68,9 +68,9 @@
       "source_file": "src/content/blog/graphify.mdx",
       "source_location": "L29",
       "_origin": "ast",
-      "id": "blog_graphify_2_high_latency_and_token_exhaustion",
       "community": 104,
-      "norm_label": "2. high latency and token exhaustion"
+      "norm_label": "2. high latency and token exhaustion",
+      "id": "blog_graphify_2_high_latency_and_token_exhaustion"
     },
     {
       "label": "3. Cross-Repository Blindspots",
@@ -78,9 +78,9 @@
       "source_file": "src/content/blog/graphify.mdx",
       "source_location": "L35",
       "_origin": "ast",
-      "id": "blog_graphify_3_cross_repository_blindspots",
       "community": 104,
-      "norm_label": "3. cross-repository blindspots"
+      "norm_label": "3. cross-repository blindspots",
+      "id": "blog_graphify_3_cross_repository_blindspots"
     },
     {
       "label": "Enter Graphify: High-Density, Low-Bloat Context Mapping",
@@ -88,9 +88,9 @@
       "source_file": "src/content/blog/graphify.mdx",
       "source_location": "L42",
       "_origin": "ast",
-      "id": "blog_graphify_enter_graphify_high_density_low_bloat_context_mapping",
       "community": 104,
-      "norm_label": "enter graphify: high-density, low-bloat context mapping"
+      "norm_label": "enter graphify: high-density, low-bloat context mapping",
+      "id": "blog_graphify_enter_graphify_high_density_low_bloat_context_mapping"
     },
     {
       "label": "How Graphify Represents Code",
@@ -98,9 +98,9 @@
       "source_file": "src/content/blog/graphify.mdx",
       "source_location": "L66",
       "_origin": "ast",
-      "id": "blog_graphify_how_graphify_represents_code",
       "community": 104,
-      "norm_label": "how graphify represents code"
+      "norm_label": "how graphify represents code",
+      "id": "blog_graphify_how_graphify_represents_code"
     },
     {
       "label": "f1-fandom.mdx",
@@ -492,16 +492,6 @@
       "community": 0,
       "norm_label": "canonicalurl",
       "id": "components_basehead_canonicalurl"
-    },
-    {
-      "label": "../styles/global.css",
-      "file_type": "code",
-      "source_file": "src/styles/global.css",
-      "confidence": "EXTRACTED",
-      "_origin": "ast",
-      "community": 0,
-      "norm_label": "../styles/global.css",
-      "id": "c_users_chris_documents_github_christran_io_src_styles_global_css"
     },
     {
       "label": "../components/BlogCard.astro",
@@ -12962,9 +12952,9 @@
       "source_file": "src/content/blog/graphify.mdx",
       "source_location": "L42",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "blog_graphify",
-      "target": "blog_graphify_enter_graphify_high_density_low_bloat_context_mapping",
-      "confidence_score": 1.0
+      "target": "blog_graphify_enter_graphify_high_density_low_bloat_context_mapping"
     },
     {
       "relation": "contains",
@@ -12972,9 +12962,9 @@
       "source_file": "src/content/blog/graphify.mdx",
       "source_location": "L20",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "blog_graphify",
-      "target": "blog_graphify_the_token_bottleneck_why_naive_folder_shoving_fails",
-      "confidence_score": 1.0
+      "target": "blog_graphify_the_token_bottleneck_why_naive_folder_shoving_fails"
     },
     {
       "relation": "contains",
@@ -12982,9 +12972,9 @@
       "source_file": "src/content/blog/graphify.mdx",
       "source_location": "L26",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "blog_graphify_the_token_bottleneck_why_naive_folder_shoving_fails",
-      "target": "blog_graphify_1_the_lost_in_the_middle_phenomenon",
-      "confidence_score": 1.0
+      "target": "blog_graphify_1_the_lost_in_the_middle_phenomenon"
     },
     {
       "relation": "contains",
@@ -12992,9 +12982,9 @@
       "source_file": "src/content/blog/graphify.mdx",
       "source_location": "L29",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "blog_graphify_the_token_bottleneck_why_naive_folder_shoving_fails",
-      "target": "blog_graphify_2_high_latency_and_token_exhaustion",
-      "confidence_score": 1.0
+      "target": "blog_graphify_2_high_latency_and_token_exhaustion"
     },
     {
       "relation": "contains",
@@ -13002,9 +12992,9 @@
       "source_file": "src/content/blog/graphify.mdx",
       "source_location": "L35",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "blog_graphify_the_token_bottleneck_why_naive_folder_shoving_fails",
-      "target": "blog_graphify_3_cross_repository_blindspots",
-      "confidence_score": 1.0
+      "target": "blog_graphify_3_cross_repository_blindspots"
     },
     {
       "relation": "contains",
@@ -13012,9 +13002,9 @@
       "source_file": "src/content/blog/graphify.mdx",
       "source_location": "L66",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "blog_graphify_enter_graphify_high_density_low_bloat_context_mapping",
-      "target": "blog_graphify_how_graphify_represents_code",
-      "confidence_score": 1.0
+      "target": "blog_graphify_how_graphify_represents_code"
     },
     {
       "relation": "contains",
@@ -13353,14 +13343,6 @@
       "confidence_score": 1.0,
       "source": "blog_index",
       "target": "components_basehead"
-    },
-    {
-      "relation": "imports_from",
-      "confidence": "EXTRACTED",
-      "source_file": "src/components/BaseHead.astro",
-      "confidence_score": 1.0,
-      "source": "components_basehead",
-      "target": "c_users_chris_documents_github_christran_io_src_styles_global_css"
     },
     {
       "relation": "contains",
@@ -25989,5 +25971,5 @@
       "source_file": "src/content/blog/spacex-ipo-equation.mdx"
     }
   ],
-  "built_at_commit": "77e21fb9a0cd8227cc5dd0380f0f02e520c6871b"
+  "built_at_commit": "2f4e85079e9650c7d52e453269844e602af71445"
 }

@@ -1,16 +1,16 @@
-# Graph Report - christran.io  (2026-06-29)
+# Graph Report - christran.io  (2026-06-30)
 
 ## Corpus Check
-- 84 files · ~2,323,184 words
+- 84 files · ~2,443,247 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1215 nodes · 1289 edges · 105 communities (78 shown, 27 thin omitted)
+- 1214 nodes · 1288 edges · 105 communities (78 shown, 27 thin omitted)
 - Extraction: 96% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 48 edges (avg confidence: 0.87)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `77e21fb9`
+- Built from commit: `2f4e8507`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -109,8 +109,8 @@
 1. `christran.io` - 11 edges
 2. `../components/Header.astro` - 10 edges
 3. `../layouts/BlogPost.astro` - 10 edges
-4. `../components/BaseHead.astro` - 9 edges
-5. `scripts` - 8 edges
+4. `scripts` - 8 edges
+5. `../components/BaseHead.astro` - 8 edges
 6. `../components/Footer.astro` - 8 edges
 7. `Christopher Tran's Resume` - 8 edges
 8. `cloudflare` - 7 edges
@@ -139,8 +139,8 @@
 ## Communities (105 total, 27 thin omitted)
 
 ### Community 0 - "Enterprise Homelab Infrastructure"
-Cohesion: 0.06
-Nodes (29): posts, ../assets/img/network-bg-desktop.webp, ../assets/img/network-bg-mobile.webp, ../assets/img/network-bg-ultrawide.webp, ../assets/img/network-bg.webp, ../assets/img/profile.png, ../consts, ../styles/global.css (+21 more)
+Cohesion: 0.07
+Nodes (28): posts, ../assets/img/network-bg-desktop.webp, ../assets/img/network-bg-mobile.webp, ../assets/img/network-bg-ultrawide.webp, ../assets/img/network-bg.webp, ../assets/img/profile.png, ../consts, ../components/BaseHead.astro (+20 more)
 
 ### Community 1 - "AI Art Studio and Workspace UI"
 Cohesion: 0.06
@@ -387,7 +387,7 @@ Cohesion: 0.29
 Nodes (6): 1. The "Lost in the Middle" Phenomenon, 2. High Latency and Token Exhaustion, 3. Cross-Repository Blindspots, Enter Graphify: High-Density, Low-Bloat Context Mapping, How Graphify Represents Code, The Token Bottleneck: Why Naive Folder-Shoving Fails
 
 ## Knowledge Gaps
-- **827 isolated node(s):** `1. The "Lost in the Middle" Phenomenon`, `2. High Latency and Token Exhaustion`, `3. Cross-Repository Blindspots`, `How Graphify Represents Code`, `redirectUrls` (+822 more)
+- **826 isolated node(s):** `1. The "Lost in the Middle" Phenomenon`, `2. High Latency and Token Exhaustion`, `3. Cross-Repository Blindspots`, `How Graphify Represents Code`, `redirectUrls` (+821 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **27 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -395,13 +395,13 @@ Nodes (6): 1. The "Lost in the Middle" Phenomenon, 2. High Latency and Token Exh
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `../components/Header.astro` connect `Enterprise Homelab Infrastructure` to `Home Server and Self-Hosted Media`?**
-  _High betweenness centrality (0.002) - this node is a cross-community bridge._
+  _High betweenness centrality (0.003) - this node is a cross-community bridge._
 - **Why does `../components/Footer.astro` connect `Enterprise Homelab Infrastructure` to `Cloudflare Workers Pipeline Batch Metadata`?**
   _High betweenness centrality (0.002) - this node is a cross-community bridge._
 - **What connects `1. The "Lost in the Middle" Phenomenon`, `2. High Latency and Token Exhaustion`, `3. Cross-Repository Blindspots` to the rest of the system?**
-  _855 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _854 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Enterprise Homelab Infrastructure` be split into smaller, more focused modules?**
-  _Cohesion score 0.06352941176470588 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.0653061224489796 - nodes in this community are weakly interconnected._
 - **Should `AI Art Studio and Workspace UI` be split into smaller, more focused modules?**
   _Cohesion score 0.06451612903225806 - nodes in this community are weakly interconnected._
 - **Should `F1 Active Aerodynamics Challenge` be split into smaller, more focused modules?**

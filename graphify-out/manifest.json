@@ -625,13 +625,18 @@
     "semantic_hash": ""
   },
   "src/content/blog/graphify.mdx": {
-    "mtime": 1782799367.353377,
-    "ast_hash": "c9ac9f0da1c99ae2521087e260f14d4f",
+    "mtime": 1782864277.3238401,
+    "ast_hash": "e46b2789932d101e77ec0afbf9e272f0",
     "semantic_hash": ""
   },
   "src/assets/img/blog/graphify.webp": {
     "mtime": 1782798400.54,
     "ast_hash": "53c53c49dcde4b2252ec759eacc7616a",
+    "semantic_hash": ""
+  },
+  "table_screenshot.png": {
+    "mtime": 1782865616.4385948,
+    "ast_hash": "8814482369048825fc5ddadab540e6fb",
     "semantic_hash": ""
   }
 }
