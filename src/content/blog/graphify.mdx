@@ -135,6 +135,79 @@ Claude reads the exact structural relationships, understands how `sYnID` communi
 
 ---
 
+## Going Autonomous: The Graphify MCP Server
+
+While manually exporting sub-graphs via the CLI is great for targeted tasks, the real magic happens when you let the AI agent navigate the codebase map *autonomously*. 
+
+To enable this, I built a **Model Context Protocol (MCP)** server directly into Graphify. MCP is an open-source standard developed by Anthropic that allows AI assistants (like Claude Desktop, Cursor, or Claude Code CLI) to securely query external data sources using structured tools.
+
+Instead of you generating markdown context files, the AI agent can query the Graphify index dynamically as it reasons about your prompt.
+
+```
+  [ AI Agent (Claude/Cursor) ] ◄─── (Dynamic Subgraph Context) ───┐
+               │                                                  │
+         (Structured Tool Call)                                   │
+               │                                                  │
+               ▼                                                  │
+     [ Graphify MCP Server ] ────── (Reads Graph) ──────► [ graph.json Index ]
+```
+
+### Tools Exposed by the Server
+
+Once connected, the Graphify MCP server equips the AI agent with a specialized toolkit:
+*   `query_graph`: Performs a traversal of the graph to retrieve context for a specific concept or natural language query.
+*   `shortest_path`: Traces the dependency path between two components (e.g., finding how `sYnapse` depends on `sYnID`).
+*   `get_node` & `get_neighbors`: Fetches details about a specific code symbol, file, or its immediate dependents.
+*   `get_community`: Focuses on a clustered module or conceptual bucket identified during semantic grouping.
+*   `god_nodes` & `graph_stats`: Provides architectural overviews and central hubs in the system.
+
+### Setting Up the Graphify MCP Server
+
+To let your AI agent query the graph directly, you can run the server over standard input/output (stdio) and configure it in your favorite IDE or chat agent.
+
+#### Step 1: Start/Locate the Python Interpreter
+First, you'll need the path to the Python environment where Graphify is installed. If you ran Graphify via a tool installer (like `uv` or `pipx`), you can output the active python path:
+
+```bash
+cat graphify-out/.graphify_python
+```
+*(Copy the absolute path returned, e.g., `C:\Users\chris\AppData\Local\pipx\venvs\graphifyy\Scripts\python.exe` on Windows).*
+
+#### Step 2: Configure Your AI Agent
+
+##### A. Claude Desktop
+Add the server config to your Claude Desktop configuration file (located at `%APPDATA%\Claude\claude_desktop_config.json` on Windows or `~/Library/Application Support/Claude/claude_desktop_config.json` on macOS):
+
+```json
+{
+  "mcpServers": {
+    "graphify": {
+      "command": "C:/Users/chris/AppData/Local/pipx/venvs/graphifyy/Scripts/python.exe",
+      "args": [
+        "-m",
+        "graphify.serve",
+        "C:/Users/chris/Documents/GitHub/christran.io/graphify-out/graph.json"
+      ]
+    }
+  }
+}
+```
+*(Make sure to use forward slashes `/` in paths even on Windows, and replace the paths with your actual python path and absolute path to your project's `graph.json`)*.
+
+##### B. Cursor IDE
+You can add Graphify as a custom command-based MCP server in Cursor:
+1. Go to **Settings** -> **Features** -> **MCP**.
+2. Click **+ Add New MCP Server**.
+3. Configure the settings:
+   *   **Name:** `graphify`
+   *   **Type:** `command`
+   *   **Command:** `<absolute-path-to-python> -m graphify.serve <absolute-path-to-graph.json>` (e.g. `C:/Users/chris/.../python.exe -m graphify.serve C:/Users/chris/.../graphify-out/graph.json`)
+4. Click **Save**.
+
+Now, when you ask Cursor or Claude questions in chat, they will notice the `graphify` tool group and autonomously call `shortest_path` or `query_graph` to retrieve precise type definitions and dependencies on their own!
+
+---
+
 ## The Results: Faster, Cheaper, Smarter
 
 Implementing Graphify as a context broker between my codebases and our AI agents has completely transformed my development velocity across all 8 web applications.
