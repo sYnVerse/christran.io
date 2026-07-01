@@ -38,69 +38,69 @@
       "source_file": "src/content/blog/graphify.mdx",
       "source_location": "L1",
       "_origin": "ast",
+      "id": "blog_graphify",
       "community": 104,
-      "norm_label": "graphify.mdx",
-      "id": "blog_graphify"
+      "norm_label": "graphify.mdx"
     },
     {
       "label": "The Token Bottleneck: Why Naive Folder-Shoving Fails",
       "file_type": "document",
       "source_file": "src/content/blog/graphify.mdx",
-      "source_location": "L20",
+      "source_location": "L21",
       "_origin": "ast",
+      "id": "blog_graphify_the_token_bottleneck_why_naive_folder_shoving_fails",
       "community": 104,
-      "norm_label": "the token bottleneck: why naive folder-shoving fails",
-      "id": "blog_graphify_the_token_bottleneck_why_naive_folder_shoving_fails"
+      "norm_label": "the token bottleneck: why naive folder-shoving fails"
     },
     {
       "label": "1. The \"Lost in the Middle\" Phenomenon",
       "file_type": "document",
       "source_file": "src/content/blog/graphify.mdx",
-      "source_location": "L26",
+      "source_location": "L27",
       "_origin": "ast",
+      "id": "blog_graphify_1_the_lost_in_the_middle_phenomenon",
       "community": 104,
-      "norm_label": "1. the \"lost in the middle\" phenomenon",
-      "id": "blog_graphify_1_the_lost_in_the_middle_phenomenon"
+      "norm_label": "1. the \"lost in the middle\" phenomenon"
     },
     {
       "label": "2. High Latency and Token Exhaustion",
       "file_type": "document",
       "source_file": "src/content/blog/graphify.mdx",
-      "source_location": "L29",
+      "source_location": "L30",
       "_origin": "ast",
+      "id": "blog_graphify_2_high_latency_and_token_exhaustion",
       "community": 104,
-      "norm_label": "2. high latency and token exhaustion",
-      "id": "blog_graphify_2_high_latency_and_token_exhaustion"
+      "norm_label": "2. high latency and token exhaustion"
     },
     {
       "label": "3. Cross-Repository Blindspots",
       "file_type": "document",
       "source_file": "src/content/blog/graphify.mdx",
-      "source_location": "L35",
+      "source_location": "L36",
       "_origin": "ast",
+      "id": "blog_graphify_3_cross_repository_blindspots",
       "community": 104,
-      "norm_label": "3. cross-repository blindspots",
-      "id": "blog_graphify_3_cross_repository_blindspots"
+      "norm_label": "3. cross-repository blindspots"
     },
     {
       "label": "Enter Graphify: High-Density, Low-Bloat Context Mapping",
       "file_type": "document",
       "source_file": "src/content/blog/graphify.mdx",
-      "source_location": "L42",
+      "source_location": "L43",
       "_origin": "ast",
+      "id": "blog_graphify_enter_graphify_high_density_low_bloat_context_mapping",
       "community": 104,
-      "norm_label": "enter graphify: high-density, low-bloat context mapping",
-      "id": "blog_graphify_enter_graphify_high_density_low_bloat_context_mapping"
+      "norm_label": "enter graphify: high-density, low-bloat context mapping"
     },
     {
       "label": "How Graphify Represents Code",
       "file_type": "document",
       "source_file": "src/content/blog/graphify.mdx",
-      "source_location": "L66",
+      "source_location": "L67",
       "_origin": "ast",
+      "id": "blog_graphify_how_graphify_represents_code",
       "community": 104,
-      "norm_label": "how graphify represents code",
-      "id": "blog_graphify_how_graphify_represents_code"
+      "norm_label": "how graphify represents code"
     },
     {
       "label": "f1-fandom.mdx",
@@ -25971,5 +25971,5 @@
       "source_file": "src/content/blog/spacex-ipo-equation.mdx"
     }
   ],
-  "built_at_commit": "2f4e85079e9650c7d52e453269844e602af71445"
+  "built_at_commit": "29b039d26dcd5a255ff631e272b2a4688d3c0467"
 }
