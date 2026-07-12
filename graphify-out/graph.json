@@ -33,14 +33,114 @@
   },
   "nodes": [
     {
+      "label": "zero-ports-open-securing-home-lab-entry-points-with-cloudflare-tunnels-and-access.md",
+      "file_type": "document",
+      "source_file": "src/content/blog/zero-ports-open-securing-home-lab-entry-points-with-cloudflare-tunnels-and-access.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "blog_zero_ports_open_securing_home_lab_entry_points_with_cloudflare_tunnels_and_access",
+      "community": 105,
+      "norm_label": "zero-ports-open-securing-home-lab-entry-points-with-cloudflare-tunnels-and-access.md"
+    },
+    {
+      "label": "The Anatomy of a Threat: Why Port Forwarding Must Die",
+      "file_type": "document",
+      "source_file": "src/content/blog/zero-ports-open-securing-home-lab-entry-points-with-cloudflare-tunnels-and-access.md",
+      "source_location": "L20",
+      "_origin": "ast",
+      "id": "blog_zero_ports_open_securing_home_lab_entry_points_with_cloudflare_tunnels_and_access_the_anatomy_of_a_threat_why_port_forwarding_must_die",
+      "community": 105,
+      "norm_label": "the anatomy of a threat: why port forwarding must die"
+    },
+    {
+      "label": "The Cloudflare Tunnel Paradigm Shift",
+      "file_type": "document",
+      "source_file": "src/content/blog/zero-ports-open-securing-home-lab-entry-points-with-cloudflare-tunnels-and-access.md",
+      "source_location": "L30",
+      "_origin": "ast",
+      "id": "blog_zero_ports_open_securing_home_lab_entry_points_with_cloudflare_tunnels_and_access_the_cloudflare_tunnel_paradigm_shift",
+      "community": 105,
+      "norm_label": "the cloudflare tunnel paradigm shift"
+    },
+    {
+      "label": "Layering Identity: Zero Trust at the Edge with Cloudflare Access",
+      "file_type": "document",
+      "source_file": "src/content/blog/zero-ports-open-securing-home-lab-entry-points-with-cloudflare-tunnels-and-access.md",
+      "source_location": "L45",
+      "_origin": "ast",
+      "id": "blog_zero_ports_open_securing_home_lab_entry_points_with_cloudflare_tunnels_and_access_layering_identity_zero_trust_at_the_edge_with_cloudflare_access",
+      "community": 105,
+      "norm_label": "layering identity: zero trust at the edge with cloudflare access"
+    },
+    {
+      "label": "Practical Guide: Deploying `cloudflared` in Docker",
+      "file_type": "document",
+      "source_file": "src/content/blog/zero-ports-open-securing-home-lab-entry-points-with-cloudflare-tunnels-and-access.md",
+      "source_location": "L73",
+      "_origin": "ast",
+      "id": "blog_zero_ports_open_securing_home_lab_entry_points_with_cloudflare_tunnels_and_access_practical_guide_deploying_cloudflared_in_docker",
+      "community": 105,
+      "norm_label": "practical guide: deploying `cloudflared` in docker"
+    },
+    {
+      "label": "Step 1: Create the Tunnel in Cloudflare Zero Trust",
+      "file_type": "document",
+      "source_file": "src/content/blog/zero-ports-open-securing-home-lab-entry-points-with-cloudflare-tunnels-and-access.md",
+      "source_location": "L77",
+      "_origin": "ast",
+      "id": "blog_zero_ports_open_securing_home_lab_entry_points_with_cloudflare_tunnels_and_access_step_1_create_the_tunnel_in_cloudflare_zero_trust",
+      "community": 105,
+      "norm_label": "step 1: create the tunnel in cloudflare zero trust"
+    },
+    {
+      "label": "Step 2: Write the Docker Compose Configuration",
+      "file_type": "document",
+      "source_file": "src/content/blog/zero-ports-open-securing-home-lab-entry-points-with-cloudflare-tunnels-and-access.md",
+      "source_location": "L85",
+      "_origin": "ast",
+      "id": "blog_zero_ports_open_securing_home_lab_entry_points_with_cloudflare_tunnels_and_access_step_2_write_the_docker_compose_configuration",
+      "community": 105,
+      "norm_label": "step 2: write the docker compose configuration"
+    },
+    {
+      "label": "Step 3: Start the Daemon",
+      "file_type": "document",
+      "source_file": "src/content/blog/zero-ports-open-securing-home-lab-entry-points-with-cloudflare-tunnels-and-access.md",
+      "source_location": "L104",
+      "_origin": "ast",
+      "id": "blog_zero_ports_open_securing_home_lab_entry_points_with_cloudflare_tunnels_and_access_step_3_start_the_daemon",
+      "community": 105,
+      "norm_label": "step 3: start the daemon"
+    },
+    {
+      "label": "Step 4: Route a Service and Apply Access Policies",
+      "file_type": "document",
+      "source_file": "src/content/blog/zero-ports-open-securing-home-lab-entry-points-with-cloudflare-tunnels-and-access.md",
+      "source_location": "L120",
+      "_origin": "ast",
+      "id": "blog_zero_ports_open_securing_home_lab_entry_points_with_cloudflare_tunnels_and_access_step_4_route_a_service_and_apply_access_policies",
+      "community": 105,
+      "norm_label": "step 4: route a service and apply access policies"
+    },
+    {
+      "label": "Conclusion",
+      "file_type": "document",
+      "source_file": "src/content/blog/zero-ports-open-securing-home-lab-entry-points-with-cloudflare-tunnels-and-access.md",
+      "source_location": "L141",
+      "_origin": "ast",
+      "id": "blog_zero_ports_open_securing_home_lab_entry_points_with_cloudflare_tunnels_and_access_conclusion",
+      "community": 105,
+      "norm_label": "conclusion"
+    },
+    {
       "label": "graphify.mdx",
       "file_type": "document",
       "source_file": "src/content/blog/graphify.mdx",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "blog_graphify",
       "community": 104,
-      "norm_label": "graphify.mdx"
+      "norm_label": "graphify.mdx",
+      "id": "blog_graphify"
     },
     {
       "label": "The Token Bottleneck: Why Naive Folder-Shoving Fails",
@@ -48,9 +148,9 @@
       "source_file": "src/content/blog/graphify.mdx",
       "source_location": "L21",
       "_origin": "ast",
-      "id": "blog_graphify_the_token_bottleneck_why_naive_folder_shoving_fails",
       "community": 104,
-      "norm_label": "the token bottleneck: why naive folder-shoving fails"
+      "norm_label": "the token bottleneck: why naive folder-shoving fails",
+      "id": "blog_graphify_the_token_bottleneck_why_naive_folder_shoving_fails"
     },
     {
       "label": "1. The \"Lost in the Middle\" Phenomenon",
@@ -58,9 +158,9 @@
       "source_file": "src/content/blog/graphify.mdx",
       "source_location": "L27",
       "_origin": "ast",
-      "id": "blog_graphify_1_the_lost_in_the_middle_phenomenon",
       "community": 104,
-      "norm_label": "1. the \"lost in the middle\" phenomenon"
+      "norm_label": "1. the \"lost in the middle\" phenomenon",
+      "id": "blog_graphify_1_the_lost_in_the_middle_phenomenon"
     },
     {
       "label": "2. High Latency and Token Exhaustion",
@@ -68,9 +168,9 @@
       "source_file": "src/content/blog/graphify.mdx",
       "source_location": "L30",
       "_origin": "ast",
-      "id": "blog_graphify_2_high_latency_and_token_exhaustion",
       "community": 104,
-      "norm_label": "2. high latency and token exhaustion"
+      "norm_label": "2. high latency and token exhaustion",
+      "id": "blog_graphify_2_high_latency_and_token_exhaustion"
     },
     {
       "label": "3. Cross-Repository Blindspots",
@@ -78,9 +178,9 @@
       "source_file": "src/content/blog/graphify.mdx",
       "source_location": "L36",
       "_origin": "ast",
-      "id": "blog_graphify_3_cross_repository_blindspots",
       "community": 104,
-      "norm_label": "3. cross-repository blindspots"
+      "norm_label": "3. cross-repository blindspots",
+      "id": "blog_graphify_3_cross_repository_blindspots"
     },
     {
       "label": "Enter Graphify: High-Density, Low-Bloat Context Mapping",
@@ -88,9 +188,9 @@
       "source_file": "src/content/blog/graphify.mdx",
       "source_location": "L43",
       "_origin": "ast",
-      "id": "blog_graphify_enter_graphify_high_density_low_bloat_context_mapping",
       "community": 104,
-      "norm_label": "enter graphify: high-density, low-bloat context mapping"
+      "norm_label": "enter graphify: high-density, low-bloat context mapping",
+      "id": "blog_graphify_enter_graphify_high_density_low_bloat_context_mapping"
     },
     {
       "label": "How Graphify Represents Code",
@@ -98,9 +198,9 @@
       "source_file": "src/content/blog/graphify.mdx",
       "source_location": "L67",
       "_origin": "ast",
-      "id": "blog_graphify_how_graphify_represents_code",
       "community": 104,
-      "norm_label": "how graphify represents code"
+      "norm_label": "how graphify represents code",
+      "id": "blog_graphify_how_graphify_represents_code"
     },
     {
       "label": "f1-fandom.mdx",
@@ -12946,6 +13046,96 @@
     }
   ],
   "links": [
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/content/blog/zero-ports-open-securing-home-lab-entry-points-with-cloudflare-tunnels-and-access.md",
+      "source_location": "L141",
+      "weight": 1.0,
+      "source": "blog_zero_ports_open_securing_home_lab_entry_points_with_cloudflare_tunnels_and_access",
+      "target": "blog_zero_ports_open_securing_home_lab_entry_points_with_cloudflare_tunnels_and_access_conclusion",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/content/blog/zero-ports-open-securing-home-lab-entry-points-with-cloudflare-tunnels-and-access.md",
+      "source_location": "L45",
+      "weight": 1.0,
+      "source": "blog_zero_ports_open_securing_home_lab_entry_points_with_cloudflare_tunnels_and_access",
+      "target": "blog_zero_ports_open_securing_home_lab_entry_points_with_cloudflare_tunnels_and_access_layering_identity_zero_trust_at_the_edge_with_cloudflare_access",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/content/blog/zero-ports-open-securing-home-lab-entry-points-with-cloudflare-tunnels-and-access.md",
+      "source_location": "L73",
+      "weight": 1.0,
+      "source": "blog_zero_ports_open_securing_home_lab_entry_points_with_cloudflare_tunnels_and_access",
+      "target": "blog_zero_ports_open_securing_home_lab_entry_points_with_cloudflare_tunnels_and_access_practical_guide_deploying_cloudflared_in_docker",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/content/blog/zero-ports-open-securing-home-lab-entry-points-with-cloudflare-tunnels-and-access.md",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "blog_zero_ports_open_securing_home_lab_entry_points_with_cloudflare_tunnels_and_access",
+      "target": "blog_zero_ports_open_securing_home_lab_entry_points_with_cloudflare_tunnels_and_access_the_anatomy_of_a_threat_why_port_forwarding_must_die",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/content/blog/zero-ports-open-securing-home-lab-entry-points-with-cloudflare-tunnels-and-access.md",
+      "source_location": "L30",
+      "weight": 1.0,
+      "source": "blog_zero_ports_open_securing_home_lab_entry_points_with_cloudflare_tunnels_and_access_the_anatomy_of_a_threat_why_port_forwarding_must_die",
+      "target": "blog_zero_ports_open_securing_home_lab_entry_points_with_cloudflare_tunnels_and_access_the_cloudflare_tunnel_paradigm_shift",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/content/blog/zero-ports-open-securing-home-lab-entry-points-with-cloudflare-tunnels-and-access.md",
+      "source_location": "L77",
+      "weight": 1.0,
+      "source": "blog_zero_ports_open_securing_home_lab_entry_points_with_cloudflare_tunnels_and_access_practical_guide_deploying_cloudflared_in_docker",
+      "target": "blog_zero_ports_open_securing_home_lab_entry_points_with_cloudflare_tunnels_and_access_step_1_create_the_tunnel_in_cloudflare_zero_trust",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/content/blog/zero-ports-open-securing-home-lab-entry-points-with-cloudflare-tunnels-and-access.md",
+      "source_location": "L85",
+      "weight": 1.0,
+      "source": "blog_zero_ports_open_securing_home_lab_entry_points_with_cloudflare_tunnels_and_access_practical_guide_deploying_cloudflared_in_docker",
+      "target": "blog_zero_ports_open_securing_home_lab_entry_points_with_cloudflare_tunnels_and_access_step_2_write_the_docker_compose_configuration",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/content/blog/zero-ports-open-securing-home-lab-entry-points-with-cloudflare-tunnels-and-access.md",
+      "source_location": "L104",
+      "weight": 1.0,
+      "source": "blog_zero_ports_open_securing_home_lab_entry_points_with_cloudflare_tunnels_and_access_practical_guide_deploying_cloudflared_in_docker",
+      "target": "blog_zero_ports_open_securing_home_lab_entry_points_with_cloudflare_tunnels_and_access_step_3_start_the_daemon",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/content/blog/zero-ports-open-securing-home-lab-entry-points-with-cloudflare-tunnels-and-access.md",
+      "source_location": "L120",
+      "weight": 1.0,
+      "source": "blog_zero_ports_open_securing_home_lab_entry_points_with_cloudflare_tunnels_and_access_practical_guide_deploying_cloudflared_in_docker",
+      "target": "blog_zero_ports_open_securing_home_lab_entry_points_with_cloudflare_tunnels_and_access_step_4_route_a_service_and_apply_access_policies",
+      "confidence_score": 1.0
+    },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
@@ -25971,5 +26161,5 @@
       "source_file": "src/content/blog/spacex-ipo-equation.mdx"
     }
   ],
-  "built_at_commit": "29b039d26dcd5a255ff631e272b2a4688d3c0467"
+  "built_at_commit": "1d6b28159f880154346afcf1f6669a425fafa1e2"
 }

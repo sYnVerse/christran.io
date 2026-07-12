@@ -1,16 +1,16 @@
-# Graph Report - christran.io  (2026-06-30)
+# Graph Report - christran.io  (2026-07-12)
 
 ## Corpus Check
-- 84 files · ~2,668,434 words
+- 85 files · ~2,552,435 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1214 nodes · 1288 edges · 105 communities (78 shown, 27 thin omitted)
+- 1224 nodes · 1297 edges · 106 communities (79 shown, 27 thin omitted)
 - Extraction: 96% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 48 edges (avg confidence: 0.87)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `29b039d2`
+- Built from commit: `1d6b2815`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -104,6 +104,7 @@
 - [[_COMMUNITY_Community 102|Community 102]]
 - [[_COMMUNITY_Community 103|Community 103]]
 - [[_COMMUNITY_Community 104|Community 104]]
+- [[_COMMUNITY_Community 105|Community 105]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `christran.io` - 11 edges
@@ -136,7 +137,7 @@
 - **Elon Musk Business Ecosystem** — spacex_ipo_equation_spacex, tesla_fsd_tesla, spacex_ipo_equation_xai [INFERRED 0.90]
 - **Orbital Infrastructure Components** — spacex_ipo_equation_starship, spacex_ipo_equation_starlink, spacex_ipo_equation_orbital_data_center [EXTRACTED 0.95]
 
-## Communities (105 total, 27 thin omitted)
+## Communities (106 total, 27 thin omitted)
 
 ### Community 0 - "Enterprise Homelab Infrastructure"
 Cohesion: 0.07
@@ -386,20 +387,24 @@ Nodes (5): __dirname, __filename, run(), testRESTImageGen(), testSDKImageGen()
 Cohesion: 0.29
 Nodes (6): 1. The "Lost in the Middle" Phenomenon, 2. High Latency and Token Exhaustion, 3. Cross-Repository Blindspots, Enter Graphify: High-Density, Low-Bloat Context Mapping, How Graphify Represents Code, The Token Bottleneck: Why Naive Folder-Shoving Fails
 
+### Community 105 - "Community 105"
+Cohesion: 0.20
+Nodes (9): Conclusion, Layering Identity: Zero Trust at the Edge with Cloudflare Access, Practical Guide: Deploying `cloudflared` in Docker, Step 1: Create the Tunnel in Cloudflare Zero Trust, Step 2: Write the Docker Compose Configuration, Step 3: Start the Daemon, Step 4: Route a Service and Apply Access Policies, The Anatomy of a Threat: Why Port Forwarding Must Die (+1 more)
+
 ## Knowledge Gaps
-- **826 isolated node(s):** `1. The "Lost in the Middle" Phenomenon`, `2. High Latency and Token Exhaustion`, `3. Cross-Repository Blindspots`, `How Graphify Represents Code`, `redirectUrls` (+821 more)
+- **833 isolated node(s):** `The Cloudflare Tunnel Paradigm Shift`, `Layering Identity: Zero Trust at the Edge with Cloudflare Access`, `Step 1: Create the Tunnel in Cloudflare Zero Trust`, `Step 2: Write the Docker Compose Configuration`, `Step 3: Start the Daemon` (+828 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **27 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `../components/Header.astro` connect `Enterprise Homelab Infrastructure` to `Home Server and Self-Hosted Media`?**
-  _High betweenness centrality (0.003) - this node is a cross-community bridge._
 - **Why does `../components/Footer.astro` connect `Enterprise Homelab Infrastructure` to `Cloudflare Workers Pipeline Batch Metadata`?**
   _High betweenness centrality (0.002) - this node is a cross-community bridge._
-- **What connects `1. The "Lost in the Middle" Phenomenon`, `2. High Latency and Token Exhaustion`, `3. Cross-Repository Blindspots` to the rest of the system?**
-  _854 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Why does `../components/Header.astro` connect `Enterprise Homelab Infrastructure` to `Home Server and Self-Hosted Media`?**
+  _High betweenness centrality (0.002) - this node is a cross-community bridge._
+- **What connects `The Cloudflare Tunnel Paradigm Shift`, `Layering Identity: Zero Trust at the Edge with Cloudflare Access`, `Step 1: Create the Tunnel in Cloudflare Zero Trust` to the rest of the system?**
+  _861 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Enterprise Homelab Infrastructure` be split into smaller, more focused modules?**
   _Cohesion score 0.0653061224489796 - nodes in this community are weakly interconnected._
 - **Should `AI Art Studio and Workspace UI` be split into smaller, more focused modules?**

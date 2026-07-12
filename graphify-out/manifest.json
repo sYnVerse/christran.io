@@ -629,14 +629,19 @@
     "ast_hash": "08cdf5b245296cce787ad6ec0c9eae8b",
     "semantic_hash": ""
   },
-  "table_screenshot.png": {
-    "mtime": 1782865616.4385948,
-    "ast_hash": "8814482369048825fc5ddadab540e6fb",
-    "semantic_hash": ""
-  },
   "src/assets/img/blog/graphify.png": {
     "mtime": 1782867207.4507492,
     "ast_hash": "8875026853dc3558b92f150ad33a0e39",
+    "semantic_hash": ""
+  },
+  "src/content/blog/zero-ports-open-securing-home-lab-entry-points-with-cloudflare-tunnels-and-access.md": {
+    "mtime": 1783868191.126225,
+    "ast_hash": "9371cc7894ad473969388e4cc996f45a",
+    "semantic_hash": ""
+  },
+  "src/assets/img/blog/zero-ports-open-securing-home-lab-entry-points-with-cloudflare-tunnels-and-access.webp": {
+    "mtime": 1783700586.38,
+    "ast_hash": "9f86826ad9b733470827908057d67f8d",
     "semantic_hash": ""
   }
 }
