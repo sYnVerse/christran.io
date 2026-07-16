@@ -20,7 +20,10 @@ import { SITE_TITLE } from '../consts';
 			.explore-container {
 				display: flex;
 				height: calc(100vh - 80px); /* Adjust for header height */
-				margin-top: 80px; /* Safe padding below header */
+				margin: 0 !important;
+				width: 100% !important;
+				max-width: 100% !important;
+				padding: 0 !important;
 				position: relative;
 				font-family: 'Atkinson', sans-serif;
 			}
@@ -599,6 +602,8 @@ import { SITE_TITLE } from '../consts';
 
 				// Create Graph Object
 				Graph = ForceGraph()(container)
+					.width(container.clientWidth)
+					.height(container.clientHeight)
 					.graphData(filterGraphData())
 					.nodeId('id')
 					.nodeVal(n => Math.sqrt(n.degree) * 1.5 + 2.5) // size based on connectivity
