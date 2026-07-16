@@ -38,6 +38,7 @@ import { SITE_TITLE } from '../consts';
 			.explore-sidebar {
 				width: 380px;
 				min-width: 320px;
+				flex-shrink: 0;
 				height: 100%;
 				background: rgba(11, 16, 33, 0.75);
 				backdrop-filter: blur(20px);
@@ -47,7 +48,6 @@ import { SITE_TITLE } from '../consts';
 				display: flex;
 				flex-direction: column;
 				z-index: 10;
-				transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
 			}
 			.sidebar-header {
 				padding: 1.5rem;
@@ -306,6 +306,7 @@ import { SITE_TITLE } from '../consts';
 					min-width: 100%;
 					border-left: none;
 					border-top: 1px solid rgba(123, 158, 255, 0.15);
+					transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
 				}
 				.sidebar-toggle {
 					display: flex;
