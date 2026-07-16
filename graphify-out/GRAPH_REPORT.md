@@ -1,16 +1,16 @@
-# Graph Report - christran.io  (2026-07-12)
+# Graph Report - christran.io  (2026-07-15)
 
 ## Corpus Check
-- 85 files · ~2,552,435 words
+- 87 files · ~2,556,182 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1224 nodes · 1297 edges · 106 communities (79 shown, 27 thin omitted)
+- 1232 nodes · 1308 edges · 107 communities (80 shown, 27 thin omitted)
 - Extraction: 96% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 48 edges (avg confidence: 0.87)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `1d6b2815`
+- Built from commit: `08672a3f`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -107,12 +107,12 @@
 - [[_COMMUNITY_Community 105|Community 105]]
 
 ## God Nodes (most connected - your core abstractions)
-1. `christran.io` - 11 edges
-2. `../components/Header.astro` - 10 edges
-3. `../layouts/BlogPost.astro` - 10 edges
-4. `scripts` - 8 edges
-5. `../components/BaseHead.astro` - 8 edges
-6. `../components/Footer.astro` - 8 edges
+1. `../components/Header.astro` - 11 edges
+2. `christran.io` - 11 edges
+3. `../components/BaseHead.astro` - 10 edges
+4. `../layouts/BlogPost.astro` - 10 edges
+5. `../components/Footer.astro` - 9 edges
+6. `scripts` - 8 edges
 7. `Christopher Tran's Resume` - 8 edges
 8. `cloudflare` - 7 edges
 9. `Event` - 7 edges
@@ -137,11 +137,11 @@
 - **Elon Musk Business Ecosystem** — spacex_ipo_equation_spacex, tesla_fsd_tesla, spacex_ipo_equation_xai [INFERRED 0.90]
 - **Orbital Infrastructure Components** — spacex_ipo_equation_starship, spacex_ipo_equation_starlink, spacex_ipo_equation_orbital_data_center [EXTRACTED 0.95]
 
-## Communities (106 total, 27 thin omitted)
+## Communities (107 total, 27 thin omitted)
 
 ### Community 0 - "Enterprise Homelab Infrastructure"
-Cohesion: 0.07
-Nodes (28): posts, ../assets/img/network-bg-desktop.webp, ../assets/img/network-bg-mobile.webp, ../assets/img/network-bg-ultrawide.webp, ../assets/img/network-bg.webp, ../assets/img/profile.png, ../consts, ../components/BaseHead.astro (+20 more)
+Cohesion: 0.06
+Nodes (30): posts, ../assets/img/network-bg-desktop.webp, ../assets/img/network-bg-mobile.webp, ../assets/img/network-bg-ultrawide.webp, ../assets/img/network-bg.webp, ../assets/img/profile.png, ../consts, ../styles/global.css (+22 more)
 
 ### Community 1 - "AI Art Studio and Workspace UI"
 Cohesion: 0.06
@@ -392,21 +392,21 @@ Cohesion: 0.20
 Nodes (9): Conclusion, Layering Identity: Zero Trust at the Edge with Cloudflare Access, Practical Guide: Deploying `cloudflared` in Docker, Step 1: Create the Tunnel in Cloudflare Zero Trust, Step 2: Write the Docker Compose Configuration, Step 3: Start the Daemon, Step 4: Route a Service and Apply Access Policies, The Anatomy of a Threat: Why Port Forwarding Must Die (+1 more)
 
 ## Knowledge Gaps
-- **833 isolated node(s):** `The Cloudflare Tunnel Paradigm Shift`, `Layering Identity: Zero Trust at the Edge with Cloudflare Access`, `Step 1: Create the Tunnel in Cloudflare Zero Trust`, `Step 2: Write the Docker Compose Configuration`, `Step 3: Start the Daemon` (+828 more)
+- **835 isolated node(s):** `redirectUrls`, `name`, `description`, `label`, `products` (+830 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **27 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
+- **Why does `../components/Header.astro` connect `Enterprise Homelab Infrastructure` to `Home Server and Self-Hosted Media`?**
+  _High betweenness centrality (0.003) - this node is a cross-community bridge._
 - **Why does `../components/Footer.astro` connect `Enterprise Homelab Infrastructure` to `Cloudflare Workers Pipeline Batch Metadata`?**
   _High betweenness centrality (0.002) - this node is a cross-community bridge._
-- **Why does `../components/Header.astro` connect `Enterprise Homelab Infrastructure` to `Home Server and Self-Hosted Media`?**
-  _High betweenness centrality (0.002) - this node is a cross-community bridge._
-- **What connects `The Cloudflare Tunnel Paradigm Shift`, `Layering Identity: Zero Trust at the Edge with Cloudflare Access`, `Step 1: Create the Tunnel in Cloudflare Zero Trust` to the rest of the system?**
-  _861 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **What connects `redirectUrls`, `name`, `description` to the rest of the system?**
+  _863 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Enterprise Homelab Infrastructure` be split into smaller, more focused modules?**
-  _Cohesion score 0.0653061224489796 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.05844155844155844 - nodes in this community are weakly interconnected._
 - **Should `AI Art Studio and Workspace UI` be split into smaller, more focused modules?**
   _Cohesion score 0.06451612903225806 - nodes in this community are weakly interconnected._
 - **Should `F1 Active Aerodynamics Challenge` be split into smaller, more focused modules?**
