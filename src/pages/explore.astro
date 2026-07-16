@@ -65,18 +65,18 @@ import { SITE_TITLE } from '../consts';
 				font-size: 0.85rem;
 				color: rgb(var(--gray));
 			}
-			.sidebar-scrollable {
+			:global(.sidebar-scrollable) {
 				flex-grow: 1;
 				overflow-y: auto;
 				padding: 1.5rem;
 				display: flex;
 				flex-direction: column;
 				gap: 1.5rem;
-				-ms-overflow-style: none;  /* IE and Edge */
-				scrollbar-width: none;  /* Firefox */
+				-ms-overflow-style: none !important;  /* IE and Edge */
+				scrollbar-width: none !important;  /* Firefox */
 			}
-			.sidebar-scrollable::-webkit-scrollbar {
-				display: none; /* Chrome, Safari and Opera */
+			:global(.sidebar-scrollable)::-webkit-scrollbar {
+				display: none !important; /* Chrome, Safari and Opera */
 			}
 			.panel-section {
 				background: rgba(30, 35, 50, 0.4);
@@ -100,6 +100,8 @@ import { SITE_TITLE } from '../consts';
 				font-weight: 700;
 				color: #fff;
 				margin-bottom: 0.5rem;
+				word-break: break-word;
+				overflow-wrap: break-word;
 			}
 			.node-type-badge {
 				display: inline-block;
@@ -657,7 +659,11 @@ import { SITE_TITLE } from '../consts';
 						return 0.005;
 					})
 					.nodeCanvasObject((node, ctx, globalScale) => {
-						const label = node.label;
+						// Truncate long node labels on the canvas to prevent overlaps
+						let label = node.label;
+						if (label.length > 28) {
+							label = label.substring(0, 25) + '...';
+						}
 						const size = Math.sqrt(node.degree) * 1.5 + 2.5;
 						
 						// Node fill
@@ -758,8 +764,8 @@ import { SITE_TITLE } from '../consts';
 					});
 
 				// Physics settings to prevent node label collisions
-				Graph.d3Force('charge').strength(-150);
-				Graph.d3Force('link').distance(65);
+				Graph.d3Force('charge').strength(-240);
+				Graph.d3Force('link').distance(80);
 
 				// Adjust size on container resize (safeguards initial layout rendering)
 				const resizeObserver = new ResizeObserver((entries) => {
