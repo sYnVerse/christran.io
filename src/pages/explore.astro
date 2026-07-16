@@ -1,0 +1,913 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE_TITLE } from '../consts';
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`Explore | ${SITE_TITLE}`} description="Interactive Knowledge Graph of Chris Tran's portfolio, blog, and technical skills." />
+		<!-- Load force-graph from CDN with is:inline so Astro passes it to browser directly -->
+		<script src="https://unpkg.com/force-graph" is:inline></script>
+		<style>
+			body {
+				overflow: hidden;
+				height: 100vh;
+				background-color: #0b1021;
+			}
+			.explore-container {
+				display: flex;
+				height: calc(100vh - 80px); /* Adjust for header height */
+				margin-top: 80px; /* Safe padding below header */
+				position: relative;
+				font-family: 'Atkinson', sans-serif;
+			}
+			#graph-canvas-wrap {
+				flex-grow: 1;
+				height: 100%;
+				position: relative;
+			}
+			.explore-sidebar {
+				width: 380px;
+				min-width: 320px;
+				height: 100%;
+				background: rgba(11, 16, 33, 0.75);
+				backdrop-filter: blur(20px);
+				-webkit-backdrop-filter: blur(20px);
+				border-left: 1px solid rgba(123, 158, 255, 0.15);
+				box-shadow: -8px 0 32px rgba(0, 0, 0, 0.5);
+				display: flex;
+				flex-direction: column;
+				z-index: 10;
+				transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+			}
+			.sidebar-header {
+				padding: 1.5rem;
+				border-bottom: 1px solid rgba(123, 158, 255, 0.1);
+			}
+			.sidebar-title {
+				margin: 0;
+				font-size: 1.5rem;
+				font-weight: 700;
+				color: #fff;
+				letter-spacing: -0.02em;
+			}
+			.sidebar-subtitle {
+				margin: 0.25rem 0 0 0;
+				font-size: 0.85rem;
+				color: rgb(var(--gray));
+			}
+			.sidebar-scrollable {
+				flex-grow: 1;
+				overflow-y: auto;
+				padding: 1.5rem;
+				display: flex;
+				flex-direction: column;
+				gap: 1.5rem;
+			}
+			.panel-section {
+				background: rgba(30, 35, 50, 0.4);
+				border: 1px solid rgba(123, 158, 255, 0.1);
+				border-radius: 8px;
+				padding: 1rem;
+			}
+			.panel-section-title {
+				font-size: 0.85rem;
+				font-weight: 700;
+				text-transform: uppercase;
+				letter-spacing: 0.05em;
+				color: var(--accent);
+				margin: 0 0 0.75rem 0;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+			}
+			.node-title-highlight {
+				font-size: 1.2rem;
+				font-weight: 700;
+				color: #fff;
+				margin-bottom: 0.5rem;
+			}
+			.node-type-badge {
+				display: inline-block;
+				font-size: 0.7rem;
+				text-transform: uppercase;
+				font-weight: 700;
+				padding: 2px 8px;
+				border-radius: 4px;
+				margin-bottom: 0.75rem;
+			}
+			.badge-blog { background: rgba(168, 85, 247, 0.2); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.4); }
+			.badge-project { background: rgba(6, 182, 212, 0.2); color: #22d3ee; border: 1px solid rgba(6, 182, 212, 0.4); }
+			.badge-concept { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+			.badge-image { background: rgba(249, 115, 22, 0.2); color: #fb923c; border: 1px solid rgba(249, 115, 22, 0.4); }
+			.badge-code { background: rgba(244, 63, 94, 0.2); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.4); }
+			.badge-system { background: rgba(100, 116, 139, 0.2); color: #94a3b8; border: 1px solid rgba(100, 116, 139, 0.4); }
+			
+			.node-desc {
+				font-size: 0.9rem;
+				line-height: 1.5;
+				color: rgb(var(--gray-dark));
+				margin-bottom: 1rem;
+			}
+			.node-meta-item {
+				font-size: 0.8rem;
+				color: rgb(var(--gray));
+				margin-bottom: 0.4rem;
+				word-break: break-all;
+			}
+			.node-meta-item b {
+				color: #fff;
+			}
+			.visit-btn {
+				display: block;
+				width: 100%;
+				text-align: center;
+				background: linear-gradient(135deg, var(--accent-dark) 0%, var(--accent) 100%);
+				color: #fff;
+				text-decoration: none;
+				font-weight: 700;
+				font-size: 0.9rem;
+				padding: 0.6rem;
+				border-radius: 6px;
+				box-shadow: 0 4px 12px rgba(123, 158, 255, 0.3);
+				transition: all 0.2s ease;
+			}
+			.visit-btn:hover {
+				transform: translateY(-1px);
+				box-shadow: 0 6px 16px rgba(123, 158, 255, 0.4);
+			}
+			.filter-group {
+				display: flex;
+				flex-direction: column;
+				gap: 0.6rem;
+			}
+			.filter-label {
+				display: flex;
+				align-items: center;
+				gap: 0.5rem;
+				font-size: 0.85rem;
+				color: rgb(var(--gray-dark));
+				cursor: pointer;
+			}
+			.filter-label input {
+				cursor: pointer;
+				accent-color: var(--accent);
+			}
+			.search-wrap {
+				position: relative;
+			}
+			.search-input {
+				width: 100%;
+				background: rgba(11, 16, 33, 0.6);
+				border: 1px solid rgba(123, 158, 255, 0.2);
+				border-radius: 6px;
+				color: #fff;
+				padding: 0.5rem 0.75rem;
+				font-size: 0.9rem;
+				outline: none;
+				box-sizing: border-box;
+			}
+			.search-input:focus {
+				border-color: var(--accent);
+				box-shadow: 0 0 8px rgba(123, 158, 255, 0.3);
+			}
+			.search-results {
+				position: absolute;
+				top: 100%;
+				left: 0;
+				right: 0;
+				background: #0f142a;
+				border: 1px solid rgba(123, 158, 255, 0.3);
+				border-radius: 6px;
+				margin-top: 4px;
+				max-height: 200px;
+				overflow-y: auto;
+				z-index: 100;
+				display: none;
+				box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+			}
+			.search-item {
+				padding: 0.5rem 0.75rem;
+				font-size: 0.85rem;
+				color: rgb(var(--gray-dark));
+				cursor: pointer;
+				transition: background 0.15s ease;
+			}
+			.search-item:hover {
+				background: rgba(123, 158, 255, 0.15);
+				color: #fff;
+			}
+			.pathfinder-fields {
+				display: flex;
+				flex-direction: column;
+				gap: 0.5rem;
+			}
+			.path-btn {
+				background: rgba(16, 185, 129, 0.2);
+				border: 1px solid rgba(16, 185, 129, 0.5);
+				color: #34d399;
+				padding: 0.5rem;
+				border-radius: 6px;
+				font-weight: 700;
+				font-size: 0.85rem;
+				cursor: pointer;
+				transition: all 0.2s ease;
+			}
+			.path-btn:hover {
+				background: rgba(16, 185, 129, 0.35);
+			}
+			.path-btn:active {
+				transform: scale(0.98);
+			}
+			.clear-path-btn {
+				background: transparent;
+				border: 1px solid rgba(255, 95, 86, 0.4);
+				color: #ff5f56;
+				padding: 0.4rem;
+				border-radius: 6px;
+				font-weight: 700;
+				font-size: 0.8rem;
+				cursor: pointer;
+				transition: all 0.2s ease;
+				margin-top: 0.4rem;
+				width: 100%;
+			}
+			.clear-path-btn:hover {
+				background: rgba(255, 95, 86, 0.15);
+			}
+			.path-result-wrap {
+				margin-top: 0.75rem;
+				font-size: 0.8rem;
+				color: rgb(var(--gray));
+				max-height: 150px;
+				overflow-y: auto;
+				padding-left: 0.5rem;
+				border-left: 2px solid rgba(16, 185, 129, 0.3);
+			}
+			.path-hop {
+				margin-bottom: 0.25rem;
+				color: #fff;
+			}
+			.path-hop span {
+				color: #34d399;
+				font-weight: 700;
+			}
+			.hud-instruction {
+				position: absolute;
+				bottom: 1.5rem;
+				left: 1.5rem;
+				background: rgba(11, 16, 33, 0.6);
+				border: 1px solid rgba(123, 158, 255, 0.15);
+				border-radius: 6px;
+				padding: 0.5rem 0.75rem;
+				font-size: 0.8rem;
+				color: rgb(var(--gray));
+				pointer-events: none;
+				z-index: 5;
+				backdrop-filter: blur(8px);
+			}
+			
+			/* Toggle sidebar trigger on small viewports */
+			.sidebar-toggle {
+				display: none;
+				position: absolute;
+				top: 1.5rem;
+				right: 1.5rem;
+				background: rgba(11, 16, 33, 0.85);
+				border: 1px solid rgba(123, 158, 255, 0.2);
+				width: 44px;
+				height: 44px;
+				border-radius: 50%;
+				z-index: 100;
+				cursor: pointer;
+				color: #fff;
+				align-items: center;
+				justify-content: center;
+				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+			}
+
+			@media (max-width: 900px) {
+				.explore-container {
+					flex-direction: column-reverse;
+					height: calc(100vh - 80px);
+				}
+				.explore-sidebar {
+					width: 100%;
+					height: 280px;
+					min-width: 100%;
+					border-left: none;
+					border-top: 1px solid rgba(123, 158, 255, 0.15);
+				}
+				.sidebar-toggle {
+					display: flex;
+				}
+				.explore-sidebar.collapsed {
+					transform: translateY(100%);
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<Header />
+		
+		<main class="explore-container">
+			<div id="graph-canvas-wrap">
+				<div class="hud-instruction">
+					Drag to pan · Scroll to zoom · Left-click node to select · Right-click node to focus
+				</div>
+				<button class="sidebar-toggle" id="sidebar-toggle-btn" aria-label="Toggle details panel">
+					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<line x1="3" y1="12" x2="21" y2="12"></line>
+						<line x1="3" y1="6" x2="21" y2="6"></line>
+						<line x1="3" y1="18" x2="21" y2="18"></line>
+					</svg>
+				</button>
+			</div>
+
+			<aside class="explore-sidebar" id="sidebar-panel">
+				<div class="sidebar-header">
+					<h3 class="sidebar-title">Digital Brain</h3>
+					<p class="sidebar-subtitle">Exploring christran.io knowledge graph</p>
+				</div>
+				<div class="sidebar-scrollable">
+					<!-- Search Section -->
+					<div class="panel-section">
+						<h4 class="panel-section-title">Search Node</h4>
+						<div class="search-wrap">
+							<input type="text" class="search-input" id="search-nodes" placeholder="Search concepts, projects..." />
+							<div class="search-results" id="search-results-box"></div>
+						</div>
+					</div>
+
+					<!-- Node Details Section -->
+					<div class="panel-section" id="details-section">
+						<h4 class="panel-section-title">Node Details</h4>
+						<div id="no-selection-msg">
+							<p class="node-desc" style="opacity: 0.6; font-style: italic;">Select any node on the graph to inspect details, read full articles, or trace paths.</p>
+						</div>
+						<div id="selection-details" style="display: none;">
+							<div class="node-title-highlight" id="node-name">ZFS Data Integrity</div>
+							<span class="node-type-badge badge-concept" id="node-badge">concept</span>
+							<p class="node-desc" id="node-desc">Analyzing the self-healing and data protection mechanisms of ZFS storage in enterprise environments.</p>
+							<div class="node-meta-item"><b>Community:</b> <span id="node-community">Enterprise Homelab</span></div>
+							<div class="node-meta-item"><b>Source file:</b> <span id="node-source">src/content/blog/beyond-nas.mdx</span></div>
+							<div style="margin-top: 1.25rem;" id="visit-btn-container">
+								<a href="#" class="visit-btn" id="node-url" target="_blank">Read Article ↗</a>
+							</div>
+						</div>
+					</div>
+
+					<!-- Pathfinding Section -->
+					<div class="panel-section">
+						<h4 class="panel-section-title">Shortest Path Finder</h4>
+						<div class="pathfinder-fields">
+							<div class="search-wrap">
+								<input type="text" class="search-input" id="path-start" placeholder="Start Node..." style="margin-bottom: 0.4rem;" />
+								<div class="search-results" id="start-results-box"></div>
+							</div>
+							<div class="search-wrap">
+								<input type="text" class="search-input" id="path-end" placeholder="End Node..." />
+								<div class="search-results" id="end-results-box"></div>
+							</div>
+							<button class="path-btn" id="find-path-btn">Trace Path</button>
+						</div>
+						<div id="path-results" style="display: none;">
+							<div class="path-result-wrap" id="path-hops-list">
+								<!-- Dynamically populated hops -->
+							</div>
+							<button class="clear-path-btn" id="clear-path-btn">Reset Highlight</button>
+						</div>
+					</div>
+
+					<!-- Filters Section -->
+					<div class="panel-section">
+						<h4 class="panel-section-title">Graph Layers</h4>
+						<div class="filter-group">
+							<label class="filter-label">
+								<input type="checkbox" id="show-blogs" checked /> Show Blog Posts
+							</label>
+							<label class="filter-label">
+								<input type="checkbox" id="show-projects" checked /> Show Projects
+							</label>
+							<label class="filter-label">
+								<input type="checkbox" id="show-concepts" checked /> Show Concepts
+							</label>
+							<label class="filter-label">
+								<input type="checkbox" id="show-code" /> Show Code Files
+							</label>
+							<label class="filter-label">
+								<input type="checkbox" id="show-images" /> Show Image Assets
+							</label>
+							<label class="filter-label">
+								<input type="checkbox" id="show-system" /> Show System APIs & Libraries
+							</label>
+							<label class="filter-label">
+								<input type="checkbox" id="show-tools" /> Show Internal Dev Tools
+							</label>
+						</div>
+					</div>
+				</div>
+			</aside>
+		</main>
+
+		<!-- Visualizer implementation script -->
+		<script is:inline>
+			let graphData = null;
+			let Graph = null;
+			
+			// Highlight States
+			let highlightedPath = new Set();
+			let highlightedLinks = new Set();
+			let selectedNode = null;
+
+			// Controls elements
+			const searchInput = document.getElementById('search-nodes');
+			const searchResults = document.getElementById('search-results-box');
+			
+			const pathStartInput = document.getElementById('path-start');
+			const startResults = document.getElementById('start-results-box');
+			
+			const pathEndInput = document.getElementById('path-end');
+			const endResults = document.getElementById('end-results-box');
+			
+			const findPathBtn = document.getElementById('find-path-btn');
+			const clearPathBtn = document.getElementById('clear-path-btn');
+			const pathResultsWrap = document.getElementById('path-results');
+			const pathHopsList = document.getElementById('path-hops-list');
+
+			// Detail Panel Elements
+			const noSelectionMsg = document.getElementById('no-selection-msg');
+			const selectionDetails = document.getElementById('selection-details');
+			const nodeName = document.getElementById('node-name');
+			const nodeBadge = document.getElementById('node-badge');
+			const nodeDesc = document.getElementById('node-desc');
+			const nodeCommunity = document.getElementById('node-community');
+			const nodeSource = document.getElementById('node-source');
+			const nodeUrl = document.getElementById('node-url');
+			const visitBtnContainer = document.getElementById('visit-btn-container');
+
+			// Sidebar toggling for mobile
+			const sidebarToggleBtn = document.getElementById('sidebar-toggle-btn');
+			const sidebarPanel = document.getElementById('sidebar-panel');
+			if (sidebarToggleBtn && sidebarPanel) {
+				sidebarToggleBtn.addEventListener('click', () => {
+					sidebarPanel.classList.toggle('collapsed');
+				});
+			}
+
+			// Color Palette mapping helper
+			function getNeonColor(node) {
+				// Base color mapping
+				if (node.isSystem) return 'rgb(100, 116, 139)'; // grey
+				if (node.isTool) return 'rgb(71, 85, 105)'; // dark slate
+				
+				if (node.file_type === 'document' || node.file_type === 'paper') {
+					if (node.url && node.url.includes('/blog/')) {
+						return 'rgb(168, 85, 247)'; // Neon Purple
+					}
+					if (node.url && node.url.includes('/portfolio/')) {
+						return 'rgb(6, 182, 212)'; // Neon Cyan
+					}
+					return 'rgb(59, 130, 246)'; // Default document blue
+				}
+				if (node.file_type === 'concept') return 'rgb(16, 185, 129)'; // Neon Emerald
+				if (node.file_type === 'code') return 'rgb(244, 63, 94)'; // Neon Rose / Pink
+				if (node.file_type === 'image') return 'rgb(249, 115, 22)'; // Neon Orange
+				
+				return 'rgb(123, 158, 255)'; // base accent
+			}
+
+			// Format badge class based on node
+			function updateBadgeStyle(element, file_type, node) {
+				element.className = 'node-type-badge';
+				
+				if (node.isSystem) {
+					element.classList.add('badge-system');
+					element.textContent = 'system';
+					return;
+				}
+				if (node.isTool) {
+					element.classList.add('badge-system');
+					element.textContent = 'tool';
+					return;
+				}
+
+				if (file_type === 'document') {
+					if (node.url && node.url.includes('/blog/')) {
+						element.classList.add('badge-blog');
+						element.textContent = 'blog';
+					} else {
+						element.classList.add('badge-project');
+						element.textContent = 'project';
+					}
+				} else {
+					element.classList.add(`badge-${file_type}`);
+					element.textContent = file_type;
+				}
+			}
+
+			// BFS Shortest Path Finder
+			function findShortestPath(nodes, links, startId, endId) {
+				const adj = {};
+				nodes.forEach(n => adj[n.id] = []);
+				links.forEach(l => {
+					const s = typeof l.source === 'object' ? l.source.id : l.source;
+					const t = typeof l.target === 'object' ? l.target.id : l.target;
+					if (adj[s]) adj[s].push({ target: t, link: l });
+					if (adj[t]) adj[t].push({ target: s, link: l });
+				});
+
+				if (!adj[startId] || !adj[endId]) return null;
+
+				const queue = [[{ id: startId, link: null }]];
+				const visited = new Set([startId]);
+
+				while (queue.length > 0) {
+					const path = queue.shift();
+					const curr = path[path.length - 1].id;
+
+					if (curr === endId) return path;
+
+					const neighbors = adj[curr] || [];
+					for (const next of neighbors) {
+						if (!visited.has(next.target)) {
+							visited.add(next.target);
+							queue.push([...path, { id: next.target, link: next.link }]);
+						}
+					}
+				}
+				return null;
+			}
+
+			// Show details in sidebar
+			function showNodeDetails(node) {
+				selectedNode = node;
+				noSelectionMsg.style.display = 'none';
+				selectionDetails.style.display = 'block';
+
+				nodeName.textContent = node.label;
+				updateBadgeStyle(nodeBadge, node.file_type, node);
+				
+				// Generate helpful description
+				let descText = '';
+				if (node.file_type === 'document') {
+					descText = `Article/portfolio record summarizing "${node.label}". Contains conceptual relations, engineering traces, and architecture details.`;
+				} else if (node.file_type === 'concept') {
+					descText = `Technical concept: ${node.label}. Core technology node in our system's network structure.`;
+				} else if (node.file_type === 'code') {
+					descText = `Source code node modeling architecture components or scripting tasks.`;
+				} else if (node.file_type === 'image') {
+					descText = `Visual content asset referenced by system logs or articles.`;
+				} else {
+					descText = `System symbol or entity registered in dependencies.`;
+				}
+				nodeDesc.textContent = descText;
+				
+				nodeCommunity.textContent = node.communityName || `Community ${node.community}`;
+				nodeSource.textContent = node.source_file || 'N/A';
+
+				if (node.url) {
+					nodeUrl.href = node.url;
+					visitBtnContainer.style.display = 'block';
+					if (node.url.includes('/blog/')) {
+						nodeUrl.textContent = 'Read Blog Post ↗';
+					} else {
+						nodeUrl.textContent = 'View Portfolio Project ↗';
+					}
+				} else {
+					visitBtnContainer.style.display = 'none';
+				}
+			}
+
+			// Initialize the Force-Directed Canvas
+			function initVisualizer(data) {
+				graphData = data;
+				const container = document.getElementById('graph-canvas-wrap');
+				
+				// Degree calculations (connected edges per node)
+				const degrees = {};
+				data.links.forEach(l => {
+					degrees[l.source] = (degrees[l.source] || 0) + 1;
+					degrees[l.target] = (degrees[l.target] || 0) + 1;
+				});
+				data.nodes.forEach(n => {
+					n.degree = degrees[n.id] || 0;
+				});
+
+				// Create Graph Object
+				Graph = ForceGraph()(container)
+					.graphData(filterGraphData())
+					.nodeId('id')
+					.nodeVal(n => Math.sqrt(n.degree) * 1.5 + 2.5) // size based on connectivity
+					.nodeColor(node => {
+						if (highlightedPath.size > 0) {
+							return highlightedPath.has(node.id) ? getNeonColor(node) : 'rgba(255, 255, 255, 0.08)';
+						}
+						return getNeonColor(node);
+					})
+					.nodeLabel(n => `${n.label} [${n.file_type}]`)
+					.linkColor(link => {
+						if (highlightedLinks.size > 0) {
+							return highlightedLinks.has(link) ? '#22c55e' : 'rgba(255, 255, 255, 0.03)';
+						}
+						return 'rgba(123, 158, 255, 0.12)';
+					})
+					.linkWidth(link => {
+						if (highlightedLinks.size > 0) {
+							return highlightedLinks.has(link) ? 3 : 0.8;
+						}
+						return 1.0;
+					})
+					.linkDirectionalParticles(link => {
+						if (highlightedLinks.size > 0) {
+							return highlightedLinks.has(link) ? 4 : 0;
+						}
+						return 1;
+					})
+					.linkDirectionalParticleWidth(link => {
+						if (highlightedLinks.size > 0) {
+							return highlightedLinks.has(link) ? 3.5 : 1;
+						}
+						return 1.2;
+					})
+					.linkDirectionalParticleSpeed(link => {
+						if (highlightedLinks.size > 0) {
+							return highlightedLinks.has(link) ? 0.015 : 0.006;
+						}
+						return 0.005;
+					})
+					.nodeCanvasObject((node, ctx, globalScale) => {
+						// Custom high-density label drawing for zoomed views
+						const label = node.label;
+						const size = Math.sqrt(node.degree) * 1.5 + 2.5;
+						
+						// Node fill
+						ctx.beginPath();
+						ctx.arc(node.x, node.y, size, 0, 2 * Math.PI, false);
+						ctx.fillStyle = (highlightedPath.size > 0 && !highlightedPath.has(node.id)) 
+							? 'rgba(100, 116, 139, 0.15)' 
+							: getNeonColor(node);
+						ctx.fill();
+
+						// Node halo glow (neon)
+						if (highlightedPath.has(node.id) || (highlightedPath.size === 0 && selectedNode && selectedNode.id === node.id)) {
+							ctx.beginPath();
+							ctx.arc(node.x, node.y, size + 3, 0, 2 * Math.PI, false);
+							ctx.strokeStyle = highlightedPath.has(node.id) ? '#22c55e' : getNeonColor(node);
+							ctx.lineWidth = 1.5;
+							ctx.stroke();
+						}
+
+						// Label drawing if scale is large enough
+						if (globalScale > 1.2) {
+							const fontSize = Math.max(7, 10 / Math.sqrt(globalScale) + (size * 0.15));
+							ctx.font = `${fontSize}px Atkinson, sans-serif`;
+							ctx.textAlign = 'center';
+							ctx.textBaseline = 'top';
+							
+							// Translucent text background for readability
+							const textWidth = ctx.measureText(label).width;
+							ctx.fillStyle = 'rgba(11, 16, 33, 0.7)';
+							ctx.fillRect(node.x - textWidth/2 - 2, node.y + size + 2, textWidth + 4, fontSize + 2);
+
+							ctx.fillStyle = (highlightedPath.size > 0 && !highlightedPath.has(node.id)) 
+								? 'rgba(176, 186, 209, 0.25)' 
+								: '#ffffff';
+							ctx.fillText(label, node.x, node.y + size + 3);
+						}
+					})
+					.onNodeClick(node => {
+						showNodeDetails(node);
+						// Focus camera on node
+						Graph.centerAt(node.x, node.y, 800);
+						Graph.zoom(3, 800);
+					})
+					.onNodeRightClick(node => {
+						// Center on right click
+						Graph.centerAt(node.x, node.y, 800);
+						Graph.zoom(3.5, 800);
+					});
+
+				// Adjust size on window resize
+				window.addEventListener('resize', () => {
+					Graph.width(container.clientWidth).height(container.clientHeight);
+				});
+
+				// Auto-fit to view initially
+				setTimeout(() => Graph.zoomToFit(400), 500);
+
+				// Setup dynamic auto-complete bindings
+				setupAutocomplete(searchInput, searchResults, (node) => {
+					showNodeDetails(node);
+					Graph.centerAt(node.x, node.y, 1000);
+					Graph.zoom(3, 1000);
+				});
+				
+				setupAutocomplete(pathStartInput, startResults);
+				setupAutocomplete(pathEndInput, endResults);
+			}
+
+			// Apply node category filters
+			function filterGraphData() {
+				if (!graphData) return { nodes: [], links: [] };
+
+				const showBlogs = document.getElementById('show-blogs').checked;
+				const showProjects = document.getElementById('show-projects').checked;
+				const showConcepts = document.getElementById('show-concepts').checked;
+				const showCode = document.getElementById('show-code').checked;
+				const showImages = document.getElementById('show-images').checked;
+				const showSystem = document.getElementById('show-system').checked;
+				const showTools = document.getElementById('show-tools').checked;
+
+				const filteredNodes = graphData.nodes.filter(node => {
+					if (node.isSystem && !showSystem) return false;
+					if (node.isTool && !showTools) return false;
+					
+					if (node.file_type === 'document') {
+						const isBlog = node.url && node.url.includes('/blog/');
+						if (isBlog && !showBlogs) return false;
+						if (!isBlog && !showProjects) return false;
+					}
+					
+					if (node.file_type === 'concept' && !showConcepts) return false;
+					if (node.file_type === 'code' && !showCode) return false;
+					if (node.file_type === 'image' && !showImages) return false;
+
+					return true;
+				});
+
+				const nodeIds = new Set(filteredNodes.map(n => n.id));
+				const filteredLinks = graphData.links.filter(l => {
+					const s = typeof l.source === 'object' ? l.source.id : l.source;
+					const t = typeof l.target === 'object' ? l.target.id : l.target;
+					return nodeIds.has(s) && nodeIds.has(t);
+				});
+
+				return { nodes: filteredNodes, links: filteredLinks };
+			}
+
+			// Bind checkboxes to filter redraws
+			const checkboxes = document.querySelectorAll('.filter-group input[type="checkbox"]');
+			checkboxes.forEach(cb => {
+				cb.addEventListener('change', () => {
+					if (Graph) {
+						Graph.graphData(filterGraphData());
+						// Reset highlighted path since links might have vanished
+						resetPathHighlight();
+					}
+				});
+			});
+
+			// Setup interactive dropdown menus
+			function setupAutocomplete(inputEl, resultsEl, onSelect = null) {
+				inputEl.addEventListener('input', () => {
+					const val = inputEl.value.trim().toLowerCase();
+					if (val === '') {
+						resultsEl.style.display = 'none';
+						return;
+					}
+
+					// search matching nodes in current filtered dataset
+					const currentNodes = Graph ? Graph.graphData().nodes : [];
+					const matches = currentNodes.filter(n => 
+						n.label.toLowerCase().includes(val) || 
+						n.id.toLowerCase().includes(val)
+					).slice(0, 8);
+
+					if (matches.length === 0) {
+						resultsEl.innerHTML = '<div style="padding: 0.5rem 0.75rem; font-size: 0.8rem; opacity: 0.5;">No nodes found</div>';
+					} else {
+						resultsEl.innerHTML = matches.map(n => 
+							`<div class="search-item" data-id="${n.id}">${n.label} <span style="font-size:0.7rem; opacity:0.6;">(${n.file_type})</span></div>`
+						).join('');
+					}
+
+					resultsEl.style.display = 'block';
+				});
+
+				// Selection logic
+				resultsEl.addEventListener('click', (e) => {
+					const item = e.target.closest('.search-item');
+					if (!item) return;
+
+					const id = item.dataset.id;
+					const currentNodes = Graph ? Graph.graphData().nodes : [];
+					const node = currentNodes.find(n => n.id === id);
+
+					if (node) {
+						inputEl.value = node.label;
+						inputEl.dataset.selectedId = node.id;
+						resultsEl.style.display = 'none';
+						if (onSelect) onSelect(node);
+					}
+				});
+
+				// Close list when clicking outside
+				document.addEventListener('click', (e) => {
+					if (e.target !== inputEl && e.target !== resultsEl) {
+						resultsEl.style.display = 'none';
+					}
+				});
+			}
+
+			// Trace connections click handler
+			findPathBtn.addEventListener('click', () => {
+				const startId = pathStartInput.dataset.selectedId;
+				const endId = pathEndInput.dataset.selectedId;
+
+				if (!startId || !endId) {
+					alert("Please select valid nodes from the dropdown list for both Start and End points.");
+					return;
+				}
+
+				if (startId === endId) {
+					alert("Start and End concepts are the same!");
+					return;
+				}
+
+				const currentData = Graph.graphData();
+				const path = findShortestPath(currentData.nodes, currentData.links, startId, endId);
+
+				if (!path) {
+					pathHopsList.innerHTML = `<div style="color: #ff5f56; font-style: italic;">No path found connecting these concepts in the current view layers. Try enabling more graph layers (e.g. system APIs or code files).</div>`;
+					pathResultsWrap.style.display = 'block';
+					return;
+				}
+
+				// Populate Highlight Sets
+				highlightedPath.clear();
+				highlightedLinks.clear();
+				
+				pathHopsList.innerHTML = `<div style="font-weight: 700; margin-bottom: 0.5rem; color:#22c55e;">Connection Trace Found:</div>`;
+				
+				path.forEach((hop, index) => {
+					highlightedPath.add(hop.id);
+					if (hop.link) {
+						highlightedLinks.add(hop.link);
+					}
+
+					const nodeObj = currentData.nodes.find(n => n.id === hop.id);
+					pathHopsList.innerHTML += `
+						<div class="path-hop">
+							<span>${index + 1}.</span> ${nodeObj ? nodeObj.label : hop.id}
+						</div>`;
+				});
+
+				pathResultsWrap.style.display = 'block';
+
+				// Trigger Graph redraw with highlight states
+				Graph.nodeColor(Graph.nodeColor())
+					.linkColor(Graph.linkColor())
+					.linkWidth(Graph.linkWidth())
+					.linkDirectionalParticles(Graph.linkDirectionalParticles());
+				
+				// Center on path
+				const pathNodes = currentData.nodes.filter(n => highlightedPath.has(n.id));
+				if (pathNodes.length > 0) {
+					Graph.zoomToFit(600, 50);
+				}
+			});
+
+			// Reset path finding highlight states
+			function resetPathHighlight() {
+				highlightedPath.clear();
+				highlightedLinks.clear();
+				pathResultsWrap.style.display = 'none';
+				pathHopsList.innerHTML = '';
+				pathStartInput.value = '';
+				pathStartInput.removeAttribute('data-selected-id');
+				pathEndInput.value = '';
+				pathEndInput.removeAttribute('data-selected-id');
+
+				if (Graph) {
+					Graph.nodeColor(Graph.nodeColor())
+						.linkColor(Graph.linkColor())
+						.linkWidth(Graph.linkWidth())
+						.linkDirectionalParticles(Graph.linkDirectionalParticles());
+				}
+			}
+
+			clearPathBtn.addEventListener('click', resetPathHighlight);
+
+			// Initial API fetch
+			fetch('/graph-data.json')
+				.then(res => {
+					if (!res.ok) throw new Error();
+					return res.json();
+				})
+				.then(data => {
+					initVisualizer(data);
+				})
+				.catch(err => {
+					console.error("Failed loading graph-data endpoint.", err);
+					document.getElementById('graph-canvas-wrap').innerHTML = `
+						<div style="display:flex; height:100%; align-items:center; justify-content:center; color:#ff5f56; padding: 2rem; text-align:center;">
+							Error: Failed to fetch knowledge graph. Please run 'graphify update .' or build the project before accessing.
+						</div>`;
+				});
+		</script>
+	</body>
+</html>

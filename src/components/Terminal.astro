@@ -682,6 +682,8 @@
 					'whoami',
 					'ping skills',
 					'traceroute career',
+					'explore',
+					'shortestpath',
 					'ls',
 					'certs',
 					'skills',
@@ -1003,7 +1005,7 @@
 						return { type: 'async', lines: lines, delay: 350 };
 					},
 					ls: function () {
-						return '__HTML__' + 'skills  certs  contact  portfolio  resume  about<br><br>Tip: try <code>cat resume</code>, <code>certs</code>, or <code>contact</code>.';
+						return '__HTML__' + 'skills  certs  contact  portfolio  resume  about  explore<br><br>Tip: try <code>cat resume</code>, <code>explore</code>, or <code>shortestpath</code>.';
 					},
 					certs: function () {
 						return 'Certificate inventory (chris.local):\n\n  ITILv4 Foundations\n  CompTIA A+\n  CompTIA Network+ (in progress)\n  CompTIA Security+ (planned)\n  (and counting — always learning)';
@@ -1131,6 +1133,8 @@
 							'  whoami              — who is Chris?\n' +
 							'  ping skills        — probe my skills (animated)\n' +
 							'  traceroute career  — path of my career (animated)\n' +
+							'  explore             — open interactive visual knowledge graph\n' +
+							'  shortestpath <A> to <B> — trace path between two concepts\n' +
 							'  search <query>     — search blog posts & projects\n' +
 							'  ls                  — list areas to explore\n' +
 							'  cat <file>          — output file contents (e.g. cat skills)\n' +
@@ -1182,6 +1186,112 @@
 									resolve('Error: Could not retrieve search index.');
 								});
 						});
+					},
+					explore: function () {
+						setTimeout(function() {
+							window.location.href = '/explore';
+						}, 1500);
+						if (typeof TerminalSound !== 'undefined') {
+							TerminalSound.playStartup();
+						}
+						return 'Opening interactive visualizer at /explore...';
+					},
+					shortestpath: function (args) {
+						if (!args || args.trim() === '') {
+							return 'Usage: shortestpath <concept A> to <concept B>\nExample: shortestpath ZFS Storage to ITILv4';
+						}
+						var parts = args.split(/ -> | to |,/i);
+						if (parts.length < 2) {
+							return 'Usage: shortestpath <concept A> to <concept B>\nExample: shortestpath ZFS Storage to ITILv4';
+						}
+						var startQuery = parts[0].trim().toLowerCase();
+						var endQuery = parts[1].trim().toLowerCase();
+
+						return new Promise(function(resolve) {
+							fetch('/graph-data.json')
+								.then(function(res) {
+									if (!res.ok) throw new Error();
+									return res.json();
+								})
+								.then(function(data) {
+									var startNode = data.nodes.find(function(n) {
+										return n.label.toLowerCase() === startQuery || 
+											n.id.toLowerCase() === startQuery ||
+											n.label.toLowerCase().indexOf(startQuery) !== -1;
+									});
+									var endNode = data.nodes.find(function(n) {
+										return n.label.toLowerCase() === endQuery || 
+											n.id.toLowerCase() === endQuery ||
+											n.label.toLowerCase().indexOf(endQuery) !== -1;
+									});
+
+									if (!startNode) {
+										resolve('Error: Concept "' + parts[0].trim() + '" not found in knowledge graph.');
+										return;
+									}
+									if (!endNode) {
+										resolve('Error: Concept "' + parts[1].trim() + '" not found in knowledge graph.');
+										return;
+									}
+									if (startNode.id === endNode.id) {
+										resolve('Concepts are identical: ' + startNode.label);
+										return;
+									}
+
+									var adj = {};
+									data.nodes.forEach(function(n) { adj[n.id] = []; });
+									data.links.forEach(function(l) {
+										var s = l.source;
+										var t = l.target;
+										if (adj[s]) adj[s].push(t);
+										if (adj[t]) adj[t].push(s);
+									});
+
+									var queue = [[startNode.id]];
+									var visited = new Set([startNode.id]);
+									var foundPath = null;
+
+									while (queue.length > 0) {
+										var path = queue.shift();
+										var curr = path[path.length - 1];
+
+										if (curr === endNode.id) {
+											foundPath = path;
+											break;
+										}
+
+										var neighbors = adj[curr] || [];
+										for (var i = 0; i < neighbors.length; i++) {
+											var next = neighbors[i];
+											if (!visited.has(next)) {
+												visited.add(next);
+												queue.push([...path, next]);
+											}
+										}
+									}
+
+									if (!foundPath) {
+										resolve('No path found connecting "' + startNode.label + '" and "' + endNode.label + '".');
+										return;
+									}
+
+									var outputHtml = '__HTML__' + 'traceroute to concept "' + escapeHtml(endNode.label) + '" from "' + escapeHtml(startNode.label) + '"<br>';
+									foundPath.forEach(function(nodeId, index) {
+										var nodeObj = data.nodes.find(function(n) { return n.id === nodeId; });
+										var label = nodeObj ? nodeObj.label : nodeId;
+										var rtt = (Math.random() * 2 + 0.2 + index * 0.4).toFixed(2);
+										var isLast = index === foundPath.length - 1;
+										outputHtml += ' &nbsp;' + (index + 1) + ' &nbsp;<b>' + escapeHtml(label) + '</b> (' + rtt + ' ms)' + (isLast ? ' [Reached]' : '') + '<br>';
+									});
+									resolve(outputHtml);
+								})
+								.catch(function() {
+									resolve('Error: Could not retrieve graph data. Try building the website first.');
+								});
+						});
+					},
+					path: function (args) {
+						return this.shortestpath(args);
 					},
 					clear: function () { return '__CLEAR__'; }
 				};
