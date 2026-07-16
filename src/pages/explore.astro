@@ -72,6 +72,11 @@ import { SITE_TITLE } from '../consts';
 				display: flex;
 				flex-direction: column;
 				gap: 1.5rem;
+				-ms-overflow-style: none;  /* IE and Edge */
+				scrollbar-width: none;  /* Firefox */
+			}
+			.sidebar-scrollable::-webkit-scrollbar {
+				display: none; /* Chrome, Safari and Opera */
 			}
 			.panel-section {
 				background: rgba(30, 35, 50, 0.4);
@@ -130,6 +135,7 @@ import { SITE_TITLE } from '../consts';
 			.visit-btn {
 				display: block;
 				width: 100%;
+				box-sizing: border-box;
 				text-align: center;
 				background: linear-gradient(135deg, var(--accent-dark) 0%, var(--accent) 100%);
 				color: #fff;
@@ -429,6 +435,8 @@ import { SITE_TITLE } from '../consts';
 			let highlightedPath = new Set();
 			let highlightedLinks = new Set();
 			let selectedNode = null;
+			let hoveredNode = null;
+			let hoveredNeighbors = new Set();
 
 			// Controls elements
 			const searchInput = document.getElementById('search-nodes');
@@ -649,7 +657,6 @@ import { SITE_TITLE } from '../consts';
 						return 0.005;
 					})
 					.nodeCanvasObject((node, ctx, globalScale) => {
-						// Custom high-density label drawing for zoomed views
 						const label = node.label;
 						const size = Math.sqrt(node.degree) * 1.5 + 2.5;
 						
@@ -662,16 +669,53 @@ import { SITE_TITLE } from '../consts';
 						ctx.fill();
 
 						// Node halo glow (neon)
-						if (highlightedPath.has(node.id) || (highlightedPath.size === 0 && selectedNode && selectedNode.id === node.id)) {
+						const isHovered = hoveredNode && hoveredNode.id === node.id;
+						const isSelected = selectedNode && selectedNode.id === node.id;
+						const isPathNode = highlightedPath.has(node.id);
+
+						if (isPathNode || isSelected || isHovered) {
 							ctx.beginPath();
 							ctx.arc(node.x, node.y, size + 3, 0, 2 * Math.PI, false);
-							ctx.strokeStyle = highlightedPath.has(node.id) ? '#22c55e' : getNeonColor(node);
-							ctx.lineWidth = 1.5;
+							ctx.strokeStyle = isPathNode ? '#22c55e' : getNeonColor(node);
+							ctx.lineWidth = isHovered ? 2.0 : 1.5;
 							ctx.stroke();
 						}
 
-						// Label drawing if scale is large enough
-						if (globalScale > 1.2) {
+						// Dynamic Premium Text Collision Prevention Rules:
+						// Show labels if:
+						// - The node itself is hovered or selected.
+						// - The node is part of the highlighted BFS shortest path.
+						// - The node is a direct neighbor of the hovered node.
+						// - The node is a direct neighbor of the selected node.
+						// - Zoom level is very high (globalScale > 3.0), reveal all.
+						// - Zoom level is medium-high (2.0 < globalScale <= 3.0), reveal nodes with degree >= 3.
+						// - Zoom level is medium (1.2 < globalScale <= 2.0), reveal nodes with degree >= 7.
+						let shouldShowLabel = false;
+						
+						if (isHovered || isSelected || isPathNode) {
+							shouldShowLabel = true;
+						} else if (hoveredNode && hoveredNeighbors.has(node.id)) {
+							shouldShowLabel = true;
+						} else if (selectedNode && graphData) {
+							const isSelectedNeighbor = graphData.links.some(l => {
+								const s = typeof l.source === 'object' ? l.source.id : l.source;
+								const t = typeof l.target === 'object' ? l.target.id : l.target;
+								return (s === selectedNode.id && t === node.id) || (t === selectedNode.id && s === node.id);
+							});
+							if (isSelectedNeighbor) shouldShowLabel = true;
+						}
+
+						if (!shouldShowLabel && globalScale > 1.2) {
+							if (globalScale > 3.0) {
+								shouldShowLabel = true;
+							} else if (globalScale > 2.0 && node.degree >= 3) {
+								shouldShowLabel = true;
+							} else if (globalScale > 1.2 && node.degree >= 7) {
+								shouldShowLabel = true;
+							}
+						}
+
+						if (shouldShowLabel) {
 							const fontSize = Math.max(7, 10 / Math.sqrt(globalScale) + (size * 0.15));
 							ctx.font = `${fontSize}px Atkinson, sans-serif`;
 							ctx.textAlign = 'center';
@@ -679,7 +723,7 @@ import { SITE_TITLE } from '../consts';
 							
 							// Translucent text background for readability
 							const textWidth = ctx.measureText(label).width;
-							ctx.fillStyle = 'rgba(11, 16, 33, 0.7)';
+							ctx.fillStyle = 'rgba(11, 16, 33, 0.75)';
 							ctx.fillRect(node.x - textWidth/2 - 2, node.y + size + 2, textWidth + 4, fontSize + 2);
 
 							ctx.fillStyle = (highlightedPath.size > 0 && !highlightedPath.has(node.id)) 
@@ -687,6 +731,19 @@ import { SITE_TITLE } from '../consts';
 								: '#ffffff';
 							ctx.fillText(label, node.x, node.y + size + 3);
 						}
+					})
+					.onNodeHover(node => {
+						hoveredNode = node;
+						hoveredNeighbors.clear();
+						if (node && graphData) {
+							graphData.links.forEach(l => {
+								const s = typeof l.source === 'object' ? l.source.id : l.source;
+								const t = typeof l.target === 'object' ? l.target.id : l.target;
+								if (s === node.id) hoveredNeighbors.add(t);
+								if (t === node.id) hoveredNeighbors.add(s);
+							});
+						}
+						container.style.cursor = node ? 'pointer' : null;
 					})
 					.onNodeClick(node => {
 						showNodeDetails(node);
@@ -699,6 +756,10 @@ import { SITE_TITLE } from '../consts';
 						Graph.centerAt(node.x, node.y, 800);
 						Graph.zoom(3.5, 800);
 					});
+
+				// Physics settings to prevent node label collisions
+				Graph.d3Force('charge').strength(-150);
+				Graph.d3Force('link').distance(65);
 
 				// Adjust size on container resize (safeguards initial layout rendering)
 				const resizeObserver = new ResizeObserver((entries) => {
