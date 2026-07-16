@@ -31,6 +31,9 @@ import { SITE_TITLE } from '../consts';
 				flex-grow: 1;
 				height: 100%;
 				position: relative;
+				min-width: 0;
+				min-height: 0;
+				overflow: hidden;
 			}
 			.explore-sidebar {
 				width: 380px;
@@ -602,8 +605,8 @@ import { SITE_TITLE } from '../consts';
 
 				// Create Graph Object
 				Graph = ForceGraph()(container)
-					.width(container.clientWidth)
-					.height(container.clientHeight)
+					.width(container.clientWidth || (window.innerWidth - 380))
+					.height(container.clientHeight || (window.innerHeight - 80))
 					.graphData(filterGraphData())
 					.nodeId('id')
 					.nodeVal(n => Math.sqrt(n.degree) * 1.5 + 2.5) // size based on connectivity
@@ -696,10 +699,16 @@ import { SITE_TITLE } from '../consts';
 						Graph.zoom(3.5, 800);
 					});
 
-				// Adjust size on window resize
-				window.addEventListener('resize', () => {
-					Graph.width(container.clientWidth).height(container.clientHeight);
+				// Adjust size on container resize (safeguards initial layout rendering)
+				const resizeObserver = new ResizeObserver((entries) => {
+					for (let entry of entries) {
+						const { width, height } = entry.contentRect;
+						if (width > 0 && height > 0) {
+							Graph.width(width).height(height);
+						}
+					}
 				});
+				resizeObserver.observe(container);
 
 				// Auto-fit to view initially
 				setTimeout(() => Graph.zoomToFit(400), 500);
