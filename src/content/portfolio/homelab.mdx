@@ -21,7 +21,8 @@ order: 1
 
 <p>
 	The cluster inventory below mirrors the live Proxmox tree: Linux containers for always-on app and
-	data services, and full VMs for the Active Directory / desktop lab.
+	data services, full VMs for the Active Directory lab and per-user Windows 11 desktops, plus
+	kept-lean templates for fast clones.
 </p>
 
 <div class="specs-grid">
@@ -65,17 +66,17 @@ order: 1
 			<span class="spec-icon">
 				<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
 			</span>
-			<h3>Identity &amp; Desktops — VM</h3>
+			<h3>Windows Domain &amp; Desktops — VM</h3>
 		</div>
 		<table class="spec-table">
 			<tbody>
 				<tr><td class="spec-label">100</td><td><strong>DC-00</strong> — domain controller (<code>server</code>)</td></tr>
 				<tr><td class="spec-label">104</td><td><strong>DC-01</strong> — domain controller (<code>host-01</code>)</td></tr>
-				<tr><td class="spec-label">112</td><td><strong>SVC</strong> — member server for shared lab services</td></tr>
-				<tr><td class="spec-label">113</td><td><strong>RDS</strong> — Remote Desktop Services host</td></tr>
-				<tr><td class="spec-label">101</td><td><strong>PC-01</strong> — domain-joined workstation</td></tr>
-				<tr><td class="spec-label">111</td><td><strong>PC-02</strong> — domain-joined workstation</td></tr>
-				<tr><td class="spec-label">115</td><td><strong>PC-03</strong> — domain-joined workstation</td></tr>
+				<tr><td class="spec-label">112</td><td><strong>SVC</strong> — Windows VM for services, scripts &amp; scheduled tasks</td></tr>
+				<tr><td class="spec-label">113</td><td><strong>RDS</strong> — Remote Desktop Services test bench (not deployed for daily use)</td></tr>
+				<tr><td class="spec-label">101</td><td><strong>PC-01</strong> — in-use Windows 11 VM (one user per guest)</td></tr>
+				<tr><td class="spec-label">111</td><td><strong>PC-02</strong> — in-use Windows 11 VM (one user per guest)</td></tr>
+				<tr><td class="spec-label">115</td><td><strong>PC-03</strong> — in-use Windows 11 VM (one user per guest)</td></tr>
 			</tbody>
 		</table>
 	</div>
@@ -85,16 +86,23 @@ order: 1
 			<span class="spec-icon">
 				<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
 			</span>
-			<h3>Lab Images — VM</h3>
+			<h3>Templates &amp; Linux — VM</h3>
 		</div>
 		<table class="spec-table">
 			<tbody>
 				<tr><td class="spec-label">105</td><td><strong>Ubuntu</strong> — general-purpose Linux guest</td></tr>
-				<tr><td class="spec-label">106</td><td><strong>WindowsServer2025</strong> — evaluation / staging image</td></tr>
-				<tr><td class="spec-label">110</td><td><strong>Windows11</strong> — client OS test image</td></tr>
+				<tr><td class="spec-label">106</td><td><strong>WindowsServer2025</strong> — template for cloning new Server VMs</td></tr>
+				<tr><td class="spec-label">110</td><td><strong>Windows11</strong> — template for cloning new Windows 11 VMs</td></tr>
 			</tbody>
 		</table>
 	</div>
+</div>
+
+<div class="lab-note">
+	<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+	<span>
+		<strong>Why per-user PCs:</strong> Each Windows 11 desktop is a dedicated VM so household users don't kick each other out — only one interactive session can be active on a given guest at a time. <strong>WindowsServer2025</strong> and <strong>Windows11</strong> stay as Proxmox templates to spin up new VMs quickly while keeping storage lean.
+	</span>
 </div>
 
 <div class="lab-note">
@@ -162,7 +170,7 @@ order: 1
 
 <ul>
 	<li><strong>Self-hosted services</strong> — Immich, Ghostfolio, Blocky DNS, and the PostgreSQL/Redis/Docker stack that backs them</li>
-	<li><strong>Active Directory practice</strong> — dual DCs, member servers, RDS, and domain-joined workstations</li>
+	<li><strong>Active Directory practice</strong> — dual DCs, an SVC host for scripts/scheduled tasks, per-user Windows 11 desktops, and an RDS test bench</li>
 	<li><strong>Storage &amp; backup drills</strong> — ZFS on <code>host-01</code> plus rclone cloud mounts for off-site copies</li>
 	<li><strong>Automation &amp; IaC</strong> — a safe place to break and rebuild with Ansible, Terraform, and CI pipelines</li>
 </ul>
