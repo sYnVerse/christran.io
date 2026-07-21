@@ -1,22 +1,110 @@
 ---
 title: "Enterprise Home Lab"
-description: "Enterprise-grade testing environment built on decommissioned Dell PowerEdge servers. Simulates complex network topologies, manages virtualized infrastructure, and provides a dedicated space for continuous skill development."
+description: "A two-node Proxmox VE 9 cluster running Active Directory, media, finance, DNS, and platform services across dedicated VMs and LXC containers — an always-on sandbox for enterprise infrastructure work."
 category: "infrastructure"
-tags: ["Infrastructure Virtualization", "Network Simulation", "Hardware Restoration"]
-techStack: ["Proxmox", "pfSense", "Docker", "Ansible"]
+tags: ["Proxmox Cluster", "LXC Services", "Active Directory Lab"]
+techStack: ["Proxmox VE", "LXC", "ZFS", "Docker", "PostgreSQL", "Redis", "rclone", "Blocky"]
 image: "/img/projects/homelab.webp"
 featured: false
 order: 1
 ---
 
 <p>
-	This lab started with a decommissioned Dell PowerEdge R730 server generously donated by Auto-Chlor System. 
-	I rescued this hardware from a future at an e-waste facility and turned it into the foundation of a dedicated, 
-	enterprise-grade testing environment. Since then, it has grown into a multi-host setup that allows me to 
-	simulate production-level infrastructure at home.
+	<strong>Enterprise Home Lab</strong> is a two-node <strong>Proxmox VE 9.2</strong> cluster
+	(<code>proxmox-cluster</code>) that hosts the services I rely on day to day and the Windows domain
+	topology I use for systems administration practice. Workloads are split across bare-metal Dell
+	PowerEdge hosts — one tuned for density and ZFS storage, the other for identity and lighter VMs —
+	linked over a bonded 10G backbone.
 </p>
 
-<h2>Hardware</h2>
+<h2>What's Running</h2>
+
+<p>
+	The cluster inventory below mirrors the live Proxmox tree: Linux containers for always-on app and
+	data services, and full VMs for the Active Directory / desktop lab.
+</p>
+
+<div class="specs-grid">
+	<div class="spec-card">
+		<div class="spec-header">
+			<span class="spec-icon">
+				<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"/></svg>
+			</span>
+			<h3>Data Platform — LXC</h3>
+		</div>
+		<table class="spec-table">
+			<tbody>
+				<tr><td class="spec-label">102</td><td><strong>postgresql</strong> — primary relational database for lab apps</td></tr>
+				<tr><td class="spec-label">116</td><td><strong>redis</strong> — shared cache / in-memory store</td></tr>
+				<tr><td class="spec-label">107</td><td><strong>docker</strong> — nested container host for microservices</td></tr>
+				<tr><td class="spec-label">114</td><td><strong>rclone</strong> — cloud sync &amp; filesystem mounts</td></tr>
+			</tbody>
+		</table>
+	</div>
+
+	<div class="spec-card">
+		<div class="spec-header">
+			<span class="spec-icon">
+				<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+			</span>
+			<h3>Applications — LXC</h3>
+		</div>
+		<table class="spec-table">
+			<tbody>
+				<tr><td class="spec-label">103</td><td><strong>immich</strong> — self-hosted photo &amp; video library</td></tr>
+				<tr><td class="spec-label">108</td><td><strong>ghostfolio</strong> — open-source wealth / portfolio tracker</td></tr>
+				<tr><td class="spec-label">109</td><td><strong>blocky</strong> — DNS proxy &amp; network-wide ad blocking</td></tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<div class="specs-grid">
+	<div class="spec-card">
+		<div class="spec-header">
+			<span class="spec-icon">
+				<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+			</span>
+			<h3>Identity &amp; Desktops — VM</h3>
+		</div>
+		<table class="spec-table">
+			<tbody>
+				<tr><td class="spec-label">100</td><td><strong>DC-00</strong> — domain controller (<code>server</code>)</td></tr>
+				<tr><td class="spec-label">104</td><td><strong>DC-01</strong> — domain controller (<code>host-01</code>)</td></tr>
+				<tr><td class="spec-label">112</td><td><strong>SVC</strong> — member server for shared lab services</td></tr>
+				<tr><td class="spec-label">113</td><td><strong>RDS</strong> — Remote Desktop Services host</td></tr>
+				<tr><td class="spec-label">101</td><td><strong>PC-01</strong> — domain-joined workstation</td></tr>
+				<tr><td class="spec-label">111</td><td><strong>PC-02</strong> — domain-joined workstation</td></tr>
+				<tr><td class="spec-label">115</td><td><strong>PC-03</strong> — domain-joined workstation</td></tr>
+			</tbody>
+		</table>
+	</div>
+
+	<div class="spec-card">
+		<div class="spec-header">
+			<span class="spec-icon">
+				<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+			</span>
+			<h3>Lab Images — VM</h3>
+		</div>
+		<table class="spec-table">
+			<tbody>
+				<tr><td class="spec-label">105</td><td><strong>Ubuntu</strong> — general-purpose Linux guest</td></tr>
+				<tr><td class="spec-label">106</td><td><strong>WindowsServer2025</strong> — evaluation / staging image</td></tr>
+				<tr><td class="spec-label">110</td><td><strong>Windows11</strong> — client OS test image</td></tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<div class="lab-note">
+	<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+	<span>
+		<strong>Placement:</strong> Application and data LXCs (postgresql, immich, docker, ghostfolio, blocky, rclone, redis) plus most Windows guests live on <code>host-01</code>. Identity starter VMs <strong>DC-00</strong> and <strong>Ubuntu</strong> run on <code>server</code>, giving the cluster a second domain controller path and a lightweight Linux guest off the primary storage node.
+	</span>
+</div>
+
+<h2>Hypervisor Hosts</h2>
 
 <div class="specs-grid">
 	<div class="spec-card">
@@ -24,16 +112,15 @@ order: 1
 			<span class="spec-icon">
 				<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><circle cx="6" cy="6" r="1"/><circle cx="6" cy="18" r="1"/></svg>
 			</span>
-			<h3>Host 1 — Dell PowerEdge R730</h3>
+			<h3>host-01 — Dell PowerEdge R740</h3>
 		</div>
 		<table class="spec-table">
 			<tbody>
-				<tr><td class="spec-label">CPU</td><td>2x Intel Xeon E5-2637 v3 @ 3.50GHz (16 Threads)</td></tr>
-				<tr><td class="spec-label">RAM</td><td>64 GB DDR4 ECC</td></tr>
-				<tr><td class="spec-label">Storage</td><td>100 GB (93.93 GiB)</td></tr>
-				<tr><td class="spec-label">OS</td><td>Proxmox VE</td></tr>
-				<tr><td class="spec-label">Role</td><td>Virtualization & network simulation</td></tr>
-				<tr><td class="spec-label">Origin</td><td>Donated by Auto-Chlor System</td></tr>
+				<tr><td class="spec-label">CPU</td><td>2× Intel Xeon Gold 6242 @ 2.80GHz (64 threads)</td></tr>
+				<tr><td class="spec-label">RAM</td><td>503.50 GiB DDR4 ECC</td></tr>
+				<tr><td class="spec-label">Storage</td><td>3.00 TiB ZFS pool + local-lvm</td></tr>
+				<tr><td class="spec-label">OS</td><td>Proxmox VE 9.2.3 (Linux 7.0.12-1-pve)</td></tr>
+				<tr><td class="spec-label">Role</td><td>Primary compute — apps, data, most AD clients</td></tr>
 			</tbody>
 		</table>
 	</div>
@@ -43,15 +130,15 @@ order: 1
 			<span class="spec-icon">
 				<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><circle cx="6" cy="6" r="1"/><circle cx="6" cy="18" r="1"/></svg>
 			</span>
-			<h3>Host 2 — Dell PowerEdge R740</h3>
+			<h3>server — Dell PowerEdge R730</h3>
 		</div>
 		<table class="spec-table">
 			<tbody>
-				<tr><td class="spec-label">CPU</td><td>2x Intel Xeon Gold 6242 @ 2.80GHz (64 Threads)</td></tr>
-				<tr><td class="spec-label">RAM</td><td>512 GB DDR4 ECC</td></tr>
-				<tr><td class="spec-label">Storage</td><td>3 TB ZFS Pool (Highly Efficient)</td></tr>
-				<tr><td class="spec-label">OS</td><td>Proxmox VE</td></tr>
-				<tr><td class="spec-label">Role</td><td>Primary workload server</td></tr>
+				<tr><td class="spec-label">CPU</td><td>2× Intel Xeon E5-2637 v3 @ 3.50GHz (16 threads)</td></tr>
+				<tr><td class="spec-label">RAM</td><td>62.79 GiB DDR4 ECC</td></tr>
+				<tr><td class="spec-label">Storage</td><td>93.93 GiB boot + local-lvm</td></tr>
+				<tr><td class="spec-label">OS</td><td>Proxmox VE 9.2.3 (Linux 7.0.12-1-pve, EFI)</td></tr>
+				<tr><td class="spec-label">Role</td><td>Secondary node — DC-00 &amp; Ubuntu</td></tr>
 			</tbody>
 		</table>
 	</div>
@@ -60,38 +147,31 @@ order: 1
 <div class="lab-note">
 	<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19A5.5 5.5 0 0 0 22 13.5C22 9.5 19 6.5 15 6.5c-1 0-2 .2-3 .6A8.5 8.5 0 0 0 3 14c0 3.5 2.5 6.5 6 6.5h8.5Z"/></svg>
 	<span>
-		<strong>Cloud Storage Integration:</strong> Both host servers have <code>rclone</code> configured to mount cloud storage drives directly to the filesystem. This integrates <strong>5 TB of Google Drive</strong> and <strong>6 TB of Microsoft 365 Business</strong> storage (split into 1 TB per sub-account), providing highly resilient off-site storage for backups and media.
+		<strong>Off-site storage:</strong> The <code>rclone</code> LXC mounts cloud backends into the lab filesystem — <strong>5 TB Google Drive</strong> and <strong>6 TB Microsoft 365 Business</strong> (1 TB per sub-account) — for resilient backups and media.
 	</span>
 </div>
 
 <div class="lab-note">
 	<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6" y2="18"/><line x1="18" y1="6" x2="18" y2="18"/></svg>
 	<span>
-		<strong>Network Backbone:</strong> The two hosts are interconnected via a high-speed <strong>10 Gbps bonded connection</strong>, configured for link aggregation to achieve up to <strong>20 Gbps of aggregate throughput</strong>.
+		<strong>Network backbone:</strong> Both hosts share a high-speed <strong>10 Gbps bonded</strong> interconnect (link aggregation up to <strong>20 Gbps</strong> aggregate), with UniFi switching for lab VLANs and east-west VM traffic.
 	</span>
 </div>
 
-<h2>What It Runs</h2>
-
-<p>
-	The lab serves as a sandbox for building, breaking, and rebuilding infrastructure without impacting 
-	production environments. Day-to-day, it supports:
-</p>
+<h2>What It's For</h2>
 
 <ul>
-	<li><strong>Virtualized infrastructure</strong> — running multiple VMs and containers to mirror enterprise topologies</li>
-	<li><strong>Network simulation</strong> — testing complex routing, switching, firewall, and VPN configurations</li>
-	<li><strong>Security testing</strong> — practicing hardening, monitoring, and incident response workflows</li>
-	<li><strong>Automation development</strong> — prototyping Ansible playbooks, Python scripts, and CI/CD pipelines</li>
-	<li><strong>Continuous learning</strong> — preparing for certifications and experimenting with new technologies</li>
+	<li><strong>Self-hosted services</strong> — Immich, Ghostfolio, Blocky DNS, and the PostgreSQL/Redis/Docker stack that backs them</li>
+	<li><strong>Active Directory practice</strong> — dual DCs, member servers, RDS, and domain-joined workstations</li>
+	<li><strong>Storage &amp; backup drills</strong> — ZFS on <code>host-01</code> plus rclone cloud mounts for off-site copies</li>
+	<li><strong>Automation &amp; IaC</strong> — a safe place to break and rebuild with Ansible, Terraform, and CI pipelines</li>
 </ul>
 
 <h2>Future Plans</h2>
 
 <p>
-	I'm working on documenting the full lab configuration as Infrastructure as Code (IaC). Once ready, the 
-	complete setup — including provisioning scripts, network configs, and automation playbooks — will be 
-	published as an open-source repository.
+	I'm documenting the full lab as Infrastructure as Code. Once ready, provisioning scripts, network
+	configs, and automation playbooks will ship as an open-source repository.
 </p>
 
 <div class="github-teaser">
@@ -100,16 +180,18 @@ order: 1
 </div>
 
 <div class="tech-tags">
-	<span class="tag">Proxmox</span>
-	<span class="tag">pfSense</span>
-	<span class="tag">Docker</span>
-	<span class="tag">Ansible</span>
-	<span class="tag">VLAN</span>
-	<span class="tag">Dell PowerEdge</span>
-	<span class="tag">rclone</span>
-	<span class="tag">Google Drive</span>
-	<span class="tag">Microsoft 365</span>
+	<span class="tag">Proxmox VE 9</span>
+	<span class="tag">LXC</span>
 	<span class="tag">ZFS</span>
-	<span class="tag">Link Aggregation</span>
-	<span class="tag">10G/20G Bonding</span>
+	<span class="tag">PostgreSQL</span>
+	<span class="tag">Redis</span>
+	<span class="tag">Docker</span>
+	<span class="tag">Immich</span>
+	<span class="tag">Ghostfolio</span>
+	<span class="tag">Blocky</span>
+	<span class="tag">rclone</span>
+	<span class="tag">Active Directory</span>
+	<span class="tag">RDS</span>
+	<span class="tag">Dell PowerEdge</span>
+	<span class="tag">10G Bonding</span>
 </div>
