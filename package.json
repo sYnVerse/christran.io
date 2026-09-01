@@ -36,5 +36,8 @@
     "dev": "astro dev",
     "preview": "astro build && wrangler dev"
   },
-  "type": "module"
+  "type": "module",
+  "overrides": {
+    "smol-toml@>=1.0.1 <=1.7.0": "1.7.1"
+  }
 }
