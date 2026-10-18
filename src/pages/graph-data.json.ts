@@ -3,7 +3,7 @@ import path from 'node:path';
 
 export async function GET() {
   let graphData = { nodes: [], links: [], directed: false };
-  let labels = {};
+  let labels: Record<string, string> = {};
 
   try {
     const graphPath = path.resolve('graphify-out/graph.json');
