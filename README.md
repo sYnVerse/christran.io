@@ -1,170 +1,132 @@
 # christran.io
 
-A modern personal website and blog built with **Astro**, deployed on **Cloudflare Workers**.
+Personal website and blog for [Chris Tran](https://christran.io) — portfolio, writing, and interactive explorers — built with **Astro** and deployed on **Cloudflare Workers**.
 
-Visit the live site: [https://christran.io](https://christran.io)
+Live site: [https://christran.io](https://christran.io)
 
-## About
+## Stack
 
-This repository contains the source code for christran.io, a personal website showcasing my work, thoughts, and projects. It's built with modern web technologies and optimized for performance.
+| Layer | Choice |
+| --- | --- |
+| Framework | [Astro](https://astro.build) 7.x |
+| Content | MDX collections (`src/content/`) |
+| Images | Astro `<Image />` + [sharp](https://sharp.pixelplumbing.com/) |
+| Math (blog) | remark-math + rehype-katex |
+| Hosting | [Cloudflare Workers](https://workers.cloudflare.com/) + Wrangler |
+| Optional local tooling | `tools/blog-generator` (not deployed with the site) |
 
-## Tech Stack
+## Requirements
 
-- **Framework**: [Astro](https://astro.build) (90.9%)
-- **Language**: [TypeScript](https://www.typescriptlang.org/) (6%)
-- **Styling**: [CSS](https://developer.mozilla.org/en-US/docs/Web/CSS) (2.4%)
-- **Hosting**: [Cloudflare Workers](https://workers.cloudflare.com/)
+- **Node.js ≥ 22.22.0** and npm ≥ 9.6.5 (see `engines` in `package.json`)
+- A Cloudflare account if you want to deploy your own fork
 
-## Features
-
-✨ Fast and performant static site  
-📝 Blog with MDX support  
-🔍 SEO optimized with sitemap and RSS feed  
-🎨 Responsive and clean design  
-⚡ Deployed on Cloudflare Workers  
-🔄 Automated deployment pipeline  
-✍️ Local AI Blog Generator & Editor Dashboard (Gemini + Resend + Imagen 3)  
-
-
-## Performance & UX Focus
-
-This site is meticulously optimized to balance rich, visual aesthetics with lightning-fast load times. The optimization strategy prioritizes **User Experience (UX)** and **Performance Metrics (FCP, LCP, CLS)**:
-
-*   **Responsive & Optimized Image Pipelines**: All project screenshots and blog post hero images are migrated to `src/assets/` and processed via Astro's built-in `<Image />` component (powered by `sharp`). Resizing and WebP compression are executed during the build stage (reducing file sizes by **up to 89%**). Responsive `srcset` attributes ensure mobile devices fetch smaller resolutions while desktop viewports retain high-fidelity, retina-crisp rendering.
-*   **Zero Render-Blocking CSS**: All critical stylesheets are inlined directly into HTML `<style>` blocks in production builds. This eliminates separate HTTP round-trip requests for CSS files, allowing immediate visual painting.
-*   **Compositor-Only Animations**: Animations that previously caused browser repaint cycles (like animating `background-position-x`) were refactored to animate composited properties (such as GPU-accelerated `transform` rotations on pseudo-elements). This ensures smooth, jank-free 60fps UI feedback.
-*   **Context-Aware Loader Overlay**: The initial page loading overlay is skipped completely on mobile viewports to prevent loading friction and flashes of layout shift (CLS) on slower networks. On desktop, the delay was increased to `350ms` to let the network node drawing sequence play out smoothly, creating a premium first impression.
-
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js 18+ and npm
-
-### Installation
+## Quick start
 
 ```bash
-# Clone the repository
 git clone https://github.com/sYnVerse/christran.io.git
 cd christran.io
-
-# Install dependencies
 npm install
-```
-
-### Development
-
-```bash
-# Start local development server
 npm run dev
 ```
 
-The site will be available at `http://localhost:3000` (or the port shown in your terminal).
+Open the URL printed by Astro (typically `http://localhost:4321`).
 
-### Build
-
-```bash
-# Build for production
-npm run build
-
-# Preview the build locally
-npm run preview
-```
-
-### Deployment
-
-To deploy the site manually:
+### Build & preview
 
 ```bash
-# Deploy to Cloudflare Workers
-npm run deploy
+npm run build          # output in ./dist
+npm run preview        # build + wrangler dev
+npm run check          # build + tsc + wrangler deploy --dry-run
 ```
 
-#### Conditional Git Deployments (Cloudflare Dashboard)
+### Deploy
 
-To prevent Cloudflare from wasting build minutes and rebuilding the project when only non-frontend files (like documentation or tool configs) change, you can configure conditional commands in the Cloudflare dashboard:
+```bash
+npm run deploy         # astro build && wrangler deploy
+```
 
-* **Build command**:
-  ```bash
-  git diff --quiet HEAD^ HEAD src public astro.config.mjs package.json package-lock.json || npm run build
-  ```
-* **Deploy command**:
-  ```bash
-  git diff --quiet HEAD^ HEAD src public astro.config.mjs package.json package-lock.json || npx wrangler deploy
-  ```
+Production deploys for christran.io are usually triggered from the Cloudflare dashboard when `main` changes. Optional conditional build/deploy commands (skip when only docs/tools change):
 
-This checks if any relevant frontend code files or configuration changes exist between the current commit and the previous one (`HEAD^`). If no changes are detected, it skips execution, saving build minutes.
+```bash
+# Build
+git diff --quiet HEAD^ HEAD src public astro.config.mjs package.json package-lock.json || npm run build
 
-## Project Structure
+# Deploy
+git diff --quiet HEAD^ HEAD src public astro.config.mjs package.json package-lock.json || npx wrangler deploy
+```
+
+Set `CF_BUILD=1` (or `CF_PAGES`) in the Cloudflare build environment so `astro.config.mjs` enables the `@astrojs/cloudflare` adapter.
+
+## Environment variables & secrets
+
+The **published Worker for this marketing site** does not require application secrets in `wrangler.json`. Auth for other apps in the ecosystem lives on [auth.christran.io](https://auth.christran.io) (sYnID), not in this repo’s runtime config.
+
+| Name | Where | Purpose |
+| --- | --- | --- |
+| Cloudflare account / API credentials | Cloudflare dashboard / Wrangler login | Deploy only — never commit |
+| `GEMINI_API_KEY` | Local `tools/blog-generator/.env` only | Optional local AI drafting |
+| `RESEND_API_KEY` | Local `tools/blog-generator/.env` only | Optional local email of draft ideas |
+| `USER_EMAIL` / `SENDER_EMAIL` | Local `.env` only | Optional local notification addresses |
+| `PEXELS_API_KEY` / `UNSPLASH_ACCESS_KEY` | Local `.env` only | Optional stock image search |
+| `DASHBOARD_URL` / `PORT` / `BLOG_CONTENT_PATH` | Local `.env` only | Optional blog-generator settings |
+| `.dev.vars` | Local Wrangler (gitignored) | Local Workers secrets if you add bindings later |
+
+Copy `tools/blog-generator/.env.example` → `.env` for the local tool. **Do not commit `.env` or `.dev.vars`.**
+
+## Project structure
 
 ```
+├── public/                 # Static assets, _headers, _redirects, .well-known
 ├── src/
-│   ├── pages/          # Route-based pages
-│   ├── components/     # Reusable Astro/React/Vue components
-│   ├── content/        # Blog posts and content collections
-│   ├── layouts/        # Layout components
-│   ├── styles/         # Global styles
-│   └── utils/          # Utility functions
-└── tools/
-    └── blog-generator/ # Local AI blog creator & editor dashboard
+│   ├── assets/             # Optimized images
+│   ├── components/         # UI (search, terminal, interactive widgets)
+│   ├── content/            # Blog + portfolio MDX collections
+│   ├── layouts/
+│   ├── pages/              # Routes + JSON/RSS endpoints
+│   ├── scripts/
+│   └── styles/
+├── tools/
+│   └── blog-generator/     # Optional local Express dashboard (not part of Workers deploy)
+├── graphify-out/           # Knowledge graph data used by /explore
+├── astro.config.mjs
+├── wrangler.json
+└── package.json
 ```
 
-## AI Blog Generator Tool
+### Notable public routes
 
-This repository includes a localized, administrative dashboard and automation tool to streamline writing new posts.
+- `/` — home  
+- `/blog`, `/portfolio`, `/explore`  
+- `/rss.xml`, `/search-index.json`, `/graph-data.json`  
+- `/auth` — redirects to the separate OpenAuth host  
 
-### Features
-*   **Daily Scheduling**: Automatically generates 3 personalized topic ideas every morning at **8:00 AM** and emails them to you using the **Resend API**.
-*   **AI Drafting**: Click a button to generate a complete 1000-word blog post with Astro-compatible frontmatter.
-*   **Imagen 3 Integration**: Automatically generates custom, web-optimized `.webp` hero images using Google's **Imagen 3** model, storing them in `src/assets/img/`.
-*   **Live Split Editor**: Real-time Markdown editor side-by-side with HTML rendering.
-*   **AI Proofreader & Editor**: Send interactive prompts (e.g. *"make the tone more humorous"* or *"add a section comparing X to Y"*) to refine drafts on the fly.
-*   **GitHub Publisher**: Commit and push new articles directly to your repo via a built-in terminal box.
+## Local blog generator (optional)
 
-### Quick Start
-1. Navigate to the tool's directory:
-   ```bash
-   cd tools/blog-generator
-   ```
-2. Configure credentials by copying the template:
-   ```bash
-   cp .env.example .env
-   ```
-   *Fill in your `GEMINI_API_KEY`, `RESEND_API_KEY`, and `USER_EMAIL` inside the `.env` file.*
-3. Run the API verification check:
-   ```bash
-   npm run test-apis
-   ```
-4. Start the server (runs the cron job and serves the dashboard):
-   ```bash
-   npm start
-   ```
-5. Open your browser and navigate to:
-   👉 **http://localhost:5000**
+`tools/blog-generator` is a **local-only** helper for idea generation, drafting, and publishing posts from your machine. It is **not** deployed by `wrangler.json`. Prefer binding it to localhost and never exposing it on the public internet.
 
+```bash
+cd tools/blog-generator
+cp .env.example .env   # fill secret names listed above — never commit this file
+npm install
+npm run test-apis
+npm start              # http://localhost:5000
+```
 
-## Available Commands
+## Scripts
 
 | Command | Action |
-| :--- | :--- |
-| `npm run dev` | Start local dev server at `http://localhost:3000` |
-| `npm run build` | Build your production site to `./dist/` |
-| `npm run preview` | Preview your build locally before deploying |
-| `npm run check` | Run type checking and validation |
-| `npm run deploy` | Deploy to Cloudflare Workers |
-| `npm run cf-typegen` | Generate Cloudflare types |
-
-## Learning Resources
-
-- [Astro Documentation](https://docs.astro.build)
-- [Astro Discord Community](https://astro.build/chat)
-- [Cloudflare Workers Documentation](https://developers.cloudflare.com/workers/)
+| --- | --- |
+| `npm run dev` | Astro dev server |
+| `npm run build` | Production build → `./dist` |
+| `npm run preview` | Build + Wrangler local preview |
+| `npm run check` | Build + TypeScript + Wrangler dry-run |
+| `npm run deploy` | Build + Wrangler deploy |
+| `npm run cf-typegen` | Regenerate Cloudflare types |
 
 ## License
 
-This project is private. For inquiries about the code or design, please reach out.
+No license file is present in this repository yet. All rights reserved unless/until a license is added. For reuse questions, contact [career@christran.io](mailto:career@christran.io).
 
 ---
 
-Built with ❤️ by [sYnVerse](https://github.com/sYnVerse)
+Built by [sYnVerse](https://github.com/sYnVerse) · [christran.io](https://christran.io)
