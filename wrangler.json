@@ -20,5 +20,6 @@
       "pattern": "www.christran.io",
       "custom_domain": true
     }
-  ]
+  ],
+  "previews": {}
 }
