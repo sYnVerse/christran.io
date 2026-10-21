@@ -18,7 +18,11 @@
     0 16px 32px rgba(0, 0, 0, 0.4);
 }
 html {
-  background: var(--background-gradient);
+  /* Solid color first: Android Chrome edge-to-edge / overscroll use
+     background-color (not gradient) behind the system nav gesture area. */
+  color-scheme: dark;
+  background-color: var(--background);
+  background-image: var(--background-gradient);
   background-size: 100% 100%;
   min-height: 100vh;
 }
