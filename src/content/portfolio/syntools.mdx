@@ -1,0 +1,80 @@
+---
+title: "sYnTools"
+description: "A self-hosted collection of handy developer and IT utilities. Chris Tran's branded fork of it-tools (via sharevb/it-tools), with christran.io styling, privacy-focused defaults, and crypto hardening — live at tools.christran.io."
+category: "app"
+tags: ["Developer Tools", "Self-Hosted", "Utilities", "Open Source"]
+techStack: ["Vue 3", "Vite", "naive-ui", "pnpm"]
+image: "/img/projects/syntools.webp"
+liveUrl: "https://tools.christran.io"
+sourceUrl: "https://github.com/sYnVerse/sYnTools"
+featured: false
+order: 11
+---
+
+<p>
+	<strong>sYnTools</strong> is Chris Tran's self-hosted fork of <a href="https://github.com/CorentinTh/it-tools" target="_blank" rel="noopener noreferrer">CorentinTh/it-tools</a> (via <a href="https://github.com/sharevb/it-tools" target="_blank" rel="noopener noreferrer">sharevb/it-tools</a> <code>chore/all-my-stuffs</code>) — a browser-based toolbox of converters, crypto helpers, network utilities, and more. Hosted at <a href="https://tools.christran.io" target="_blank" rel="noopener noreferrer">tools.christran.io</a> and maintained on the <code>sYn-local-config</code> branch with periodic upstream syncs.
+</p>
+
+<h2>Technical Stack</h2>
+
+<div class="specs-grid">
+	<div class="spec-card">
+		<div class="spec-header">
+			<span class="spec-icon">
+				<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/></svg>
+			</span>
+			<h3>Application Layer</h3>
+		</div>
+		<table class="spec-table">
+			<tbody>
+				<tr><td class="spec-label">Framework</td><td>Vue 3</td></tr>
+				<tr><td class="spec-label">Build Tool</td><td>Vite</td></tr>
+				<tr><td class="spec-label">UI Library</td><td>naive-ui</td></tr>
+				<tr><td class="spec-label">Package Mgr</td><td>pnpm</td></tr>
+			</tbody>
+		</table>
+	</div>
+
+	<div class="spec-card">
+		<div class="spec-header">
+			<span class="spec-icon">
+				<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+			</span>
+			<h3>License & Provenance</h3>
+		</div>
+		<table class="spec-table">
+			<tbody>
+				<tr><td class="spec-label">License</td><td>AGPL-3.0-or-later (combined work)</td></tr>
+				<tr><td class="spec-label">Upstream</td><td>GPL-3.0 it-tools (notices preserved)</td></tr>
+				<tr><td class="spec-label">Default Branch</td><td><code>sYn-local-config</code></td></tr>
+				<tr><td class="spec-label">Source</td><td>github.com/sYnVerse/sYnTools</td></tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<div class="lab-note">
+	<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+	<span>
+		<strong>Crypto hardening:</strong> The upstream GPL-2.0 WireGuard keygen was replaced with an <code>@noble/curves</code> X25519 implementation so key material stays on a modern, auditable stack without mixed GPL-2.0 tooling.
+	</span>
+</div>
+
+<h2>Customizations</h2>
+<ul>
+	<li><strong>Full sYnTools Branding</strong> — Sidebar, document title, PWA manifest, Open Graph tags, and icons aligned with the christran.io identity (<code>#7B9EFF</code> accent, <code>#0B1021</code> navy).</li>
+	<li><strong>About & Splash</strong> — Custom About page and splash screen with the tagline <em>Engineering. Security. Automation.</em> matching the main site's look.</li>
+	<li><strong>Privacy Defaults</strong> — All upstream analytics and tracking (including Plausible) removed; tools process inputs in the browser.</li>
+	<li><strong>Upstream Sync</strong> — Periodically rebased against sharevb/it-tools so new utilities and fixes land without losing local branding and hardening.</li>
+</ul>
+
+<div class="tech-tags">
+	<span class="tag">Vue 3</span>
+	<span class="tag">Vite</span>
+	<span class="tag">naive-ui</span>
+	<span class="tag">pnpm</span>
+	<span class="tag">@noble/curves</span>
+	<span class="tag">AGPL-3.0</span>
+	<span class="tag">Self-Hosted</span>
+	<span class="tag">it-tools</span>
+</div>
