@@ -125,7 +125,19 @@ npm start              # http://localhost:5000
 
 ## License
 
-No license file is present in this repository yet. All rights reserved unless/until a license is added. For reuse questions, contact [career@christran.io](mailto:career@christran.io).
+Copyright © 2025–2026 Chris Tran.
+
+This repository uses a **dual license**:
+
+| Material | Paths | License |
+| --- | --- | --- |
+| **Code** (site, components, configs, tooling, and other software) | Everything **except** the content paths below | [GNU Affero General Public License v3.0 or later](./LICENSE) (`AGPL-3.0-or-later`) |
+| **Written content & media** (posts, articles, portfolio write-ups, and their images) | `src/content/**`, `src/assets/img/blog/**`, `src/assets/img/projects/**` | [Creative Commons Attribution-ShareAlike 4.0 International](./LICENSE-CONTENT) (CC BY-SA 4.0) |
+
+**Content © Chris Tran, licensed [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).**  
+Attribution: credit Chris Tran / [christran.io](https://christran.io) and link to the license.
+
+Full legal texts: [`LICENSE`](./LICENSE) (AGPL-3.0) and [`LICENSE-CONTENT`](./LICENSE-CONTENT) (CC BY-SA 4.0).
 
 ---
 
