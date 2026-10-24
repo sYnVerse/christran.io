@@ -26,7 +26,7 @@
   },
   "devDependencies": {
     "sharp": "^0.35.1",
-    "wrangler": "^4.101.0"
+    "wrangler": "^4.152.0"
   },
   "scripts": {
     "astro": "astro",
@@ -36,6 +36,9 @@
     "deploy": "astro build && wrangler deploy",
     "dev": "astro dev",
     "preview": "astro build && wrangler dev"
+  },
+  "overrides": {
+    "ws@<8.21.1": "8.21.1"
   },
   "type": "module",
   "engines": {
