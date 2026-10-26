@@ -537,10 +537,12 @@ const toolkitDomains = [
 									))}
 								</div>
 								<div class="cert-action-wrap">
-									<a href={stackCerts.compTiaA.verificationUrl} target="_blank" rel="noopener noreferrer" class="cert-verify-link">
-										<span>Verify Credential</span>
-										<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-									</a>
+									<span class="verify-pill-wrapper">
+										<a href={stackCerts.compTiaA.verificationUrl} target="_blank" rel="noopener noreferrer" class="cert-verify-link">
+											<span>Verify Credential</span>
+											<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+										</a>
+									</span>
 								</div>
 							</div>
 
@@ -574,10 +576,12 @@ const toolkitDomains = [
 								</div>
 								<div class="cert-action-wrap">
 									{stackCerts.compTiaNet.verificationUrl ? (
-										<a href={stackCerts.compTiaNet.verificationUrl} target="_blank" rel="noopener noreferrer" class="cert-verify-link">
-											<span>Verify Credential</span>
-											<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-										</a>
+										<span class="verify-pill-wrapper">
+											<a href={stackCerts.compTiaNet.verificationUrl} target="_blank" rel="noopener noreferrer" class="cert-verify-link">
+												<span>Verify Credential</span>
+												<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+											</a>
+										</span>
 									) : (
 										<span class="cert-pending-pill">
 											<span class="pulse-dot"></span>
@@ -617,10 +621,12 @@ const toolkitDomains = [
 								</div>
 								<div class="cert-action-wrap">
 									{stackCerts.compTiaCios.verificationUrl ? (
-										<a href={stackCerts.compTiaCios.verificationUrl} target="_blank" rel="noopener noreferrer" class="cert-verify-link">
-											<span>Verify Credential</span>
-											<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-										</a>
+										<span class="verify-pill-wrapper">
+											<a href={stackCerts.compTiaCios.verificationUrl} target="_blank" rel="noopener noreferrer" class="cert-verify-link">
+												<span>Verify Credential</span>
+												<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+											</a>
+										</span>
 									) : (
 										<span class="cert-pending-pill cios-pending">
 											<span class="pulse-dot-cyan"></span>
@@ -653,10 +659,12 @@ const toolkitDomains = [
 								</div>
 								<div class="sec-card-bottom">
 									{cert.verificationUrl ? (
-										<a href={cert.verificationUrl} target="_blank" rel="noopener noreferrer" class="sec-verify-btn">
-											<span>Verify Credential</span>
-											<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-										</a>
+										<span class="verify-pill-wrapper">
+											<a href={cert.verificationUrl} target="_blank" rel="noopener noreferrer" class="sec-verify-btn">
+												<span>Verify Credential</span>
+												<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+											</a>
+										</span>
 									) : cert.isRoadmap ? (
 										<span class="roadmap-badge-label">⚡ In Progress / Next Exam</span>
 									) : (
@@ -1440,19 +1448,91 @@ const toolkitDomains = [
 				border-top: 1px solid rgba(123, 158, 255, 0.1);
 				padding-top: 0.75rem;
 			}
-			.cert-verify-link {
+			/* Verify Credential pill: matches the homepage "View all projects" button */
+			.verify-pill-wrapper {
+				position: relative;
 				display: inline-flex;
 				align-items: center;
-				gap: 0.35rem;
-				font-size: 0.78rem;
-				font-weight: 600;
-				color: var(--accent);
-				text-decoration: none;
-				transition: color 0.2s ease;
+				justify-content: center;
+				border-radius: 9999px;
+				transition: transform 0.22s cubic-bezier(0.34, 1.45, 0.64, 1);
+				z-index: 1;
 			}
-			.cert-verify-link:hover {
-				color: #FFFFFF;
-				text-decoration: underline;
+			.verify-pill-wrapper::before,
+			.verify-pill-wrapper::after {
+				content: "";
+				position: absolute;
+				left: -2px;
+				top: -2px;
+				width: calc(100% + 4px);
+				height: calc(100% + 4px);
+				border-radius: 9999px;
+				z-index: 0;
+				background: linear-gradient(45deg, #042f4a, #0a4d6e, #0d6b7d, #0e7490, #0891b2, #06b6d4, #22d3ee, #2dd4bf, #34d399, #5eead4, #67e8f9, #38bdf8, #0ea5e9, #0369a1, #042f4a);
+				background-size: 200% auto;
+				animation: verify-pill-gradient-flow 6s linear infinite;
+				pointer-events: none;
+			}
+			.verify-pill-wrapper::after {
+				filter: blur(14px);
+				opacity: 0.65;
+				transition: filter 0.32s ease, opacity 0.32s ease;
+			}
+			.verify-pill-wrapper:hover {
+				transform: scale(1.04) translateY(-2px);
+			}
+			.verify-pill-wrapper:hover::after {
+				filter: blur(20px) brightness(1.3);
+				opacity: 0.9;
+			}
+			.verify-pill-wrapper:active {
+				transform: scale(0.98) translateY(0);
+			}
+			.cert-verify-link,
+			.sec-verify-btn {
+				position: relative;
+				z-index: 1;
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				gap: 0.4rem;
+				padding: 0.65rem 1.6rem;
+				border-radius: 9999px;
+				background: linear-gradient(135deg, rgba(30, 35, 50, 0.95) 0%, rgba(15, 20, 35, 0.98) 100%);
+				border: 1px solid rgba(123, 158, 255, 0.3);
+				color: var(--accent);
+				font-size: 0.9rem;
+				font-weight: 600;
+				text-decoration: none;
+				box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 8px 32px rgba(0, 0, 0, 0.5);
+				transition: all 0.22s ease;
+			}
+			.verify-pill-wrapper:hover .cert-verify-link,
+			.verify-pill-wrapper:hover .sec-verify-btn {
+				color: #ffffff;
+				border-color: rgba(123, 158, 255, 0.6);
+				box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 12px 40px rgba(0, 0, 0, 0.6);
+			}
+			.cert-verify-link:focus-visible,
+			.sec-verify-btn:focus-visible {
+				outline: 2px solid var(--accent);
+				outline-offset: 4px;
+			}
+			@keyframes verify-pill-gradient-flow {
+				0% { background-position: 0% 50%; }
+				50% { background-position: 100% 50%; }
+				100% { background-position: 0% 50%; }
+			}
+			@media (prefers-reduced-motion: reduce) {
+				.verify-pill-wrapper::before,
+				.verify-pill-wrapper::after {
+					animation: none;
+				}
+				.verify-pill-wrapper,
+				.verify-pill-wrapper:hover,
+				.verify-pill-wrapper:active {
+					transform: none;
+				}
 			}
 			.cert-pending-pill {
 				display: inline-flex;
@@ -1610,19 +1690,6 @@ const toolkitDomains = [
 				margin-top: 1rem;
 				padding-top: 0.65rem;
 				border-top: 1px solid rgba(123, 158, 255, 0.08);
-			}
-			.sec-verify-btn {
-				display: inline-flex;
-				align-items: center;
-				gap: 0.35rem;
-				font-size: 0.76rem;
-				font-weight: 600;
-				color: var(--accent);
-				text-decoration: none;
-			}
-			.sec-verify-btn:hover {
-				color: #FFFFFF;
-				text-decoration: underline;
 			}
 			.roadmap-badge-label {
 				font-size: 0.72rem;
