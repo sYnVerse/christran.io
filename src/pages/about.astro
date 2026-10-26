@@ -680,6 +680,7 @@ const toolkitDomains = [
 									id={`story-tab-${i}`}
 									aria-selected={i === 0 ? 'true' : 'false'}
 									aria-controls={`story-panel-${i}`}
+									tabindex={i === 0 ? '0' : '-1'}
 									class:list={['console-tab-btn', { active: i === 0 }]}
 									data-index={i}
 								>
@@ -691,10 +692,11 @@ const toolkitDomains = [
 
 					<div class="console-body">
 						{storyChapters.map((chap, i) => (
-							<article
+							<div
 								role="tabpanel"
 								id={`story-panel-${i}`}
 								aria-labelledby={`story-tab-${i}`}
+								tabindex="0"
 								class:list={['story-panel', { active: i === 0 }]}
 								data-index={i}
 							>
@@ -715,7 +717,7 @@ const toolkitDomains = [
 										))}
 									</div>
 								</div>
-							</article>
+							</div>
 						))}
 
 						<noscript>
@@ -747,6 +749,7 @@ const toolkitDomains = [
 									id={`hop-tab-${i}`}
 									aria-selected={hop.isCurrent ? 'true' : 'false'}
 									aria-controls={`hop-panel-${i}`}
+									tabindex={hop.isCurrent ? '0' : '-1'}
 									class:list={['hop-node-btn', { active: hop.isCurrent, 'is-current': hop.isCurrent }]}
 									data-index={i}
 									title={`${hop.org} (${hop.timeframe})`}
@@ -771,6 +774,7 @@ const toolkitDomains = [
 								role="tabpanel"
 								id={`hop-panel-${i}`}
 								aria-labelledby={`hop-tab-${i}`}
+								tabindex="0"
 								class:list={['hop-detail-panel', { active: hop.isCurrent }]}
 								data-index={i}
 							>
@@ -842,78 +846,53 @@ const toolkitDomains = [
 		<Footer />
 
 		<script is:inline>
-			// Story Tab Switching Logic
+			// WAI-ARIA tabs pattern: roving tabindex, automatic activation,
+			// arrow keys move between tabs and Home/End jump to the ends.
 			document.addEventListener('DOMContentLoaded', function () {
-				const storyTabs = document.querySelectorAll('.console-tab-btn');
-				const storyPanels = document.querySelectorAll('.story-panel');
-
-				storyTabs.forEach(function (tab) {
-					tab.addEventListener('click', function () {
-						const targetIdx = this.getAttribute('data-index');
-
-						storyTabs.forEach(function (t) {
-							const isActive = t.getAttribute('data-index') === targetIdx;
+				function setupTabs(tabs, panels, keys) {
+					function select(idx, moveFocus) {
+						tabs.forEach(function (t, i) {
+							const isActive = i === idx;
 							t.classList.toggle('active', isActive);
 							t.setAttribute('aria-selected', isActive ? 'true' : 'false');
+							t.setAttribute('tabindex', isActive ? '0' : '-1');
 						});
-
-						storyPanels.forEach(function (p) {
-							p.classList.toggle('active', p.getAttribute('data-index') === targetIdx);
+						panels.forEach(function (p, i) {
+							p.classList.toggle('active', i === idx);
 						});
-					});
+						if (moveFocus) tabs[idx].focus();
+					}
 
-					// Keyboard arrow navigation between tabs
-					tab.addEventListener('keydown', function (e) {
-						let currentIdx = parseInt(this.getAttribute('data-index'), 10);
-						if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+					tabs.forEach(function (tab, i) {
+						tab.addEventListener('click', function () {
+							select(i, false);
+						});
+						tab.addEventListener('keydown', function (e) {
+							let next = null;
+							if (keys.next.indexOf(e.key) !== -1) next = (i + 1) % tabs.length;
+							else if (keys.prev.indexOf(e.key) !== -1) next = (i - 1 + tabs.length) % tabs.length;
+							else if (e.key === 'Home') next = 0;
+							else if (e.key === 'End') next = tabs.length - 1;
+							if (next === null) return;
 							e.preventDefault();
-							const nextIdx = (currentIdx + 1) % storyTabs.length;
-							storyTabs[nextIdx].click();
-							storyTabs[nextIdx].focus();
-						} else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
-							e.preventDefault();
-							const prevIdx = (currentIdx - 1 + storyTabs.length) % storyTabs.length;
-							storyTabs[prevIdx].click();
-							storyTabs[prevIdx].focus();
-						}
-					});
-				});
-
-				// Traceroute Hop Switching Logic
-				const hopButtons = document.querySelectorAll('.hop-node-btn');
-				const hopPanels = document.querySelectorAll('.hop-detail-panel');
-
-				hopButtons.forEach(function (btn) {
-					btn.addEventListener('click', function () {
-						const targetIdx = this.getAttribute('data-index');
-
-						hopButtons.forEach(function (b) {
-							const isActive = b.getAttribute('data-index') === targetIdx;
-							b.classList.toggle('active', isActive);
-							b.setAttribute('aria-selected', isActive ? 'true' : 'false');
-						});
-
-						hopPanels.forEach(function (panel) {
-							panel.classList.toggle('active', panel.getAttribute('data-index') === targetIdx);
+							select(next, true);
 						});
 					});
+				}
 
-					// Keyboard arrow navigation between hops
-					btn.addEventListener('keydown', function (e) {
-						let currentIdx = parseInt(this.getAttribute('data-index'), 10);
-						if (e.key === 'ArrowRight') {
-							e.preventDefault();
-							const nextIdx = (currentIdx + 1) % hopButtons.length;
-							hopButtons[nextIdx].click();
-							hopButtons[nextIdx].focus();
-						} else if (e.key === 'ArrowLeft') {
-							e.preventDefault();
-							const prevIdx = (currentIdx - 1 + hopButtons.length) % hopButtons.length;
-							hopButtons[prevIdx].click();
-							hopButtons[prevIdx].focus();
-						}
-					});
-				});
+				// Story chapter tabs
+				setupTabs(
+					Array.from(document.querySelectorAll('.console-tab-btn')),
+					Array.from(document.querySelectorAll('.story-panel')),
+					{ next: ['ArrowRight', 'ArrowDown'], prev: ['ArrowLeft', 'ArrowUp'] }
+				);
+
+				// Traceroute hop tabs
+				setupTabs(
+					Array.from(document.querySelectorAll('.hop-node-btn')),
+					Array.from(document.querySelectorAll('.hop-detail-panel')),
+					{ next: ['ArrowRight'], prev: ['ArrowLeft'] }
+				);
 			});
 		</script>
 
