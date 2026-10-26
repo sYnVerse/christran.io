@@ -65,8 +65,8 @@
     "semantic_hash": ""
   },
   "src/components/Terminal.astro": {
-    "mtime": 1784162503.81999,
-    "ast_hash": "9307584747672032e1b51615979003a9",
+    "mtime": 1792982915.8657873,
+    "ast_hash": "e09d0363f507afa7e8e2002aac728837",
     "semantic_hash": ""
   },
   "src/components/interactive/F1AeroSimulator.astro": {
@@ -115,9 +115,9 @@
     "semantic_hash": "c81cdbad5347092cbb9fd48e812c611b"
   },
   "src/pages/about.astro": {
-    "mtime": 1780720921.2713492,
-    "ast_hash": "978bf52fc225135b478e77d1c6d9635f",
-    "semantic_hash": "978bf52fc225135b478e77d1c6d9635f"
+    "mtime": 1792983151.7835462,
+    "ast_hash": "5ec9ee7c43cc48a7409ab7bf28915e98",
+    "semantic_hash": ""
   },
   "src/pages/apps.astro": {
     "mtime": 1780201807.1659515,
@@ -135,8 +135,8 @@
     "semantic_hash": ""
   },
   "src/pages/index.astro": {
-    "mtime": 1782447163.4425292,
-    "ast_hash": "50419ca6e311def529c5123ec5de4344",
+    "mtime": 1792982969.8756788,
+    "ast_hash": "4947f30cb7590f03839e0b1bd3cf7631",
     "semantic_hash": ""
   },
   "src/pages/portfolio/[...slug].astro": {
