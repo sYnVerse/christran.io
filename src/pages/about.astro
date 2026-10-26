@@ -4,6 +4,297 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { Image } from 'astro:assets';
 import profileImg from '../assets/img/profile.png';
+
+const impactMetrics = [
+	{
+		label: 'Enterprise Scale',
+		value: '70+ Sites',
+		subtext: '& 2 On-Prem Data Centers',
+		badge: 'ACTIVE PRODUCTION',
+		accent: 'blue',
+	},
+	{
+		label: 'Certifications',
+		value: '6 Active',
+		badge: '+2 NEW · OCT 2026',
+		subtext: 'CompTIA CIOS Stack Unlocked',
+		accent: 'emerald',
+	},
+	{
+		label: 'Experience',
+		value: '4+ Years',
+		subtext: 'Enterprise IT & NetEng',
+		badge: 'PROMOTED 2025',
+		accent: 'indigo',
+	},
+	{
+		label: 'Core Focus',
+		value: 'Fortinet & IaC',
+		subtext: 'Security · Hybrid Cloud · Auto',
+		badge: 'ZERO TRUST',
+		accent: 'cyan',
+	},
+];
+
+const stackCerts = {
+	compTiaA: {
+		id: 'comptia-a',
+		code: 'CORE 1 & 2',
+		title: 'CompTIA A+',
+		issuer: 'CompTIA',
+		date: '2025',
+		statusBadge: 'VERIFIED',
+		description: 'Hardware, operating system architecture, operational troubleshooting, and enterprise endpoint support.',
+		tags: ['Hardware & OS', 'Diagnostics', 'Operational Foundations'],
+		verificationUrl: 'https://cp.certmetrics.com/comptia/en/public/verify/credential/XYBYNTH42RL0HE9J',
+	},
+	compTiaNet: {
+		id: 'comptia-net',
+		code: 'N10-009',
+		title: 'CompTIA Network+',
+		issuer: 'CompTIA',
+		date: 'Oct 2026',
+		statusBadge: 'NEW · PASSED OCT 2026',
+		description: 'Routing, switching, VLAN segmentation, IP addressing, wireless standards, network hardening, and high-availability architecture.',
+		tags: ['Routing & Switching', 'VLANs & Subnets', 'Network Hardening', 'High Availability'],
+		verificationUrl: '', // Will populate once CompTIA/Credly syncs
+	},
+	compTiaCios: {
+		id: 'comptia-cios',
+		code: 'STACKABLE CREDENTIAL',
+		title: 'CompTIA IT Operations Specialist (CIOS)',
+		issuer: 'CompTIA Stackable Credential',
+		date: 'Oct 2026',
+		statusBadge: 'STACK UNLOCKED',
+		description: 'Earned by stacking CompTIA A+ and Network+—validating end-to-end operational mastery spanning physical hosts, OS tiers, and complex network infrastructure.',
+		tags: ['A+ + Network+ Stack', 'Infrastructure Ops', 'Systems & Network Mastery'],
+		verificationUrl: '', // Will populate once CompTIA/Credly syncs
+	},
+};
+
+const secondaryCerts = [
+	{
+		id: 'itil-4',
+		title: 'ITIL® 4 Foundation',
+		issuer: 'PeopleCert',
+		date: '2025',
+		badge: 'ITSM',
+		description: 'Service value system, incident & problem management, change enablement, and organizational alignment.',
+		verificationUrl: 'https://media.licdn.com/dms/image/v2/D562DAQFBu1n8_pe09g/profile-treasury-image-shrink_800_800/profile-treasury-image-shrink_800_800/0/1737055028556?e=1793588400&v=beta&t=qQ0gX5c-F7Be76vmS1rPfCpHe-UTrjgl3bRTO2d2DT4',
+		isRoadmap: false,
+	},
+	{
+		id: 'ukg-pro',
+		title: 'UKG Pro System Management',
+		subtitle: 'Foundational',
+		issuer: 'UKG',
+		date: 'Jul 2024',
+		badge: 'ENTERPRISE SYSTEMS',
+		description: 'Core system administration, security roles, enterprise workflows, and identity integration.',
+		verificationUrl: 'https://www.credential.net/35dabac7-b2f6-4b23-b70a-f03cb8d38d21#acc.KFJWudmi',
+		isRoadmap: false,
+	},
+	{
+		id: 'google-it',
+		title: 'Google IT Support Professional',
+		issuer: 'Coursera / Google',
+		date: '2022',
+		badge: 'FOUNDATIONS',
+		description: 'Networking protocols, Linux/Windows administration, system security, and troubleshooting customer escalations.',
+		verificationUrl: 'https://www.coursera.org/account/accomplishments/professional-cert/4YFTG9CZXK29',
+		isRoadmap: false,
+	},
+	{
+		id: 'security-plus',
+		title: 'CompTIA Security+ (→ CSIS)',
+		issuer: 'Next Target on Roadmap',
+		date: 'Target: Nov 2026',
+		badge: 'NEXT STACK TARGET',
+		description: 'Completes the CompTIA Secure Infrastructure Specialist (CSIS) stack alongside A+ and Network+.',
+		verificationUrl: '',
+		isRoadmap: true,
+	},
+];
+
+const storyChapters = [
+	{
+		id: 'chapter-01',
+		tabLabel: '01_packets_logic.md',
+		title: 'The Packets & The Logic',
+		summary: 'How a Mathematics-CS foundation shapes deterministic network architecture.',
+		content: [
+			'I’ve always believed that the best networks are the ones you never notice. They are the invisible arteries of modern business—quietly routing data, securing systems, and enabling seamless collaboration across distributed sites.',
+			'My approach to systems and network engineering is heavily shaped by my background in Mathematics and Computer Science at UC San Diego. Instead of viewing systems purely as physical hardware or disjointed configuration files, I see them as graphs, algorithms, and deterministic flow systems. This mathematical lens helps me model complex traffic routing, predict bottleneck behaviors, and approach security hardening with structural rigor.',
+		],
+		takeaways: ['Graph Theory & Discrete Topology', 'Traffic Flow Modeling', 'Algorithmic Bottleneck Mitigation'],
+	},
+	{
+		id: 'chapter-02',
+		tabLabel: '02_enterprise_scale.md',
+		title: 'From Support to Enterprise Infrastructure',
+		summary: 'Multi-site scale, Fortinet security, and 24/7 reliability across 70+ locations.',
+		content: [
+			'Throughout my career, I’ve had the privilege of working in environments ranging from municipal public services to tech giants, including Microsoft, Amazon, and Santa Clara County. At Santa Clara County, I individually certified and deployed 1,200+ iPads and election hardware across 100+ polling centers—instilling an unyielding appreciation for strict SLA management, operational discipline, and bulletproof deployments.',
+			'Currently, I serve as a Network Engineer at Auto-Chlor System, where I was promoted after demonstrating a track record for scalable infrastructure design and proactive automation. Today, I oversee enterprise networking across 70+ remote sites and 2 on-premises data centers, leading Fortinet firewall administration (FortiGate, FortiManager, FortiAnalyzer), VPN/cloud connectivity, physical server hosts, and central tier-3 escalations.',
+		],
+		takeaways: ['70+ Remote Branch Sites', '2 On-Premises Data Centers', 'Fortinet Security Fabric (Gate/Manager/Analyzer)'],
+	},
+	{
+		id: 'chapter-03',
+		tabLabel: '03_automation_homelab.md',
+		title: 'Automation & The Enterprise Homelab',
+		summary: 'If it repeats three times, automate it. Bridging work with a Dell PowerEdge lab.',
+		content: [
+			'To me, a manual task repeated more than three times is a bug. I actively write PowerShell, Python, and Bash scripts to automate fleet configurations, audit security baselines, and manage enterprise mobile devices via Samsung Knox Suite (combining Knox Mobile Enrollment for touchless provisioning and Knox Manage for MDM).',
+			'This passion for building and tweaking doesn’t stop when I log off. In my spare time, I design and run an Enterprise Home Lab built on enterprise Dell PowerEdge servers. It serves as my dedicated proving ground for virtualization (Proxmox VE & Hyper-V), container orchestration (Docker & Kubernetes testing), pfSense firewalls, isolated VLANs, and automated ZFS storage pools.',
+		],
+		takeaways: ['Samsung Knox MDM & Fleet Scripting', 'Proxmox VE & ZFS Self-Healing Storage', 'pfSense & Multi-VLAN Isolation'],
+	},
+	{
+		id: 'chapter-04',
+		tabLabel: '04_strategic_growth.md',
+		title: 'Strategic Growth & Governance',
+		summary: 'Aligning packets and infrastructure with executive IT governance.',
+		content: [
+			'Technology is only half the equation; the other half is understanding how it serves organizational goals. To bridge the gap between technical design and business strategy, I am pursuing my M.S. in Information Technology Management at Western Governors University (expected 2027).',
+			'Combined with ITIL 4 Foundation principles and my newly unlocked CompTIA IT Operations Specialist (CIOS) certification, my goal is to ensure that every server I deploy or firewall policy I commit directly reinforces governance, risk management, and overall operational efficiency.',
+		],
+		takeaways: ['M.S. IT Management (WGU 2027)', 'ITIL 4 Service Value System', 'Risk & Regulatory Governance'],
+	},
+];
+
+const careerHops = [
+	{
+		hopNumber: '01',
+		org: 'Foothill College',
+		role: 'Associate in Science — Computer Science',
+		timeframe: '2015',
+		latency: '1.2 ms',
+		location: 'Los Altos Hills, CA',
+		summary: 'Foundational computer science, object-oriented programming, data structures, and computer architecture.',
+		badges: ['Computer Science', 'Algorithms', 'Foundations'],
+		url: 'https://foothill.edu',
+	},
+	{
+		hopNumber: '02',
+		org: 'UC San Diego',
+		role: 'B.S. in Mathematics — Computer Science',
+		timeframe: '2015 – 2018',
+		latency: '4.8 ms',
+		location: 'La Jolla, CA',
+		summary: 'Rigorous mathematical modeling, graph theory, discrete mathematics, network algorithms, and numerical methods.',
+		badges: ['B.S. Math-CS', 'Graph Theory', 'Discrete Systems'],
+		url: 'https://ucsd.edu',
+	},
+	{
+		hopNumber: '03',
+		org: 'Amazon.com',
+		role: '3P Problem Solver Lead',
+		timeframe: '2018 – 2020',
+		latency: '8.4 ms',
+		location: 'Bay Area, CA',
+		summary: 'Promoted to lead within 2 months of hire. Coordinated floor operations, resolved time-sensitive order anomalies, and maintained peak fulfillment SLAs.',
+		badges: ['Operational Leadership', 'Rapid Promotion', 'SLA Delivery'],
+		url: 'https://amazon.com',
+	},
+	{
+		hopNumber: '04',
+		org: 'Santa Clara County',
+		role: 'Associate IT Service Desk Specialist',
+		timeframe: '2020 – 2022',
+		latency: '12.1 ms',
+		location: 'San Jose, CA',
+		summary: 'Configured, certified, and deployed 1,200+ iPads with election software, voter files, and paired Bluetooth printers across 100+ countywide vote centers.',
+		badges: ['1,200+ Endpoint Deployments', '100+ Sites', 'Registrar of Voters'],
+		url: 'https://santaclaracounty.gov',
+	},
+	{
+		hopNumber: '05',
+		org: 'Auto-Chlor System',
+		role: 'Network Engineer (Promoted from Jr. NetEng)',
+		timeframe: '2022 – Present',
+		latency: '22.3 ms [ACTIVE_NODE]',
+		location: 'Mountain View, CA',
+		summary: 'Promoted to Network Engineer overseeing infrastructure across 70+ branches and 2 data centers. Direct Fortinet administration (FortiGate, FortiManager, FortiAnalyzer), VPN/SD-WAN, tier-3 escalations, and Samsung Knox MDM.',
+		badges: ['70+ Sites Managed', '2 On-Prem DCs', 'Fortinet Security Suite', 'Primary Escalations'],
+		url: 'https://www.autochlor.com',
+		isCurrent: true,
+	},
+	{
+		hopNumber: '06',
+		org: 'Western Governors University',
+		role: 'M.S. in Information Technology Management',
+		timeframe: 'Expected 2027',
+		latency: '28.9 ms [IN_FLIGHT]',
+		location: 'Online / Master of Science',
+		summary: 'Master’s degree focusing on executive IT governance, organizational leadership, risk & compliance, financial management, and enterprise technology strategy.',
+		badges: ['M.S. IT Management', 'IT Governance', 'Executive Strategy'],
+		url: 'https://wgu.edu',
+	},
+];
+
+const toolkitDomains = [
+	{
+		index: '01',
+		title: 'Firewalls & Network Security',
+		color: 'blue',
+		skills: [
+			'Fortinet (FortiGate / FortiManager / FortiAnalyzer)',
+			'pfSense & OPNsense Firewalls',
+			'TCP/IP, Routing & Subnetting',
+			'IPsec / SSL VPN & SD-WAN',
+			'VLAN Segmentation & 802.1Q',
+			'Cloudflare Zero Trust & Tunnels',
+			'Wireshark Packet Analysis',
+			'DNS, DHCP & NAT Configurations',
+		],
+	},
+	{
+		index: '02',
+		title: 'Infrastructure & Virtualization',
+		color: 'emerald',
+		skills: [
+			'Proxmox VE Hypervisor',
+			'Microsoft Hyper-V',
+			'Dell PowerEdge Enterprise Servers',
+			'On-Premises Data Center Racks',
+			'ZFS Storage Pools & RAIDZ',
+			'Docker Containerization',
+			'Kubernetes (K8s / K3s Prototyping)',
+			'Windows Server & Linux (Ubuntu / Debian)',
+		],
+	},
+	{
+		index: '03',
+		title: 'Identity, Cloud & MDM',
+		color: 'indigo',
+		skills: [
+			'Active Directory (Hybrid Environments)',
+			'Microsoft Entra ID (Azure AD)',
+			'Microsoft 365, Teams & SharePoint Admin',
+			'Samsung Knox Suite (KME + Knox Manage)',
+			'Jamf Pro & Microsoft Intune',
+			'UKG Pro System Management',
+			'RBAC & Security Group Policies (GPO)',
+			'Zero-Touch Device Enrollment',
+		],
+	},
+	{
+		index: '04',
+		title: 'Automation & Service Operations',
+		color: 'cyan',
+		skills: [
+			'PowerShell Scripting & Fleet Automation',
+			'Python Network & Data Scripts',
+			'Bash & Linux System Automation',
+			'ITIL 4 Service Delivery & SLAs',
+			'24/7 On-Call Escalation Management',
+			'Multi-Site Fleet Rollouts (70+ Sites)',
+			'Ansible / Declarative IaC Concepts',
+			'Technical Architecture Documentation',
+		],
+	},
+];
 ---
 
 <!doctype html>
@@ -11,387 +302,1813 @@ import profileImg from '../assets/img/profile.png';
 	<head>
 		<BaseHead
 			title="About Me | Chris Tran"
-			description="Network Engineer specializing in IT infrastructure, security, and automation."
+			description="Network Engineer specializing in enterprise infrastructure across 70+ sites, Fortinet security, virtualization, and automation."
 		/>
-		<style>
-			.about-page {
-				min-height: calc(100vh - 200px);
-				padding: 2rem 1rem;
-				box-sizing: border-box;
-			}
-			.about-container {
-				max-width: 960px;
-				margin: 0 auto;
-			}
-			.about-title-section {
-				margin-bottom: 2.5rem;
-				text-align: left;
-			}
-			.about-title-section h1 {
-				font-size: 2.5rem;
-				margin-bottom: 0.5rem;
-				background: linear-gradient(135deg, #FFFFFF 30%, var(--accent) 100%);
-				-webkit-background-clip: text;
-				-webkit-text-fill-color: transparent;
-				background-clip: text;
-			}
-			.subtitle {
-				font-size: 1.1rem;
-				color: rgb(var(--gray));
-				margin: 0;
-			}
-			.about-grid {
-				display: grid;
-				grid-template-columns: 280px 1fr;
-				gap: 2rem;
-				align-items: start;
-			}
-			/* Sidebar Styles */
-			.about-sidebar {
-				display: flex;
-				flex-direction: column;
-				gap: 1.5rem;
-			}
-			.profile-card {
-				background: rgba(30, 35, 50, 0.45);
-				backdrop-filter: blur(12px);
-				-webkit-backdrop-filter: blur(12px);
-				border: 1px solid rgba(123, 158, 255, 0.12);
-				border-radius: 12px;
-				padding: 1.25rem;
-				text-align: center;
-				box-shadow: var(--box-shadow);
-				transition: border-color 0.3s ease;
-			}
-			.profile-card:hover {
-				border-color: rgba(123, 158, 255, 0.3);
-			}
-			.profile-image-container {
-				position: relative;
-				width: 160px;
-				height: 160px;
-				margin: 0 auto 1rem;
-				border-radius: 50%;
-				padding: 4px;
-				background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
-				box-shadow: 0 0 20px rgba(123, 158, 255, 0.2);
-			}
-			.profile-image-container :global(img) {
-				width: 100%;
-				height: 100%;
-				object-fit: cover;
-				border-radius: 50%;
-				display: block;
-				background: #1e2332;
-			}
-			.profile-name {
-				font-size: 1.25rem;
-				font-weight: 700;
-				color: rgb(var(--black));
-				margin: 0 0 0.25rem 0;
-			}
-			.profile-title {
-				font-size: 0.85rem;
-				color: var(--accent);
-				font-weight: 500;
-				margin: 0 0 1rem 0;
-			}
-			.quick-meta {
-				text-align: left;
-				border-top: 1px solid rgba(123, 158, 255, 0.12);
-				padding-top: 1rem;
-				font-size: 0.85rem;
-				display: flex;
-				flex-direction: column;
-				gap: 0.75rem;
-			}
-			.meta-item {
-				display: flex;
-				align-items: flex-start;
-				gap: 0.6rem;
-				color: rgb(var(--gray-dark));
-			}
-			.meta-icon {
-				color: var(--accent);
-				flex-shrink: 0;
-				margin-top: 0.1rem;
-			}
-			.meta-label {
-				font-weight: 600;
-				color: rgb(var(--gray));
-				display: block;
-				font-size: 0.75rem;
-				text-transform: uppercase;
-				letter-spacing: 0.05em;
-			}
-			/* Sidebar Buttons */
-			.connect-buttons {
-				display: flex;
-				flex-direction: column;
-				gap: 0.75rem;
-			}
-			.btn-connect {
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				gap: 0.5rem;
-				padding: 0.65rem;
-				background: rgba(123, 158, 255, 0.1);
-				border: 1px solid rgba(123, 158, 255, 0.2);
-				border-radius: 8px;
-				color: var(--accent);
-				font-size: 0.9rem;
-				font-weight: 500;
-				text-decoration: none;
-				transition: all 0.25s ease;
-			}
-			.btn-connect:hover {
-				background: rgba(123, 158, 255, 0.2);
-				border-color: var(--accent);
-				color: #FFF;
-				transform: translateY(-1px);
-			}
-			.btn-primary-connect {
-				background: var(--accent);
-				color: #0B1021;
-				border: none;
-			}
-			.btn-primary-connect:hover {
-				background: #9bb3ff;
-				color: #0B1021;
-				transform: translateY(-1px);
-				box-shadow: 0 0 15px rgba(123, 158, 255, 0.3);
-			}
-
-			/* Narrative Styles */
-			.about-content {
-				background: rgba(11, 16, 33, 0.88);
-				border-radius: 12px;
-				padding: 2rem;
-				box-shadow: var(--box-shadow);
-				border: 1px solid rgba(255, 255, 255, 0.05);
-				line-height: 1.8;
-			}
-			.about-content h2 {
-				font-size: 1.5rem;
-				color: rgb(var(--black));
-				margin: 1.75rem 0 0.75rem;
-				position: relative;
-				padding-bottom: 0.5rem;
-			}
-			.about-content h2:first-of-type {
-				margin-top: 0;
-			}
-			.about-content h2::after {
-				content: '';
-				position: absolute;
-				bottom: 0;
-				left: 0;
-				width: 2.5rem;
-				height: 2px;
-				background: var(--accent);
-				border-radius: 1px;
-			}
-			.about-content p {
-				margin-bottom: 1.25rem;
-				font-size: 0.95rem;
-			}
-			.about-content ul {
-				padding-left: 1.25rem;
-				margin-bottom: 1.5rem;
-			}
-			.about-content li {
-				margin-bottom: 0.5rem;
-				font-size: 0.95rem;
-			}
-
-			/* Tech Badges */
-			.tech-bagde-container {
-				display: flex;
-				flex-wrap: wrap;
-				gap: 0.5rem;
-				margin-top: 1rem;
-			}
-			.badge {
-				padding: 0.15rem 0.55rem;
-				background: rgba(123, 158, 255, 0.08);
-				border: 1px solid rgba(123, 158, 255, 0.15);
-				border-radius: 4px;
-				font-size: 0.8rem;
-				color: rgb(var(--gray-dark));
-			}
-
-			/* Responsive Design */
-			@media (max-width: 800px) {
-				.about-grid {
-					grid-template-columns: 1fr;
-					gap: 1.5rem;
-				}
-				.about-sidebar {
-					flex-direction: column;
-				}
-				.profile-card {
-					display: flex;
-					flex-direction: row;
-					align-items: center;
-					text-align: left;
-					gap: 1.5rem;
-				}
-				.profile-image-container {
-					margin: 0;
-					flex-shrink: 0;
-				}
-				.profile-text {
-					flex-grow: 1;
-				}
-				.quick-meta {
-					border-top: none;
-					border-left: 1px solid rgba(123, 158, 255, 0.12);
-					padding-top: 0;
-					padding-left: 1.5rem;
-					margin-top: 0;
-				}
-				.profile-title {
-					margin-bottom: 0;
-				}
-				.connect-buttons {
-					flex-direction: row;
-				}
-				.btn-connect {
-					flex: 1;
-				}
-			}
-			@media (max-width: 600px) {
-				.profile-card {
-					flex-direction: column;
-					text-align: center;
-				}
-				.profile-image-container {
-					margin: 0 auto;
-				}
-				.quick-meta {
-					border-left: none;
-					border-top: 1px solid rgba(123, 158, 255, 0.12);
-					padding-left: 0;
-					padding-top: 1rem;
-					width: 100%;
-				}
-				.connect-buttons {
-					flex-direction: column;
-				}
-			}
-		</style>
+		<script type="application/ld+json" is:inline>
+		{
+		  "@context": "https://schema.org",
+		  "@type": "Person",
+		  "name": "Chris Tran",
+		  "jobTitle": "Network Engineer",
+		  "worksFor": {
+		    "@type": "Organization",
+		    "name": "Auto-Chlor System"
+		  },
+		  "url": "https://christran.io/about",
+		  "sameAs": [
+		    "https://linkedin.com/in/synchris",
+		    "https://github.com/sYnVerse"
+		  ],
+		  "alumniOf": [
+		    {
+		      "@type": "EducationalOrganization",
+		      "name": "University of California, San Diego"
+		    },
+		    {
+		      "@type": "EducationalOrganization",
+		      "name": "Western Governors University"
+		    },
+		    {
+		      "@type": "EducationalOrganization",
+		      "name": "Foothill College"
+		    }
+		  ],
+		  "hasCredential": [
+		    {
+		      "@type": "EducationalOccupationalCredential",
+		      "name": "CompTIA IT Operations Specialist (CIOS)",
+		      "credentialCategory": "certification",
+		      "recognizedBy": {
+		        "@type": "Organization",
+		        "name": "CompTIA"
+		      }
+		    },
+		    {
+		      "@type": "EducationalOccupationalCredential",
+		      "name": "CompTIA Network+",
+		      "credentialCategory": "certification",
+		      "recognizedBy": {
+		        "@type": "Organization",
+		        "name": "CompTIA"
+		      }
+		    },
+		    {
+		      "@type": "EducationalOccupationalCredential",
+		      "name": "CompTIA A+",
+		      "credentialCategory": "certification",
+		      "url": "https://cp.certmetrics.com/comptia/en/public/verify/credential/XYBYNTH42RL0HE9J",
+		      "recognizedBy": {
+		        "@type": "Organization",
+		        "name": "CompTIA"
+		      }
+		    },
+		    {
+		      "@type": "EducationalOccupationalCredential",
+		      "name": "ITIL 4 Foundation",
+		      "credentialCategory": "certification",
+		      "url": "https://media.licdn.com/dms/image/v2/D562DAQFBu1n8_pe09g/profile-treasury-image-shrink_800_800/profile-treasury-image-shrink_800_800/0/1737055028556?e=1793588400&v=beta&t=qQ0gX5c-F7Be76vmS1rPfCpHe-UTrjgl3bRTO2d2DT4",
+		      "recognizedBy": {
+		        "@type": "Organization",
+		        "name": "PeopleCert"
+		      }
+		    },
+		    {
+		      "@type": "EducationalOccupationalCredential",
+		      "name": "UKG Pro System Management - Foundational",
+		      "credentialCategory": "certification",
+		      "url": "https://www.credential.net/35dabac7-b2f6-4b23-b70a-f03cb8d38d21#acc.KFJWudmi",
+		      "recognizedBy": {
+		        "@type": "Organization",
+		        "name": "UKG"
+		      }
+		    },
+		    {
+		      "@type": "EducationalOccupationalCredential",
+		      "name": "Google IT Support Professional",
+		      "credentialCategory": "certification",
+		      "url": "https://www.coursera.org/account/accomplishments/professional-cert/4YFTG9CZXK29",
+		      "recognizedBy": {
+		        "@type": "Organization",
+		        "name": "Google"
+		      }
+		    }
+		  ],
+		  "address": {
+		    "@type": "PostalAddress",
+		    "addressLocality": "San Francisco Bay Area",
+		    "addressRegion": "CA",
+		    "addressCountry": "US"
+		  }
+		}
+		</script>
 	</head>
 	<body>
 		<Header />
 		<main class="about-page">
 			<div class="about-container">
-				<div class="about-title-section">
-					<h1>About Me</h1>
-					<p class="subtitle">Systems, packets, and the logical architecture that connects them.</p>
-				</div>
 
-				<div class="about-grid">
-					<!-- Sidebar -->
-					<aside class="about-sidebar">
-						<div class="profile-card">
-							<div class="profile-image-container">
-								<Image src={profileImg} alt="Chris Tran" width={160} height={160} quality={90} format="webp" />
+				<!-- Row 0: NOC Telemetry Status Bar -->
+				<header class="noc-telemetry-bar" aria-label="Systems telemetry banner">
+					<div class="telemetry-node">
+						<span class="status-ping" aria-hidden="true">
+							<span class="status-ping-ring"></span>
+							<span class="status-ping-dot"></span>
+						</span>
+						<span class="telemetry-label">NODE:</span>
+						<span class="telemetry-val">CHRIS-TRAN-SFO-01</span>
+					</div>
+					<div class="telemetry-tags">
+						<span class="telemetry-item"><span class="k">ROLE:</span> <strong class="v">NET_ENGINEER</strong></span>
+						<span class="telemetry-item"><span class="k">SITES:</span> <strong class="v-accent">70+ ONLINE</strong></span>
+						<span class="telemetry-item"><span class="k">DATA_CENTERS:</span> <strong class="v-accent">2 ACTIVE</strong></span>
+						<span class="telemetry-item"><span class="k">CERT_STACK:</span> <strong class="v-cios">CIOS_VERIFIED</strong></span>
+					</div>
+				</header>
+
+				<!-- Row 1: Bento Grid — Profile Hero (Left) + 2x2 Impact Grid (Right) -->
+				<section class="bento-row bento-hero-row" aria-label="Profile summary and impact telemetry">
+					<!-- Hero Profile Dossier Card -->
+					<div class="bento-card hero-dossier-card">
+						<div class="dossier-top">
+							<div class="avatar-container">
+								<div class="avatar-glow-ring"></div>
+								<Image
+									src={profileImg}
+									alt="Chris Tran - Network Engineer"
+									width={160}
+									height={160}
+									quality={90}
+									format="webp"
+									class="avatar-img"
+								/>
+								<span class="avatar-badge" title="Status: Online & In Service">🟢</span>
 							</div>
-							<div class="profile-text">
-								<h2 class="profile-name">Chris Tran</h2>
-								<p class="profile-title">Network Engineer</p>
-								
-								<div class="quick-meta">
-									<div class="meta-item">
-										<span class="meta-icon" aria-hidden="true">📍</span>
-										<div>
-											<span class="meta-label">Location</span>
-											<span>San Francisco Bay Area</span>
-										</div>
+							<div class="dossier-intro">
+								<div class="dossier-tag">OPERATOR // DOSSIER</div>
+								<h1 class="dossier-name">Chris Tran</h1>
+								<p class="dossier-title">Network Engineer <span class="dossier-at">@ Auto-Chlor System</span></p>
+								<p class="dossier-tagline">Systems, packets, and the logical architecture that connects them.</p>
+							</div>
+						</div>
+
+						<p class="dossier-bio">
+							Applying a <strong>Mathematics & Computer Science</strong> foundation from <strong>UC San Diego</strong> to enterprise infrastructure, multi-site network architecture, and proactive automation. Currently pursuing an <strong>M.S. in IT Management</strong> at <strong>WGU</strong>.
+						</p>
+
+						<div class="dossier-meta-chips">
+							<span class="meta-chip">📍 SF Bay Area</span>
+							<span class="meta-chip">🎓 B.S. Math-CS (UCSD)</span>
+							<span class="meta-chip">🎓 M.S. ITM (WGU '27)</span>
+							<span class="meta-chip chip-highlight">🛡️ CompTIA CIOS Stack</span>
+						</div>
+
+						<div class="dossier-actions">
+							<a href="mailto:career@christran.io" class="btn-dossier btn-primary">
+								<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+								Email Me
+							</a>
+							<a href="https://linkedin.com/in/synchris" target="_blank" rel="noopener noreferrer" class="btn-dossier">
+								<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+								LinkedIn
+							</a>
+							<a href="https://github.com/sYnVerse" target="_blank" rel="noopener noreferrer" class="btn-dossier">
+								<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+								GitHub
+							</a>
+							<a href="/resume" class="btn-dossier btn-resume">
+								<span>Resume</span>
+								<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+							</a>
+						</div>
+					</div>
+
+					<!-- 2x2 Impact Grid -->
+					<div class="impact-grid" aria-label="Key operational telemetry statistics">
+						{impactMetrics.map((metric) => (
+							<div class:list={['bento-card', 'impact-card', `accent-${metric.accent}`]}>
+								<div class="impact-header">
+									<span class="impact-label">{metric.label}</span>
+									{metric.badge && <span class="impact-badge">{metric.badge}</span>}
+								</div>
+								<div class="impact-value">{metric.value}</div>
+								<div class="impact-subtext">{metric.subtext}</div>
+							</div>
+						))}
+					</div>
+				</section>
+
+				<!-- Row 2: Certifications & CompTIA Stack Showcase Bento -->
+				<section class="bento-card certs-showcase-section" aria-label="Certifications and CompTIA Stack Showcase">
+					<div class="section-title-wrap">
+						<div class="title-with-pill">
+							<span class="section-pill">CREDENTIAL VERIFICATION</span>
+							<h2 class="section-heading">Certifications & The CompTIA Stack</h2>
+						</div>
+						<div class="celebration-badge">
+							<span class="celebration-icon">⚡</span>
+							<span>Passed Network+ Oct 2026 · Unlocked CompTIA CIOS Stack</span>
+						</div>
+					</div>
+
+					<!-- Visual CompTIA Stack Flow Diagram -->
+					<div class="stack-visualizer-container">
+						<div class="stack-flow-grid">
+							<!-- Stack Node 1: A+ -->
+							<div class="stack-card cert-node" id="cert-a-plus">
+								<div class="cert-card-header">
+									<span class="cert-code">{stackCerts.compTiaA.code}</span>
+									<span class="cert-status-pill status-verified">{stackCerts.compTiaA.statusBadge}</span>
+								</div>
+								<div class="cert-emblem-wrap">
+									<div class="cert-icon-circle comp-icon">
+										<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
 									</div>
-									<div class="meta-item">
-										<span class="meta-icon" aria-hidden="true">🎓</span>
-										<div>
-											<span class="meta-label">Education</span>
-											<span>B.S. Math-CS (UCSD)<br/>M.S. IT Management (WGU)</span>
-										</div>
+									<div class="cert-title-group">
+										<h3 class="cert-title">{stackCerts.compTiaA.title}</h3>
+										<span class="cert-meta">{stackCerts.compTiaA.issuer} · {stackCerts.compTiaA.date}</span>
 									</div>
-									<div class="meta-item">
-										<span class="meta-icon" aria-hidden="true">🛡️</span>
-										<div>
-											<span class="meta-label">Certifications</span>
-											<span>CompTIA A+, ITIL 4, Google IT Support</span>
-										</div>
+								</div>
+								<p class="cert-desc">{stackCerts.compTiaA.description}</p>
+								<div class="cert-tag-list">
+									{stackCerts.compTiaA.tags.map((tag) => (
+										<span class="cert-tag">{tag}</span>
+									))}
+								</div>
+								<div class="cert-action-wrap">
+									<a href={stackCerts.compTiaA.verificationUrl} target="_blank" rel="noopener noreferrer" class="cert-verify-link">
+										<span>Verify Credential</span>
+										<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+									</a>
+								</div>
+							</div>
+
+							<!-- Connector: Plus (+) Operator -->
+							<div class="flow-connector-cell" aria-hidden="true">
+								<div class="connector-line-left"></div>
+								<div class="operator-badge plus-badge" title="Stacked with">+</div>
+								<div class="connector-line-right"></div>
+							</div>
+
+							<!-- Stack Node 2: Network+ (Passed Oct 2026) -->
+							<div class="stack-card cert-node cert-highlight-net" id="cert-net-plus">
+								<div class="cert-card-header">
+									<span class="cert-code">{stackCerts.compTiaNet.code}</span>
+									<span class="cert-status-pill status-new">{stackCerts.compTiaNet.statusBadge}</span>
+								</div>
+								<div class="cert-emblem-wrap">
+									<div class="cert-icon-circle net-icon">
+										<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24"/><path d="m14.83 9.17 4.24-4.24"/><path d="m14.83 14.83 4.24 4.24"/><path d="m9.17 14.83-4.24 4.24"/><circle cx="12" cy="12" r="4"/></svg>
 									</div>
+									<div class="cert-title-group">
+										<h3 class="cert-title">{stackCerts.compTiaNet.title}</h3>
+										<span class="cert-meta">{stackCerts.compTiaNet.issuer} · {stackCerts.compTiaNet.date}</span>
+									</div>
+								</div>
+								<p class="cert-desc">{stackCerts.compTiaNet.description}</p>
+								<div class="cert-tag-list">
+									{stackCerts.compTiaNet.tags.map((tag) => (
+										<span class="cert-tag tag-net">{tag}</span>
+									))}
+								</div>
+								<div class="cert-action-wrap">
+									{stackCerts.compTiaNet.verificationUrl ? (
+										<a href={stackCerts.compTiaNet.verificationUrl} target="_blank" rel="noopener noreferrer" class="cert-verify-link">
+											<span>Verify Credential</span>
+											<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+										</a>
+									) : (
+										<span class="cert-pending-pill">
+											<span class="pulse-dot"></span>
+											<span>Issued Oct 2026 · Verification Link Syncing</span>
+										</span>
+									)}
+								</div>
+							</div>
+
+							<!-- Connector: Equals/Arrow (➔) Operator -->
+							<div class="flow-connector-cell" aria-hidden="true">
+								<div class="connector-line-left"></div>
+								<div class="operator-badge stack-arrow-badge" title="Stacks into">➔</div>
+								<div class="connector-line-right"></div>
+							</div>
+
+							<!-- Stacked Result: CIOS -->
+							<div class="stack-card cert-node cert-cios-unlocked" id="cert-cios">
+								<div class="cert-card-header">
+									<span class="cert-code cios-code">{stackCerts.compTiaCios.code}</span>
+									<span class="cert-status-pill status-cios">{stackCerts.compTiaCios.statusBadge}</span>
+								</div>
+								<div class="cert-emblem-wrap">
+									<div class="cert-icon-circle cios-icon">
+										<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+									</div>
+									<div class="cert-title-group">
+										<h3 class="cert-title title-cios">{stackCerts.compTiaCios.title}</h3>
+										<span class="cert-meta">{stackCerts.compTiaCios.issuer} · {stackCerts.compTiaCios.date}</span>
+									</div>
+								</div>
+								<p class="cert-desc">{stackCerts.compTiaCios.description}</p>
+								<div class="cert-tag-list">
+									{stackCerts.compTiaCios.tags.map((tag) => (
+										<span class="cert-tag tag-cios">{tag}</span>
+									))}
+								</div>
+								<div class="cert-action-wrap">
+									{stackCerts.compTiaCios.verificationUrl ? (
+										<a href={stackCerts.compTiaCios.verificationUrl} target="_blank" rel="noopener noreferrer" class="cert-verify-link">
+											<span>Verify Credential</span>
+											<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+										</a>
+									) : (
+										<span class="cert-pending-pill cios-pending">
+											<span class="pulse-dot-cyan"></span>
+											<span>Stack Active · Verification Link Syncing</span>
+										</span>
+									)}
 								</div>
 							</div>
 						</div>
+					</div>
 
-						<div class="connect-buttons">
-							<a href="mailto:career@christran.io" class="btn-connect btn-primary-connect">
-								<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-								Email Me
-							</a>
-							<a href="https://linkedin.com/in/synchris" target="_blank" rel="noopener noreferrer" class="btn-connect">
-								<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
-								LinkedIn
-							</a>
-							<a href="https://github.com/sYnVerse" target="_blank" rel="noopener noreferrer" class="btn-connect">
-								<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
-								GitHub
-							</a>
+					<!-- Secondary Certifications & Roadmap Grid (4-Card Row) -->
+					<div class="secondary-certs-header">
+						<span class="secondary-certs-title">Additional Credentials & Roadmap Target</span>
+						<span class="secondary-certs-note">Verified Third-Party Issuers</span>
+					</div>
+
+					<div class="secondary-certs-grid">
+						{secondaryCerts.map((cert) => (
+							<div class:list={['secondary-cert-card', { 'roadmap-card': cert.isRoadmap }]}>
+								<div class="secondary-card-top">
+									<div class="sec-badge-row">
+										<span class="sec-category">{cert.badge}</span>
+										<span class="sec-date">{cert.date}</span>
+									</div>
+									<h4 class="sec-cert-title">{cert.title}</h4>
+									{cert.subtitle && <span class="sec-cert-subtitle">{cert.subtitle}</span>}
+									<span class="sec-issuer">{cert.issuer}</span>
+									<p class="sec-desc">{cert.description}</p>
+								</div>
+								<div class="sec-card-bottom">
+									{cert.verificationUrl ? (
+										<a href={cert.verificationUrl} target="_blank" rel="noopener noreferrer" class="sec-verify-btn">
+											<span>Verify Credential</span>
+											<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+										</a>
+									) : cert.isRoadmap ? (
+										<span class="roadmap-badge-label">⚡ In Progress / Next Exam</span>
+									) : (
+										<span class="cert-pending-pill">Verification Link Pending</span>
+									)}
+								</div>
+							</div>
+						))}
+					</div>
+				</section>
+
+				<!-- Row 3: Interactive Tabbed Story Console -->
+				<section class="bento-card story-console-section" aria-label="Engineering story and philosophy">
+					<div class="console-header-bar">
+						<div class="console-title-group">
+							<span class="console-prompt-indicator" aria-hidden="true">SYS_LOG //</span>
+							<h2 class="console-heading">Engineering Narrative</h2>
 						</div>
-					</aside>
-
-					<!-- Narrative Content -->
-					<article class="about-content">
-						<h2>The Packets & The Logic</h2>
-						<p>
-							I’ve always believed that the best networks are the ones you never notice. They are the invisible arteries of modern business—quietly routing data, securing systems, and enabling seamless collaboration. 
-						</p>
-						<p>
-							My approach to systems and network engineering is heavily shaped by my background in <strong>Mathematics and Computer Science</strong> at UC San Diego. Instead of looking at systems purely as physical hardware or disjointed configuration files, I see them as graphs, algorithms, and logical flow systems. This mathematical lens helps me model complex traffic routing, predict bottleneck behaviors, and approach security hardening with structural rigor.
-						</p>
-
-						<h2>From Support to Infrastructure</h2>
-						<p>
-							Throughout my career, I've had the privilege of working in environments ranging from municipal services to tech giants, including <strong>Microsoft</strong>, <strong>Amazon</strong>, and <strong>Santa Clara County</strong>. These experiences instilled in me an appreciation for operational discipline, strict SLA management, and the sheer scale required for robust systems.
-						</p>
-						<p>
-							Currently, I serve as a <strong>Network Engineer at Auto-Chlor System</strong>, where I was promoted from a Junior Network Engineer role after demonstrating a strong drive for systems design and proactive automation. Today, I handle central escalations, deploy physical host servers, manage virtualized infrastructure, configure <strong>Fortinet</strong> secure networking gear, and lead project initiatives.
-						</p>
-
-						<h2>Automation & The Enterprise Homelab</h2>
-						<p>
-							To me, a manual task repeated more than three times is a bug. I actively write <strong>PowerShell</strong>, <strong>Python</strong>, and <strong>Bash</strong> scripts to automate configurations, monitor device health, and handle fleet device operations (such as managing enterprise mobile devices via <strong>Samsung Knox Suite</strong>, which combines Knox Mobile Enrollment for provisioning and Knox Manage for MDM).
-						</p>
-						<p>
-							This passion for building and tweaking doesn’t stop when I log off. In my spare time, I design and run an <a href="/portfolio/homelab">Enterprise Home Lab</a> consisting of Dell PowerEdge servers. It serves as my dedicated playground for virtualization (running <strong>Proxmox VE</strong> and <strong>Hyper-V</strong>), containerization (using <strong>Docker</strong>), pfSense firewalls, VLAN configurations, and automated ZFS storage arrays. I am currently focusing on expanding my homelab to test application orchestration using <strong>Kubernetes</strong>.
-						</p>
-
-						<h2>Strategic Growth</h2>
-						<p>
-							Technology is only half the equation; the other half is understanding how it serves organizational goals. To bridge the gap between technical design and business strategy, I am pursuing my <strong>M.S. in Information Technology Management</strong> at Western Governors University (expected 2027). I want to ensure that every server I deploy or firewall I configure is aligned with governance, risk management, and overall business value.
-						</p>
-
-						<h2>Core Toolkit</h2>
-						<div class="tech-bagde-container">
-							<span class="badge">Fortinet Equipment</span>
-							<span class="badge">pfSense & Firewalls</span>
-							<span class="badge">TCP/IP & Routing Protocols</span>
-							<span class="badge">VPN / SD-WAN</span>
-							<span class="badge">Proxmox VE & Hyper-V</span>
-							<span class="badge">Docker Containerization</span>
-							<span class="badge">Active Directory / Entra ID</span>
-							<span class="badge">PowerShell, Python & Bash</span>
-							<span class="badge">Samsung Knox Suite (KME/Knox Manage)</span>
-							<span class="badge">Dell PowerEdge & ZFS</span>
+						<div class="console-tab-list" role="tablist" aria-label="Story chapters">
+							{storyChapters.map((chap, i) => (
+								<button
+									role="tab"
+									id={`story-tab-${i}`}
+									aria-selected={i === 0 ? 'true' : 'false'}
+									aria-controls={`story-panel-${i}`}
+									tabindex={i === 0 ? '0' : '-1'}
+									class:list={['console-tab-btn', { active: i === 0 }]}
+									data-index={i}
+								>
+									<span class="tab-code-prefix">{chap.tabLabel}</span>
+								</button>
+							))}
 						</div>
-					</article>
-				</div>
+					</div>
+
+					<div class="console-body">
+						{storyChapters.map((chap, i) => (
+							<div
+								role="tabpanel"
+								id={`story-panel-${i}`}
+								aria-labelledby={`story-tab-${i}`}
+								tabindex="0"
+								class:list={['story-panel', { active: i === 0 }]}
+								data-index={i}
+							>
+								<div class="panel-header-line">
+									<h3 class="panel-chapter-title">{chap.title}</h3>
+									<span class="panel-chapter-summary">{chap.summary}</span>
+								</div>
+								<div class="panel-prose">
+									{chap.content.map((paragraph) => (
+										<p set:html={paragraph} />
+									))}
+								</div>
+								<div class="panel-takeaways">
+									<span class="takeaways-label">Key Pillars:</span>
+									<div class="takeaways-chips">
+										{chap.takeaways.map((takeaway) => (
+											<span class="takeaway-chip">✔ {takeaway}</span>
+										))}
+									</div>
+								</div>
+							</div>
+						))}
+
+						<noscript>
+							<style>
+								.console-tab-list { display: none !important; }
+								.story-panel { display: block !important; margin-bottom: 2rem; border-bottom: 1px solid rgba(123, 158, 255, 0.15); padding-bottom: 1.5rem; }
+							</style>
+						</noscript>
+					</div>
+				</section>
+
+				<!-- Row 4: Full-Width Horizontal traceroute career Pipeline -->
+				<section class="bento-card traceroute-section" aria-label="Interactive career traceroute progression">
+					<div class="traceroute-header">
+						<div class="traceroute-prompt">
+							<span class="term-green">visitor@christran.io:~$</span>
+							<span class="term-command">traceroute career</span>
+							<span class="term-hops-count">(30 hops max · 6 target hops reached)</span>
+						</div>
+						<span class="traceroute-hint">Select any hop to inspect operational details</span>
+					</div>
+
+					<!-- Horizontal Hops Timeline Track -->
+					<div class="traceroute-track-container">
+						<div class="traceroute-track" role="tablist" aria-label="Career traceroute hops">
+							{careerHops.map((hop, i) => (
+								<button
+									role="tab"
+									id={`hop-tab-${i}`}
+									aria-selected={hop.isCurrent ? 'true' : 'false'}
+									aria-controls={`hop-panel-${i}`}
+									tabindex={hop.isCurrent ? '0' : '-1'}
+									class:list={['hop-node-btn', { active: hop.isCurrent, 'is-current': hop.isCurrent }]}
+									data-index={i}
+									title={`${hop.org} (${hop.timeframe})`}
+								>
+									<div class="hop-node-marker">
+										<span class="hop-dot"></span>
+										<span class="hop-num">{hop.hopNumber}</span>
+									</div>
+									<div class="hop-summary-text">
+										<span class="hop-org">{hop.org}</span>
+										<span class="hop-rtt">{hop.latency}</span>
+									</div>
+								</button>
+							))}
+						</div>
+					</div>
+
+					<!-- Hop Inspector Detail Panels -->
+					<div class="traceroute-inspector">
+						{careerHops.map((hop, i) => (
+							<div
+								role="tabpanel"
+								id={`hop-panel-${i}`}
+								aria-labelledby={`hop-tab-${i}`}
+								tabindex="0"
+								class:list={['hop-detail-panel', { active: hop.isCurrent }]}
+								data-index={i}
+							>
+								<div class="inspector-top-row">
+									<div class="inspector-title-group">
+										<div class="hop-index-badge">HOP {hop.hopNumber} // {hop.latency}</div>
+										<h3 class="inspector-org-title">{hop.org}</h3>
+										<h4 class="inspector-role-subtitle">{hop.role}</h4>
+									</div>
+									<div class="inspector-meta-group">
+										<span class="inspector-timeframe">{hop.timeframe}</span>
+										<span class="inspector-location">{hop.location}</span>
+										{hop.url && (
+											<a href={hop.url} target="_blank" rel="noopener noreferrer" class="inspector-link">
+												<span>Visit Domain</span>
+												<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+											</a>
+										)}
+									</div>
+								</div>
+
+								<p class="inspector-desc">{hop.summary}</p>
+
+								<div class="inspector-badges-row">
+									{hop.badges.map((badge) => (
+										<span class="inspector-badge">{badge}</span>
+									))}
+								</div>
+							</div>
+						))}
+
+						<noscript>
+							<style>
+								.hop-detail-panel { display: block !important; margin-top: 1rem; border-top: 1px solid rgba(123, 158, 255, 0.1); padding-top: 1rem; }
+							</style>
+						</noscript>
+					</div>
+				</section>
+
+				<!-- Row 5: 4-Domain Core Toolkit Bento Matrix -->
+				<section class="bento-card toolkit-section" aria-label="Core technical competencies matrix">
+					<div class="section-title-wrap">
+						<div class="title-with-pill">
+							<span class="section-pill">SYSTEM ARCHITECTURE</span>
+							<h2 class="section-heading">Core Technical Toolkit</h2>
+						</div>
+						<span class="toolkit-count-pill">32 Enterprise Technologies</span>
+					</div>
+
+					<div class="toolkit-matrix-grid">
+						{toolkitDomains.map((domain) => (
+							<div class:list={['toolkit-domain-card', `domain-${domain.color}`]}>
+								<div class="domain-header">
+									<span class="domain-index">{domain.index} // DOMAIN</span>
+									<h3 class="domain-title">{domain.title}</h3>
+								</div>
+								<div class="domain-skills-wrap">
+									{domain.skills.map((skill) => (
+										<span class="skill-badge">{skill}</span>
+									))}
+								</div>
+							</div>
+						))}
+					</div>
+				</section>
+
 			</div>
 		</main>
 		<Footer />
+
+		<script is:inline>
+			// WAI-ARIA tabs pattern: roving tabindex, automatic activation,
+			// arrow keys move between tabs and Home/End jump to the ends.
+			document.addEventListener('DOMContentLoaded', function () {
+				const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+				function setupTabs(tabs, panels, keys, onSelect) {
+					function select(idx, moveFocus) {
+						tabs.forEach(function (t, i) {
+							const isActive = i === idx;
+							t.classList.toggle('active', isActive);
+							t.setAttribute('aria-selected', isActive ? 'true' : 'false');
+							t.setAttribute('tabindex', isActive ? '0' : '-1');
+						});
+						panels.forEach(function (p, i) {
+							p.classList.toggle('active', i === idx);
+						});
+						if (moveFocus) tabs[idx].focus({ preventScroll: true });
+						if (onSelect) onSelect(tabs[idx], true);
+					}
+
+					tabs.forEach(function (tab, i) {
+						tab.addEventListener('click', function () {
+							select(i, false);
+						});
+						tab.addEventListener('keydown', function (e) {
+							let next = null;
+							if (keys.next.indexOf(e.key) !== -1) next = (i + 1) % tabs.length;
+							else if (keys.prev.indexOf(e.key) !== -1) next = (i - 1 + tabs.length) % tabs.length;
+							else if (e.key === 'Home') next = 0;
+							else if (e.key === 'End') next = tabs.length - 1;
+							if (next === null) return;
+							e.preventDefault();
+							select(next, true);
+						});
+					});
+				}
+
+				// Story chapter tabs
+				setupTabs(
+					Array.from(document.querySelectorAll('.console-tab-btn')),
+					Array.from(document.querySelectorAll('.story-panel')),
+					{ next: ['ArrowRight', 'ArrowDown'], prev: ['ArrowLeft', 'ArrowUp'] }
+				);
+
+				// Traceroute hop tabs
+				const hopTrack = document.querySelector('.traceroute-track-container');
+				const hopButtons = Array.from(document.querySelectorAll('.hop-node-btn'));
+
+				// Center the selected hop inside the horizontally scrolling hop row
+				// (only that container scrolls, never the page).
+				function revealHop(btn, animate) {
+					if (!hopTrack || hopTrack.scrollWidth <= hopTrack.clientWidth) return;
+					const trackRect = hopTrack.getBoundingClientRect();
+					const btnRect = btn.getBoundingClientRect();
+					const delta = btnRect.left - trackRect.left - (trackRect.width - btnRect.width) / 2;
+					hopTrack.scrollTo({
+						left: hopTrack.scrollLeft + delta,
+						behavior: animate && !reduceMotion.matches ? 'smooth' : 'auto',
+					});
+				}
+
+				setupTabs(
+					hopButtons,
+					Array.from(document.querySelectorAll('.hop-detail-panel')),
+					{ next: ['ArrowRight'], prev: ['ArrowLeft'] },
+					revealHop
+				);
+
+				const selectedHop = hopButtons.find(function (b) {
+					return b.getAttribute('aria-selected') === 'true';
+				});
+				if (selectedHop) revealHop(selectedHop, false);
+			});
+		</script>
+
+		<style>
+			/* Page Base & Grid Container */
+			.about-page {
+				width: 100% !important;
+				max-width: 100% !important;
+				padding: 1.5rem 1rem 4rem 1rem;
+				box-sizing: border-box;
+				min-height: calc(100vh - 180px);
+			}
+			.about-container {
+				max-width: 1160px;
+				margin: 0 auto;
+				display: flex;
+				flex-direction: column;
+				gap: 1.75rem;
+			}
+
+			/* Bento Generic Card Styles */
+			.bento-card {
+				background: rgba(11, 16, 33, 0.82);
+				backdrop-filter: blur(16px);
+				-webkit-backdrop-filter: blur(16px);
+				border: 1px solid rgba(123, 158, 255, 0.14);
+				border-radius: 16px;
+				padding: 1.75rem;
+				box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+				transition: border-color 0.25s ease, box-shadow 0.25s ease;
+			}
+			.bento-card:hover {
+				border-color: rgba(123, 158, 255, 0.28);
+				box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+			}
+
+			/* Section Titles & Pills */
+			.section-title-wrap {
+				display: flex;
+				justify-content: space-between;
+				align-items: flex-start;
+				flex-wrap: wrap;
+				gap: 1rem;
+				margin-bottom: 1.5rem;
+				border-bottom: 1px solid rgba(123, 158, 255, 0.1);
+				padding-bottom: 1rem;
+			}
+			.title-with-pill {
+				display: flex;
+				flex-direction: column;
+				gap: 0.35rem;
+			}
+			.section-pill {
+				font-size: 0.68rem;
+				font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+				font-weight: 700;
+				color: var(--accent);
+				letter-spacing: 0.08em;
+			}
+			.section-heading {
+				font-size: 1.55rem;
+				font-weight: 800;
+				color: #FFFFFF;
+				margin: 0;
+				letter-spacing: -0.02em;
+			}
+			.celebration-badge {
+				display: inline-flex;
+				align-items: center;
+				gap: 0.5rem;
+				padding: 0.45rem 0.9rem;
+				border-radius: 9999px;
+				background: rgba(16, 185, 129, 0.12);
+				border: 1px solid rgba(52, 211, 153, 0.4);
+				color: #34d399;
+				font-size: 0.8rem;
+				font-weight: 700;
+				box-shadow: 0 0 16px rgba(16, 185, 129, 0.15);
+			}
+			.celebration-icon {
+				color: #fbbf24;
+			}
+
+			/* Row 0: NOC Telemetry Bar */
+			.noc-telemetry-bar {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				flex-wrap: wrap;
+				gap: 0.75rem;
+				padding: 0.65rem 1.25rem;
+				background: rgba(15, 23, 42, 0.85);
+				border: 1px solid rgba(56, 189, 248, 0.25);
+				border-radius: 10px;
+				font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+				font-size: 0.78rem;
+				box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+			}
+			.telemetry-node {
+				display: flex;
+				align-items: center;
+				gap: 0.55rem;
+			}
+			.status-ping {
+				position: relative;
+				display: inline-flex;
+				width: 10px;
+				height: 10px;
+			}
+			.status-ping-ring {
+				position: absolute;
+				display: inline-flex;
+				width: 100%;
+				height: 100%;
+				border-radius: 9999px;
+				background-color: #34d399;
+				opacity: 0.75;
+				animation: ping-pulse 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+			}
+			.status-ping-dot {
+				position: relative;
+				display: inline-flex;
+				border-radius: 9999px;
+				width: 10px;
+				height: 10px;
+				background-color: #10b981;
+			}
+			@keyframes ping-pulse {
+				75%, 100% {
+					transform: scale(2.2);
+					opacity: 0;
+				}
+			}
+			.telemetry-label {
+				color: rgb(var(--gray));
+			}
+			.telemetry-val {
+				color: #38bdf8;
+				font-weight: 700;
+			}
+			.telemetry-tags {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 1.25rem;
+			}
+			.telemetry-item .k {
+				color: rgb(var(--gray));
+			}
+			.telemetry-item .v {
+				color: #FFFFFF;
+			}
+			.telemetry-item .v-accent {
+				color: #38bdf8;
+			}
+			.telemetry-item .v-cios {
+				color: #34d399;
+			}
+
+			/* Row 1: Bento Hero Row */
+			.bento-hero-row {
+				display: grid;
+				grid-template-columns: 1.35fr 1fr;
+				gap: 1.5rem;
+				align-items: stretch;
+			}
+			.hero-dossier-card {
+				display: flex;
+				flex-direction: column;
+				justify-content: space-between;
+				gap: 1.25rem;
+			}
+			.dossier-top {
+				display: flex;
+				align-items: center;
+				gap: 1.5rem;
+			}
+			.avatar-container {
+				position: relative;
+				width: 120px;
+				height: 120px;
+				flex-shrink: 0;
+			}
+			.avatar-glow-ring {
+				position: absolute;
+				inset: -3px;
+				border-radius: 50%;
+				background: linear-gradient(135deg, var(--accent) 0%, #38bdf8 50%, var(--accent-dark) 100%);
+				opacity: 0.85;
+				box-shadow: 0 0 24px rgba(123, 158, 255, 0.4);
+			}
+			.avatar-img {
+				position: relative;
+				width: 100%;
+				height: 100%;
+				border-radius: 50%;
+				object-fit: cover;
+				display: block;
+				background: #1e2332;
+				border: 3px solid #0B1021;
+			}
+			.avatar-badge {
+				position: absolute;
+				bottom: 4px;
+				right: 4px;
+				font-size: 0.9rem;
+				filter: drop-shadow(0 0 4px #10b981);
+			}
+			.dossier-intro {
+				flex: 1;
+			}
+			.dossier-tag {
+				font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+				font-size: 0.68rem;
+				font-weight: 700;
+				color: var(--accent);
+				letter-spacing: 0.08em;
+				margin-bottom: 0.2rem;
+			}
+			.dossier-name {
+				font-size: 2.1rem;
+				font-weight: 800;
+				color: #FFFFFF;
+				margin: 0;
+				line-height: 1.1;
+				background: linear-gradient(135deg, #FFFFFF 30%, var(--accent) 100%);
+				-webkit-background-clip: text;
+				-webkit-text-fill-color: transparent;
+				background-clip: text;
+			}
+			.dossier-title {
+				font-size: 1.05rem;
+				font-weight: 600;
+				color: var(--accent);
+				margin: 0.35rem 0 0.2rem 0;
+			}
+			.dossier-at {
+				color: rgb(var(--gray-dark));
+				font-weight: 400;
+			}
+			.dossier-tagline {
+				font-size: 0.88rem;
+				color: rgb(var(--gray));
+				margin: 0;
+				font-style: italic;
+			}
+			.dossier-bio {
+				font-size: 0.94rem;
+				line-height: 1.65;
+				color: rgb(var(--gray-dark));
+				margin: 0;
+			}
+			.dossier-meta-chips {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.5rem;
+			}
+			.meta-chip {
+				padding: 0.28rem 0.65rem;
+				border-radius: 6px;
+				background: rgba(30, 35, 50, 0.6);
+				border: 1px solid rgba(123, 158, 255, 0.16);
+				font-size: 0.76rem;
+				color: rgb(var(--gray-dark));
+			}
+			.chip-highlight {
+				background: rgba(16, 185, 129, 0.12);
+				border-color: rgba(52, 211, 153, 0.35);
+				color: #34d399;
+				font-weight: 700;
+			}
+			.dossier-actions {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.6rem;
+				margin-top: 0.5rem;
+			}
+			.btn-dossier {
+				display: inline-flex;
+				align-items: center;
+				gap: 0.45rem;
+				padding: 0.55rem 0.95rem;
+				border-radius: 8px;
+				font-size: 0.85rem;
+				font-weight: 600;
+				text-decoration: none;
+				background: rgba(123, 158, 255, 0.08);
+				border: 1px solid rgba(123, 158, 255, 0.2);
+				color: var(--accent);
+				transition: all 0.2s ease;
+			}
+			.btn-dossier:hover {
+				background: rgba(123, 158, 255, 0.18);
+				border-color: var(--accent);
+				color: #FFFFFF;
+				transform: translateY(-1px);
+			}
+			.btn-primary {
+				background: var(--accent);
+				color: #0B1021;
+				border-color: var(--accent);
+			}
+			.btn-primary:hover {
+				background: #9bb3ff;
+				color: #0B1021;
+				box-shadow: 0 0 16px rgba(123, 158, 255, 0.4);
+			}
+			.btn-resume {
+				border-color: rgba(56, 189, 248, 0.4);
+				color: #38bdf8;
+			}
+
+			/* 2x2 Impact Grid */
+			.impact-grid {
+				display: grid;
+				grid-template-columns: repeat(2, 1fr);
+				gap: 1rem;
+			}
+			.impact-card {
+				display: flex;
+				flex-direction: column;
+				justify-content: space-between;
+				padding: 1.35rem;
+				background: rgba(15, 20, 38, 0.75);
+			}
+			.impact-header {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				gap: 0.5rem;
+			}
+			.impact-label {
+				font-size: 0.72rem;
+				text-transform: uppercase;
+				letter-spacing: 0.06em;
+				color: rgb(var(--gray));
+				font-weight: 700;
+			}
+			.impact-badge {
+				font-size: 0.62rem;
+				font-weight: 800;
+				padding: 0.15rem 0.45rem;
+				border-radius: 4px;
+				background: rgba(123, 158, 255, 0.12);
+				color: var(--accent);
+				border: 1px solid rgba(123, 158, 255, 0.25);
+			}
+			.impact-value {
+				font-size: 2.1rem;
+				font-weight: 800;
+				color: #FFFFFF;
+				margin: 0.4rem 0 0.1rem 0;
+				letter-spacing: -0.03em;
+				line-height: 1.1;
+			}
+			.impact-subtext {
+				font-size: 0.8rem;
+				color: rgb(var(--gray));
+			}
+			.accent-blue .impact-value { color: #60a5fa; }
+			.accent-emerald .impact-value { color: #34d399; }
+			.accent-emerald .impact-badge { background: rgba(16, 185, 129, 0.2); color: #34d399; border-color: rgba(52, 211, 153, 0.4); }
+			.accent-cyan .impact-value { color: #38bdf8; }
+			.accent-indigo .impact-value { color: #a5b4fc; }
+
+			/* Row 2: Certifications Showcase & Stack Flow */
+			.certs-showcase-section {
+				background: linear-gradient(180deg, rgba(15, 23, 42, 0.85) 0%, rgba(11, 16, 33, 0.9) 100%);
+			}
+			.stack-visualizer-container {
+				margin-bottom: 2rem;
+			}
+			.stack-flow-grid {
+				display: grid;
+				grid-template-columns: 1fr auto 1.05fr auto 1.25fr;
+				align-items: center;
+				gap: 0.75rem;
+			}
+			.stack-card {
+				background: rgba(20, 27, 49, 0.75);
+				border: 1px solid rgba(123, 158, 255, 0.18);
+				border-radius: 12px;
+				padding: 1.25rem;
+				display: flex;
+				flex-direction: column;
+				justify-content: space-between;
+				min-height: 270px;
+				box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+				transition: all 0.25s ease;
+			}
+			.stack-card:hover {
+				transform: translateY(-2px);
+				border-color: rgba(123, 158, 255, 0.4);
+			}
+			.cert-highlight-net {
+				border: 1.5px solid rgba(56, 189, 248, 0.6);
+				background: linear-gradient(165deg, rgba(14, 165, 233, 0.08) 0%, rgba(15, 23, 42, 0.85) 100%);
+				box-shadow: 0 0 24px rgba(56, 189, 248, 0.18);
+			}
+			.cert-cios-unlocked {
+				border: 2px solid rgba(52, 211, 153, 0.65);
+				background: linear-gradient(165deg, rgba(16, 185, 129, 0.12) 0%, rgba(15, 23, 42, 0.9) 100%);
+				box-shadow: 0 0 32px rgba(16, 185, 129, 0.22);
+			}
+			.cert-card-header {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				margin-bottom: 0.85rem;
+			}
+			.cert-code {
+				font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+				font-size: 0.68rem;
+				font-weight: 700;
+				color: var(--accent);
+				letter-spacing: 0.05em;
+			}
+			.cios-code {
+				color: #34d399;
+			}
+			.cert-status-pill {
+				font-size: 0.62rem;
+				font-weight: 800;
+				padding: 0.2rem 0.55rem;
+				border-radius: 9999px;
+				letter-spacing: 0.04em;
+			}
+			.status-verified {
+				background: rgba(123, 158, 255, 0.15);
+				color: #9bb3ff;
+				border: 1px solid rgba(123, 158, 255, 0.3);
+			}
+			.status-new {
+				background: #0369a1;
+				color: #FFFFFF;
+				box-shadow: 0 0 10px rgba(14, 165, 233, 0.5);
+			}
+			.status-cios {
+				background: #047857;
+				color: #FFFFFF;
+				box-shadow: 0 0 12px rgba(16, 185, 129, 0.6);
+			}
+			.cert-emblem-wrap {
+				display: flex;
+				align-items: center;
+				gap: 0.75rem;
+				margin-bottom: 0.75rem;
+			}
+			.cert-icon-circle {
+				width: 44px;
+				height: 44px;
+				border-radius: 10px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				flex-shrink: 0;
+			}
+			.comp-icon {
+				background: rgba(123, 158, 255, 0.12);
+				color: var(--accent);
+				border: 1px solid rgba(123, 158, 255, 0.3);
+			}
+			.net-icon {
+				background: rgba(56, 189, 248, 0.15);
+				color: #38bdf8;
+				border: 1px solid rgba(56, 189, 248, 0.4);
+			}
+			.cios-icon {
+				background: rgba(52, 211, 153, 0.15);
+				color: #34d399;
+				border: 1px solid rgba(52, 211, 153, 0.4);
+			}
+			.cert-title-group {
+				flex: 1;
+			}
+			.cert-title {
+				font-size: 1.05rem;
+				font-weight: 700;
+				color: #FFFFFF;
+				margin: 0;
+				line-height: 1.25;
+			}
+			.title-cios {
+				color: #a7f3d0;
+			}
+			.cert-meta {
+				font-size: 0.74rem;
+				color: rgb(var(--gray));
+			}
+			.cert-desc {
+				font-size: 0.82rem;
+				line-height: 1.5;
+				color: rgb(var(--gray-dark));
+				margin: 0 0 0.85rem 0;
+			}
+			.cert-tag-list {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.35rem;
+				margin-bottom: 1rem;
+			}
+			.cert-tag {
+				font-size: 0.68rem;
+				padding: 0.15rem 0.5rem;
+				border-radius: 4px;
+				background: rgba(30, 35, 50, 0.6);
+				border: 1px solid rgba(123, 158, 255, 0.15);
+				color: rgb(var(--gray-dark));
+			}
+			.tag-net {
+				border-color: rgba(56, 189, 248, 0.3);
+				color: #bae6fd;
+			}
+			.tag-cios {
+				border-color: rgba(52, 211, 153, 0.3);
+				color: #d1fae5;
+			}
+			.cert-action-wrap {
+				border-top: 1px solid rgba(123, 158, 255, 0.1);
+				padding-top: 0.75rem;
+			}
+			.cert-verify-link {
+				display: inline-flex;
+				align-items: center;
+				gap: 0.35rem;
+				font-size: 0.78rem;
+				font-weight: 600;
+				color: var(--accent);
+				text-decoration: none;
+				transition: color 0.2s ease;
+			}
+			.cert-verify-link:hover {
+				color: #FFFFFF;
+				text-decoration: underline;
+			}
+			.cert-pending-pill {
+				display: inline-flex;
+				align-items: center;
+				gap: 0.45rem;
+				font-size: 0.72rem;
+				color: #38bdf8;
+				background: rgba(56, 189, 248, 0.1);
+				padding: 0.25rem 0.6rem;
+				border-radius: 6px;
+				border: 1px solid rgba(56, 189, 248, 0.25);
+			}
+			.cios-pending {
+				color: #34d399;
+				background: rgba(52, 211, 153, 0.1);
+				border-color: rgba(52, 211, 153, 0.25);
+			}
+			.pulse-dot {
+				width: 6px;
+				height: 6px;
+				border-radius: 50%;
+				background: #38bdf8;
+				box-shadow: 0 0 6px #38bdf8;
+				animation: ping-pulse 1.6s infinite;
+			}
+			.pulse-dot-cyan {
+				width: 6px;
+				height: 6px;
+				border-radius: 50%;
+				background: #34d399;
+				box-shadow: 0 0 6px #34d399;
+				animation: ping-pulse 1.6s infinite;
+			}
+
+			/* Flow Connectors */
+			.flow-connector-cell {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				position: relative;
+				width: 40px;
+			}
+			.operator-badge {
+				width: 34px;
+				height: 34px;
+				border-radius: 50%;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-weight: 800;
+				font-size: 0.95rem;
+				z-index: 2;
+				box-shadow: 0 0 12px rgba(0, 0, 0, 0.4);
+			}
+			.plus-badge {
+				background: rgba(14, 165, 233, 0.2);
+				border: 1.5px solid rgba(56, 189, 248, 0.6);
+				color: #38bdf8;
+			}
+			.stack-arrow-badge {
+				background: rgba(16, 185, 129, 0.2);
+				border: 1.5px solid rgba(52, 211, 153, 0.6);
+				color: #34d399;
+			}
+
+			/* Secondary Certs Grid */
+			.secondary-certs-header {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				margin-bottom: 0.85rem;
+				border-top: 1px solid rgba(123, 158, 255, 0.12);
+				padding-top: 1.5rem;
+			}
+			.secondary-certs-title {
+				font-size: 0.92rem;
+				font-weight: 700;
+				color: #FFFFFF;
+			}
+			.secondary-certs-note {
+				font-size: 0.74rem;
+				color: rgb(var(--gray));
+			}
+			.secondary-certs-grid {
+				display: grid;
+				grid-template-columns: repeat(4, 1fr);
+				gap: 1rem;
+			}
+			.secondary-cert-card {
+				background: rgba(15, 20, 38, 0.65);
+				border: 1px solid rgba(123, 158, 255, 0.12);
+				border-radius: 10px;
+				padding: 1.15rem;
+				display: flex;
+				flex-direction: column;
+				justify-content: space-between;
+				min-height: 200px;
+				transition: border-color 0.2s ease, transform 0.2s ease;
+			}
+			.secondary-cert-card:hover {
+				border-color: rgba(123, 158, 255, 0.35);
+				transform: translateY(-2px);
+			}
+			.roadmap-card {
+				border: 1.5px dashed rgba(245, 158, 11, 0.4);
+				background: rgba(245, 158, 11, 0.04);
+			}
+			.sec-badge-row {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				margin-bottom: 0.5rem;
+			}
+			.sec-category {
+				font-size: 0.64rem;
+				font-weight: 700;
+				color: var(--accent);
+				text-transform: uppercase;
+				letter-spacing: 0.05em;
+			}
+			.roadmap-card .sec-category {
+				color: #fbbf24;
+			}
+			.sec-date {
+				font-size: 0.68rem;
+				color: rgb(var(--gray));
+			}
+			.sec-cert-title {
+				font-size: 0.95rem;
+				font-weight: 700;
+				color: #FFFFFF;
+				margin: 0;
+				line-height: 1.3;
+			}
+			.sec-cert-subtitle {
+				display: block;
+				font-size: 0.78rem;
+				color: var(--accent);
+				font-weight: 600;
+				margin-top: 0.1rem;
+			}
+			.sec-issuer {
+				display: block;
+				font-size: 0.74rem;
+				color: rgb(var(--gray));
+				margin: 0.25rem 0 0.5rem 0;
+			}
+			.sec-desc {
+				font-size: 0.78rem;
+				line-height: 1.45;
+				color: rgb(var(--gray-dark));
+				margin: 0;
+			}
+			.sec-card-bottom {
+				margin-top: 1rem;
+				padding-top: 0.65rem;
+				border-top: 1px solid rgba(123, 158, 255, 0.08);
+			}
+			.sec-verify-btn {
+				display: inline-flex;
+				align-items: center;
+				gap: 0.35rem;
+				font-size: 0.76rem;
+				font-weight: 600;
+				color: var(--accent);
+				text-decoration: none;
+			}
+			.sec-verify-btn:hover {
+				color: #FFFFFF;
+				text-decoration: underline;
+			}
+			.roadmap-badge-label {
+				font-size: 0.72rem;
+				font-weight: 700;
+				color: #fbbf24;
+			}
+
+			/* Row 3: Interactive Story Console */
+			.console-header-bar {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				flex-wrap: wrap;
+				gap: 1rem;
+				margin-bottom: 1.5rem;
+				border-bottom: 1px solid rgba(123, 158, 255, 0.12);
+				padding-bottom: 1rem;
+			}
+			.console-title-group {
+				display: flex;
+				align-items: center;
+				gap: 0.5rem;
+			}
+			.console-prompt-indicator {
+				font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+				font-size: 0.85rem;
+				font-weight: 800;
+				color: #38bdf8;
+			}
+			.console-heading {
+				font-size: 1.45rem;
+				font-weight: 800;
+				color: #FFFFFF;
+				margin: 0;
+			}
+			.console-tab-list {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.5rem;
+			}
+			.console-tab-btn {
+				background: rgba(30, 35, 50, 0.5);
+				border: 1px solid rgba(123, 158, 255, 0.16);
+				border-radius: 8px;
+				padding: 0.45rem 0.85rem;
+				cursor: pointer;
+				color: rgb(var(--gray));
+				font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+				font-size: 0.78rem;
+				transition: all 0.2s ease;
+			}
+			.console-tab-btn:hover {
+				background: rgba(123, 158, 255, 0.12);
+				color: #FFFFFF;
+				border-color: var(--accent);
+			}
+			.console-tab-btn.active {
+				background: rgba(123, 158, 255, 0.22);
+				border-color: var(--accent);
+				color: #FFFFFF;
+				font-weight: 700;
+				box-shadow: 0 0 12px rgba(123, 158, 255, 0.2);
+			}
+			.story-panel {
+				display: none;
+				animation: fadeInPanel 0.25s ease-out;
+			}
+			.story-panel.active {
+				display: block;
+			}
+			@keyframes fadeInPanel {
+				from { opacity: 0; transform: translateY(4px); }
+				to { opacity: 1; transform: translateY(0); }
+			}
+			.panel-header-line {
+				margin-bottom: 1.25rem;
+			}
+			.panel-chapter-title {
+				font-size: 1.4rem;
+				font-weight: 800;
+				color: #FFFFFF;
+				margin: 0 0 0.35rem 0;
+			}
+			.panel-chapter-summary {
+				font-size: 0.88rem;
+				color: var(--accent);
+				font-weight: 500;
+			}
+			.panel-prose p {
+				font-size: 0.96rem;
+				line-height: 1.8;
+				color: rgb(var(--gray-dark));
+				margin-bottom: 1.25rem;
+			}
+			.panel-prose strong {
+				color: #FFFFFF;
+			}
+			.panel-takeaways {
+				margin-top: 1.5rem;
+				padding-top: 1rem;
+				border-top: 1px solid rgba(123, 158, 255, 0.1);
+				display: flex;
+				flex-wrap: wrap;
+				align-items: center;
+				gap: 0.75rem;
+			}
+			.takeaways-label {
+				font-size: 0.75rem;
+				font-weight: 700;
+				text-transform: uppercase;
+				letter-spacing: 0.05em;
+				color: rgb(var(--gray));
+			}
+			.takeaways-chips {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.45rem;
+			}
+			.takeaway-chip {
+				padding: 0.2rem 0.65rem;
+				border-radius: 6px;
+				background: rgba(16, 185, 129, 0.1);
+				border: 1px solid rgba(52, 211, 153, 0.25);
+				font-size: 0.76rem;
+				color: #34d399;
+			}
+
+			/* Row 4: traceroute career Pipeline */
+			.traceroute-header {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				flex-wrap: wrap;
+				gap: 0.75rem;
+				margin-bottom: 1.5rem;
+				border-bottom: 1px solid rgba(123, 158, 255, 0.12);
+				padding-bottom: 1rem;
+			}
+			.traceroute-prompt {
+				font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+				font-size: 0.85rem;
+				display: flex;
+				align-items: center;
+				gap: 0.5rem;
+				flex-wrap: wrap;
+			}
+			.term-green {
+				color: #34d399;
+			}
+			.term-command {
+				color: #FFFFFF;
+				font-weight: 700;
+			}
+			.term-hops-count {
+				color: rgb(var(--gray));
+				font-size: 0.75rem;
+			}
+			.traceroute-hint {
+				font-size: 0.75rem;
+				color: rgb(var(--gray));
+			}
+			.traceroute-track-container {
+				overflow-x: auto;
+				padding-bottom: 0.85rem;
+				margin-bottom: 1rem;
+				scrollbar-width: thin;
+			}
+			.traceroute-track {
+				display: flex;
+				align-items: stretch;
+				gap: 0.6rem;
+				min-width: 860px;
+				position: relative;
+			}
+			.hop-node-btn {
+				flex: 1;
+				background: rgba(15, 23, 42, 0.75);
+				border: 1px solid rgba(123, 158, 255, 0.16);
+				border-radius: 10px;
+				padding: 0.85rem 0.65rem;
+				cursor: pointer;
+				text-align: left;
+				transition: all 0.2s ease;
+				display: flex;
+				flex-direction: column;
+				gap: 0.5rem;
+			}
+			.hop-node-btn:hover {
+				background: rgba(123, 158, 255, 0.12);
+				border-color: var(--accent);
+				transform: translateY(-2px);
+			}
+			.hop-node-btn.active {
+				background: rgba(123, 158, 255, 0.22);
+				border-color: var(--accent);
+				box-shadow: 0 0 16px rgba(123, 158, 255, 0.25);
+			}
+			.hop-node-btn.is-current {
+				border-color: rgba(52, 211, 153, 0.6);
+			}
+			.hop-node-btn.is-current.active {
+				background: rgba(16, 185, 129, 0.15);
+				border-color: #34d399;
+				box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+			}
+			.hop-node-marker {
+				display: flex;
+				align-items: center;
+				gap: 0.45rem;
+			}
+			.hop-dot {
+				width: 8px;
+				height: 8px;
+				border-radius: 50%;
+				background: var(--accent);
+			}
+			.is-current .hop-dot {
+				background: #34d399;
+				box-shadow: 0 0 8px #34d399;
+			}
+			.hop-num {
+				font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+				font-size: 0.72rem;
+				font-weight: 700;
+				color: rgb(var(--gray));
+			}
+			.hop-summary-text {
+				display: flex;
+				flex-direction: column;
+			}
+			.hop-org {
+				font-size: 0.84rem;
+				font-weight: 700;
+				color: #FFFFFF;
+				line-height: 1.2;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+			.hop-rtt {
+				font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+				font-size: 0.68rem;
+				color: #38bdf8;
+				margin-top: 0.2rem;
+			}
+
+			/* Hop Detail Inspector Panel */
+			.traceroute-inspector {
+				background: rgba(15, 20, 38, 0.85);
+				border: 1px solid rgba(123, 158, 255, 0.2);
+				border-radius: 12px;
+				padding: 1.5rem;
+			}
+			.hop-detail-panel {
+				display: none;
+				animation: fadeInPanel 0.25s ease-out;
+			}
+			.hop-detail-panel.active {
+				display: block;
+			}
+			.inspector-top-row {
+				display: flex;
+				justify-content: space-between;
+				align-items: flex-start;
+				flex-wrap: wrap;
+				gap: 1rem;
+				margin-bottom: 1rem;
+				border-bottom: 1px solid rgba(123, 158, 255, 0.1);
+				padding-bottom: 1rem;
+			}
+			.hop-index-badge {
+				font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+				font-size: 0.72rem;
+				font-weight: 700;
+				color: #38bdf8;
+				letter-spacing: 0.05em;
+				margin-bottom: 0.25rem;
+			}
+			.inspector-org-title {
+				font-size: 1.35rem;
+				font-weight: 800;
+				color: #FFFFFF;
+				margin: 0;
+			}
+			.inspector-role-subtitle {
+				font-size: 0.95rem;
+				font-weight: 600;
+				color: var(--accent);
+				margin: 0.25rem 0 0 0;
+			}
+			.inspector-meta-group {
+				display: flex;
+				flex-direction: column;
+				align-items: flex-end;
+				gap: 0.25rem;
+			}
+			.inspector-timeframe {
+				font-size: 0.85rem;
+				font-weight: 700;
+				color: #FFFFFF;
+			}
+			.inspector-location {
+				font-size: 0.78rem;
+				color: rgb(var(--gray));
+			}
+			.inspector-link {
+				display: inline-flex;
+				align-items: center;
+				gap: 0.35rem;
+				font-size: 0.78rem;
+				font-weight: 600;
+				color: var(--accent);
+				text-decoration: none;
+				margin-top: 0.2rem;
+			}
+			.inspector-link:hover {
+				color: #FFFFFF;
+				text-decoration: underline;
+			}
+			.inspector-desc {
+				font-size: 0.94rem;
+				line-height: 1.65;
+				color: rgb(var(--gray-dark));
+				margin: 0 0 1.25rem 0;
+			}
+			.inspector-badges-row {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.45rem;
+			}
+			.inspector-badge {
+				font-size: 0.75rem;
+				font-weight: 600;
+				padding: 0.25rem 0.65rem;
+				border-radius: 6px;
+				background: rgba(30, 35, 50, 0.7);
+				border: 1px solid rgba(123, 158, 255, 0.2);
+				color: rgb(var(--gray-dark));
+			}
+
+			/* Row 5: Core Toolkit Matrix */
+			.toolkit-count-pill {
+				font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+				font-size: 0.72rem;
+				padding: 0.25rem 0.65rem;
+				border-radius: 9999px;
+				background: rgba(123, 158, 255, 0.1);
+				border: 1px solid rgba(123, 158, 255, 0.25);
+				color: var(--accent);
+			}
+			.toolkit-matrix-grid {
+				display: grid;
+				grid-template-columns: repeat(2, 1fr);
+				gap: 1.25rem;
+			}
+			.toolkit-domain-card {
+				background: rgba(15, 23, 42, 0.65);
+				border: 1px solid rgba(123, 158, 255, 0.14);
+				border-radius: 12px;
+				padding: 1.35rem;
+				display: flex;
+				flex-direction: column;
+				gap: 1rem;
+				transition: border-color 0.2s ease, transform 0.2s ease;
+			}
+			.toolkit-domain-card:hover {
+				border-color: rgba(123, 158, 255, 0.35);
+				transform: translateY(-2px);
+			}
+			.domain-blue { border-left: 3px solid #3b82f6; }
+			.domain-emerald { border-left: 3px solid #10b981; }
+			.domain-indigo { border-left: 3px solid #6366f1; }
+			.domain-cyan { border-left: 3px solid #06b6d4; }
+			.domain-header {
+				display: flex;
+				flex-direction: column;
+				gap: 0.2rem;
+			}
+			.domain-index {
+				font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+				font-size: 0.68rem;
+				font-weight: 700;
+				color: rgb(var(--gray));
+			}
+			.domain-title {
+				font-size: 1.05rem;
+				font-weight: 800;
+				color: #FFFFFF;
+				margin: 0;
+			}
+			.domain-skills-wrap {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.45rem;
+			}
+			.skill-badge {
+				font-size: 0.78rem;
+				padding: 0.25rem 0.6rem;
+				border-radius: 6px;
+				background: rgba(30, 35, 50, 0.65);
+				border: 1px solid rgba(123, 158, 255, 0.15);
+				color: rgb(var(--gray-dark));
+				transition: all 0.2s ease;
+			}
+			.skill-badge:hover {
+				border-color: var(--accent);
+				color: #FFFFFF;
+				background: rgba(123, 158, 255, 0.1);
+			}
+
+			/* Responsive Breakpoints */
+			@media (max-width: 1024px) {
+				.bento-hero-row {
+					grid-template-columns: 1fr;
+				}
+				.stack-flow-grid {
+					grid-template-columns: 1fr;
+					gap: 1rem;
+				}
+				.flow-connector-cell {
+					width: 100%;
+					height: 36px;
+				}
+				.operator-badge {
+					transform: rotate(90deg);
+				}
+				.secondary-certs-grid {
+					grid-template-columns: repeat(2, 1fr);
+				}
+				.toolkit-matrix-grid {
+					grid-template-columns: 1fr;
+				}
+			}
+
+			@media (max-width: 768px) {
+				.about-page {
+					padding: 1rem 0.75rem 3rem 0.75rem;
+				}
+				.noc-telemetry-bar {
+					flex-direction: column;
+					align-items: flex-start;
+					gap: 0.5rem;
+				}
+				.dossier-top {
+					flex-direction: column;
+					text-align: center;
+					gap: 1rem;
+				}
+				.dossier-meta-chips, .dossier-actions {
+					justify-content: center;
+				}
+				.impact-grid {
+					grid-template-columns: 1fr;
+				}
+				.secondary-certs-grid {
+					grid-template-columns: 1fr;
+				}
+				.console-header-bar {
+					flex-direction: column;
+					align-items: flex-start;
+				}
+				.console-tab-list {
+					width: 100%;
+				}
+				.console-tab-btn {
+					flex: 1;
+					text-align: center;
+				}
+				.inspector-top-row {
+					flex-direction: column;
+					align-items: flex-start;
+				}
+				.inspector-meta-group {
+					align-items: flex-start;
+				}
+			}
+
+			@media (prefers-reduced-motion: reduce) {
+				.status-ping-ring, .pulse-dot, .pulse-dot-cyan {
+					animation: none !important;
+				}
+				.story-panel, .hop-detail-panel {
+					animation: none !important;
+				}
+				.bento-card:hover, .stack-card:hover, .toolkit-domain-card:hover {
+					transform: none !important;
+				}
+			}
+		</style>
 	</body>
 </html>
