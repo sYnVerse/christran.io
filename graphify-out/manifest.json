@@ -115,8 +115,8 @@
     "semantic_hash": "c81cdbad5347092cbb9fd48e812c611b"
   },
   "src/pages/about.astro": {
-    "mtime": 1792983151.7835462,
-    "ast_hash": "5ec9ee7c43cc48a7409ab7bf28915e98",
+    "mtime": 1792996278.3134785,
+    "ast_hash": "622d6ab5533362d557c0563b3ca5a3c5",
     "semantic_hash": ""
   },
   "src/pages/apps.astro": {
@@ -385,9 +385,9 @@
     "semantic_hash": "808fd42156eaa500688714ddc67c7267"
   },
   "public/resume.pdf": {
-    "mtime": 1780201807.124635,
-    "ast_hash": "9c5e27e873d1f6c89a4b6ef958c94106",
-    "semantic_hash": "9c5e27e873d1f6c89a4b6ef958c94106"
+    "mtime": 1792981108.9321685,
+    "ast_hash": "5fd323acd6b2b96052cb2c8f177c02dd",
+    "semantic_hash": ""
   },
   "public/favicon.svg": {
     "mtime": 1780201807.064449,

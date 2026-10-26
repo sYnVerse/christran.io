@@ -1,16 +1,16 @@
 # Graph Report - christran.io  (2026-10-25)
 
 ## Corpus Check
-- 88 files · ~2,564,317 words
+- 88 files · ~2,564,345 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1224 nodes · 1293 edges · 112 communities (82 shown, 30 thin omitted)
-- Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 43 edges (avg confidence: 0.87)
+- 1217 nodes · 1284 edges · 113 communities (83 shown, 30 thin omitted)
+- Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 40 edges (avg confidence: 0.86)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `d4b4fdb7`
+- Built from commit: `5f816568`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -108,6 +108,7 @@
 - [[_COMMUNITY_Community 92|Community 92]]
 - [[_COMMUNITY_Community 93|Community 93]]
 - [[_COMMUNITY_Community 101|Community 101]]
+- [[_COMMUNITY_Community 111|Community 111]]
 - [[_COMMUNITY_Migrating Docker LXCs to NixOS|Migrating Docker LXCs to NixOS]]
 
 ## God Nodes (most connected - your core abstractions)
@@ -117,22 +118,22 @@
 4. `../components/Footer.astro` - 9 edges
 5. `christran.io` - 9 edges
 6. `scripts` - 8 edges
-7. `Christopher Tran's Resume` - 8 edges
-8. `cloudflare` - 7 edges
-9. `Event` - 7 edges
-10. `ExtendableEvent` - 7 edges
+7. `cloudflare` - 7 edges
+8. `Event` - 7 edges
+9. `ExtendableEvent` - 7 edges
+10. `Trading the SpaceX IPO Blog Post` - 7 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `Enterprise Home Lab` --references--> `Auto-Chlor System`  [INFERRED]
-  src/content/portfolio/homelab.mdx → public/resume.pdf
-- `Christopher Tran's Resume` --references--> `F1 Fandom Wiki Integration`  [INFERRED]
-  public/resume.pdf → src/content/portfolio/f1-wiki.mdx
-- `Christopher Tran's Resume` --references--> `Enterprise Home Lab`  [INFERRED]
-  public/resume.pdf → src/content/portfolio/homelab.mdx
 - `F1 2026: Active Aero and Z-Mode` --references--> `F1 Active Aerodynamics Hero Image`  [EXTRACTED]
   src/content/blog/active-aero-and-z-mode-inside-the-2026-f1-aerodynamics-engineering-challenge.mdx → src/assets/img/blog/active-aero-f1.png
 - `Building a ZFS Home Lab Server` --references--> `ZFS Home Lab Server Hero Image`  [EXTRACTED]
   src/content/blog/beyond-nas-building-a-future-proof-zfs-home-lab-server.mdx → src/assets/img/blog/beyond-nas-building-a-future-proof-zfs-home-lab-server.webp
+- `Blog Creator Admin Dashboard` --conceptually_related_to--> `Trading the SpaceX IPO Blog Post`  [INFERRED]
+  tools/blog-generator/public/index.html → src/content/blog/trading-spacex-ipo.mdx
+- `Self-Hosted Large Language Models` --semantically_similar_to--> `Plex Media Server`  [INFERRED] [semantically similar]
+  src/assets/img/blog/hosting-private-llms-on-your-home-lab.png → src/assets/img/blog/plex-jellyfin.webp
+- `WGU Accelerated IT Program Review` --references--> `WGU Blog Hero Image`  [EXTRACTED]
+  src/content/blog/WGU.mdx → src/assets/img/blog/WGU.webp
 
 ## Import Cycles
 - None detected.
@@ -141,7 +142,7 @@
 - **Elon Musk Business Ecosystem** — src_content_blog_spacex_ipo_equation_spacex, src_content_blog_tesla_fsd_tesla, src_content_blog_spacex_ipo_equation_xai [INFERRED 0.90]
 - **Orbital Infrastructure Components** — src_content_blog_spacex_ipo_equation_starship, src_content_blog_spacex_ipo_equation_starlink, src_content_blog_spacex_ipo_equation_orbital_data_center [EXTRACTED 0.95]
 
-## Communities (112 total, 30 thin omitted)
+## Communities (113 total, 30 thin omitted)
 
 ### Community 0 - "Enterprise Homelab Infrastructure"
 Cohesion: 0.06
@@ -152,8 +153,8 @@ Cohesion: 0.06
 Nodes (34): cloudflare, categories, dash, icon_urls, label, preview_image_url, products, dependencies (+26 more)
 
 ### Community 2 - "F1 Active Aerodynamics Challenge"
-Cohesion: 0.11
-Nodes (19): Auto-Chlor System, Foothill College, Fortinet Security Suite, Christopher Tran's Resume, Santa Clara County, University of California, San Diego, Western Governors University, F1 Fandom Wiki Integration (+11 more)
+Cohesion: 0.22
+Nodes (9): Auto-Chlor System, 10G/20G Bonded Network Backbone, rclone Cloud Storage Mount, Enterprise Home Lab Documentation, Enterprise Home Lab, sYntinel 3D Globe Visualizer, sYntinel Project Documentation, lucent (+1 more)
 
 ### Community 3 - "ZFS Storage and Homelab Provisioning"
 Cohesion: 0.14
@@ -399,8 +400,12 @@ Nodes (4): animateValue(), calculate(), formatGB(), getHardwareRec()
 Cohesion: 0.40
 Nodes (3): Agent Authentication Policy, Discovery Metadata, Registration Methods
 
+### Community 111 - "Community 111"
+Cohesion: 0.67
+Nodes (3): F1 Fandom Wiki Integration, F1 Fandom Wiki Project Documentation, Scribunto Lua Scripting
+
 ## Knowledge Gaps
-- **835 isolated node(s):** `redirectUrls`, `name`, `description`, `label`, `products` (+830 more)
+- **830 isolated node(s):** `redirectUrls`, `name`, `description`, `label`, `products` (+825 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **30 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -412,12 +417,12 @@ _Questions this graph is uniquely positioned to answer:_
 - **Why does `../components/Footer.astro` connect `Enterprise Homelab Infrastructure` to `AI Chat and Edge Storage Stack`?**
   _High betweenness centrality (0.002) - this node is a cross-community bridge._
 - **What connects `redirectUrls`, `name`, `description` to the rest of the system?**
-  _863 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _858 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Enterprise Homelab Infrastructure` be split into smaller, more focused modules?**
   _Cohesion score 0.05844155844155844 - nodes in this community are weakly interconnected._
 - **Should `AI Art Studio and Workspace UI` be split into smaller, more focused modules?**
   _Cohesion score 0.05714285714285714 - nodes in this community are weakly interconnected._
-- **Should `F1 Active Aerodynamics Challenge` be split into smaller, more focused modules?**
-  _Cohesion score 0.1111111111111111 - nodes in this community are weakly interconnected._
 - **Should `ZFS Storage and Homelab Provisioning` be split into smaller, more focused modules?**
   _Cohesion score 0.14166666666666666 - nodes in this community are weakly interconnected._
+- **Should `Home Server and Self-Hosted Media` be split into smaller, more focused modules?**
+  _Cohesion score 0.0392156862745098 - nodes in this community are weakly interconnected._
