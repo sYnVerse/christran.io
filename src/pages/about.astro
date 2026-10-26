@@ -849,7 +849,9 @@ const toolkitDomains = [
 			// WAI-ARIA tabs pattern: roving tabindex, automatic activation,
 			// arrow keys move between tabs and Home/End jump to the ends.
 			document.addEventListener('DOMContentLoaded', function () {
-				function setupTabs(tabs, panels, keys) {
+				const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+				function setupTabs(tabs, panels, keys, onSelect) {
 					function select(idx, moveFocus) {
 						tabs.forEach(function (t, i) {
 							const isActive = i === idx;
@@ -860,7 +862,8 @@ const toolkitDomains = [
 						panels.forEach(function (p, i) {
 							p.classList.toggle('active', i === idx);
 						});
-						if (moveFocus) tabs[idx].focus();
+						if (moveFocus) tabs[idx].focus({ preventScroll: true });
+						if (onSelect) onSelect(tabs[idx], true);
 					}
 
 					tabs.forEach(function (tab, i) {
@@ -888,11 +891,33 @@ const toolkitDomains = [
 				);
 
 				// Traceroute hop tabs
+				const hopTrack = document.querySelector('.traceroute-track-container');
+				const hopButtons = Array.from(document.querySelectorAll('.hop-node-btn'));
+
+				// Center the selected hop inside the horizontally scrolling hop row
+				// (only that container scrolls, never the page).
+				function revealHop(btn, animate) {
+					if (!hopTrack || hopTrack.scrollWidth <= hopTrack.clientWidth) return;
+					const trackRect = hopTrack.getBoundingClientRect();
+					const btnRect = btn.getBoundingClientRect();
+					const delta = btnRect.left - trackRect.left - (trackRect.width - btnRect.width) / 2;
+					hopTrack.scrollTo({
+						left: hopTrack.scrollLeft + delta,
+						behavior: animate && !reduceMotion.matches ? 'smooth' : 'auto',
+					});
+				}
+
 				setupTabs(
-					Array.from(document.querySelectorAll('.hop-node-btn')),
+					hopButtons,
 					Array.from(document.querySelectorAll('.hop-detail-panel')),
-					{ next: ['ArrowRight'], prev: ['ArrowLeft'] }
+					{ next: ['ArrowRight'], prev: ['ArrowLeft'] },
+					revealHop
 				);
+
+				const selectedHop = hopButtons.find(function (b) {
+					return b.getAttribute('aria-selected') === 'true';
+				});
+				if (selectedHop) revealHop(selectedHop, false);
 			});
 		</script>
 
