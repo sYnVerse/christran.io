@@ -1,9 +1,9 @@
 ---
 title: "sYnX"
-description: "A modern task management application featuring public/collaborative list sharing, nested subtasks, recurring tasks, theme customization, and smart web notifications. Built with Cloudflare Workers Assets, Remix, and Cloudflare D1."
+description: "A to-do list app for the web and Android featuring shared and collaborative lists, nested subtasks, recurring reminders, a calendar view, home screen widgets, and reminders by email, text, Discord, and push notification. Built with Remix on Cloudflare Workers and Cloudflare D1, with an Expo / React Native Android app."
 category: "app"
-tags: ["Task Management", "Productivity", "Web App"]
-techStack: ["Cloudflare Workers", "D1 Database", "Remix", "TypeScript"]
+tags: ["Task Management", "Productivity", "Web App", "Mobile App"]
+techStack: ["Cloudflare Workers", "D1 Database", "Remix", "React Native", "Expo", "TypeScript"]
 image: "/img/projects/synx.jpg"
 liveUrl: "https://synx.christran.io"
 featured: true
@@ -11,7 +11,7 @@ order: 5
 ---
 
 <p>
-	<strong>sYnX</strong> is a fast, collaborative task management application designed to organize and track personal and professional responsibilities. Built as a serverless static asset application utilizing the Remix framework, it provides an intuitive user interface with robust offline-first caching and Cloudflare D1 database persistence.
+	<strong>sYnX</strong> is a fast, collaborative to-do list app for organizing and tracking personal and professional tasks on the web and on Android. The web app is built with the Remix framework and runs on Cloudflare Workers with a Cloudflare D1 database. The Android app is built with Expo and React Native and uses the same account and data through the web app's REST API. Sign-in goes through <a href="/portfolio/synid">sYnID</a>, the sYnVerse single sign-on server.
 </p>
 
 <h2>Technical Stack</h2>
@@ -26,10 +26,11 @@ order: 5
 		</div>
 		<table class="spec-table">
 			<tbody>
-				<tr><td class="spec-label">Framework</td><td>Remix (React UI Engine)</td></tr>
+				<tr><td class="spec-label">Framework</td><td>Remix 2 with React 19</td></tr>
 				<tr><td class="spec-label">Build Tool</td><td>Vite (using Remix Vite Plugin)</td></tr>
 				<tr><td class="spec-label">Language</td><td>TypeScript</td></tr>
-				<tr><td class="spec-label">Styling</td><td>Vanilla CSS (Custom UI Components)</td></tr>
+				<tr><td class="spec-label">Styling</td><td>Tailwind CSS</td></tr>
+				<tr><td class="spec-label">Validation</td><td>Valibot</td></tr>
 			</tbody>
 		</table>
 	</div>
@@ -44,8 +45,28 @@ order: 5
 		<table class="spec-table">
 			<tbody>
 				<tr><td class="spec-label">Hosting</td><td>Cloudflare Workers Assets (Static + Dynamic routing)</td></tr>
-				<tr><td class="spec-label">Database</td><td>Cloudflare D1 (Serverless SQL)</td></tr>
-				<tr><td class="spec-label">Proxy binding</td><td>Cloudflare Developer Platform (Remix Dev Proxy)</td></tr>
+				<tr><td class="spec-label">Database</td><td>Cloudflare D1 (Serverless SQL, versioned migrations)</td></tr>
+				<tr><td class="spec-label">Reminders</td><td>Cron Trigger (runs every minute)</td></tr>
+				<tr><td class="spec-label">Auth</td><td>sYnID (OpenAuth, PKCE)</td></tr>
+				<tr><td class="spec-label">CI/CD</td><td>GitHub Actions + Cloudflare Workers Builds</td></tr>
+			</tbody>
+		</table>
+	</div>
+
+	<div class="spec-card">
+		<div class="spec-header">
+			<span class="spec-icon">
+				<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+			</span>
+			<h3>Mobile App</h3>
+		</div>
+		<table class="spec-table">
+			<tbody>
+				<tr><td class="spec-label">Platform</td><td>Android</td></tr>
+				<tr><td class="spec-label">Framework</td><td>Expo + React Native</td></tr>
+				<tr><td class="spec-label">Data Sync</td><td>sYnX REST API + TanStack Query (offline copy)</td></tr>
+				<tr><td class="spec-label">Push</td><td>Firebase Cloud Messaging</td></tr>
+				<tr><td class="spec-label">Builds</td><td>EAS Build (Android preview APKs)</td></tr>
 			</tbody>
 		</table>
 	</div>
@@ -60,12 +81,16 @@ order: 5
 
 <h2>Core Features</h2>
 <ul>
-	<li><strong>Collaborative Sharing</strong> — Share task lists as Private, View-Only, or Collaborative for team coordination.</li>
-	<li><strong>Nested Subtasks</strong> — Break down tasks into single-level subtask checklists.</li>
-	<li><strong>Recurring Tasks</strong> — Automate repeating chores with Daily, Weekly, and Monthly recurrence periods.</li>
-	<li><strong>Search & Sorting Options</strong> — Instantly filter tasks and sort by Priority, Due Date, Alphabetical, or Date Created.</li>
-	<li><strong>Theme Customizer</strong> — Toggle between Midnight Indigo, Emerald Forest, Sunset Rose, and Cyberpunk Neon dark themes.</li>
-	<li><strong>Smart Web Notifications</strong> — Local browser pushes and synced email/SMS/Discord notification integrations for task reminders.</li>
+	<li><strong>Collaborative Sharing</strong> — Share task lists as Private, View-Only, or Collaborative. Lists opened from someone else's link appear under "Shared with me" with the owner's display name, and emails are never shown.</li>
+	<li><strong>Nested Subtasks</strong> — Break tasks down into subtasks nested under their parent task.</li>
+	<li><strong>Priorities, Durations & Categories</strong> — Give tasks a priority and an optional duration, and organize lists by category (Checklist, Study, Shopping, Work, Travel, and more, or a custom one).</li>
+	<li><strong>Reminders & Recurring Tasks</strong> — Set reminders with quick presets or a picked date and time, and repeat tasks Daily, Weekly, or Monthly. Repeating tasks keep their local time in your home time zone, even across daylight saving changes.</li>
+	<li><strong>Calendar View</strong> — See tasks on a calendar next to the list view. On the web, drag unscheduled tasks onto a day.</li>
+	<li><strong>Search & Sorting Options</strong> — Search tasks (including subtasks), filter by All, Active, or Done, and sort by Date Created, Priority, Reminder Time, or Name.</li>
+	<li><strong>Multi-Channel Notifications</strong> — An every-minute cron sends due reminders by email, text message, Discord webhook, and push notification to your phones, with browser notifications while the web app is open.</li>
+	<li><strong>Single Sign-On & Guest Mode</strong> — Sign in once with sYnID, with sessions that renew in the background. Without signing in, the web app works in guest mode: guest lists stay in the browser and move to your account when you sign in.</li>
+	<li><strong>Android App & Widgets</strong> — A native Android app with Tasks, Calendar, Lists, and Settings tabs, three home screen widgets (check off tasks, see what's up next, track progress and quick add), deep links, an offline copy of your lists, and optional sync of reminders to a device calendar.</li>
+	<li><strong>Theme Customizer</strong> — Choose between Midnight Indigo, Emerald Forest, Sunset Rose, Cyberpunk Neon, and Light Pastel themes on the web, and light, dark, or system themes on Android.</li>
 </ul>
 
 <div class="tech-tags">
@@ -75,4 +100,7 @@ order: 5
 	<span class="tag">TypeScript</span>
 	<span class="tag">Vite</span>
 	<span class="tag">React</span>
+	<span class="tag">React Native</span>
+	<span class="tag">Expo</span>
+	<span class="tag">Tailwind CSS</span>
 </div>
