@@ -43,3 +43,6 @@ jobs:
         uses: github/codeql-action/analyze@v3
         with:
           category: "/language:${{ matrix.language }}"
+          # Processing rejects advanced SARIF while Default setup is still on.
+          # Flip CodeQL to Advanced in repo settings; then this can stay false or be removed.
+          wait-for-processing: false
