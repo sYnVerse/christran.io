@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import fs from 'node:fs';
 import path from 'node:path';
+import { parseRedirectUrls } from '../src/lib/sitemap-redirects.mjs';
 
 describe('Redirects and Sitemap Configuration', () => {
   const redirectsPath = path.resolve('public/_redirects');
@@ -36,19 +37,7 @@ describe('Redirects and Sitemap Configuration', () => {
   it('should correctly extract sitemap custom pages as in astro.config.mjs', () => {
     const siteUrl = 'https://christran.io';
     const content = fs.readFileSync(redirectsPath, 'utf-8');
-    const redirectUrls = content
-      .split('\n')
-      .map((line) => line.trim())
-      .filter((line) => line && !line.startsWith('#'))
-      .map((line) => {
-        const parts = line.split(/\s+/);
-        const fromPath = parts[0];
-        if (fromPath && fromPath.startsWith('/') && fromPath !== '/sitemap.xml') {
-          return `${siteUrl}${fromPath}`;
-        }
-        return null;
-      })
-      .filter((url): url is string => url !== null);
+    const redirectUrls = parseRedirectUrls(content, siteUrl);
 
     expect(redirectUrls.length).toBeGreaterThan(0);
     for (const url of redirectUrls) {
