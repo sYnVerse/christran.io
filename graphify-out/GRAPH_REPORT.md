@@ -1,16 +1,16 @@
 # Graph Report - christran.io  (2026-10-29)
 
 ## Corpus Check
-- 96 files · ~2,565,895 words
+- 96 files · ~2,565,904 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1248 nodes · 1309 edges · 125 communities (94 shown, 31 thin omitted)
+- 1249 nodes · 1310 edges · 125 communities (94 shown, 31 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 40 edges (avg confidence: 0.86)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `446bdf55`
+- Built from commit: `c87e72fd`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -119,7 +119,7 @@
 - [[_COMMUNITY_Migrating Docker LXCs to NixOS|Migrating Docker LXCs to NixOS]]
 
 ## God Nodes (most connected - your core abstractions)
-1. `scripts` - 12 edges
+1. `scripts` - 13 edges
 2. `../components/Header.astro` - 11 edges
 3. `../components/BaseHead.astro` - 10 edges
 4. `../layouts/BlogPost.astro` - 10 edges
@@ -156,8 +156,8 @@ Cohesion: 0.15
 Nodes (6): ../components/CodeBlock.astro, ../layouts/BlogPost.astro, ../../layouts/PortfolioPost.astro, blog, collections, portfolio
 
 ### Community 1 - "AI Art Studio and Workspace UI"
-Cohesion: 0.05
-Nodes (43): cloudflare, categories, dash, icon_urls, label, preview_image_url, products, dependencies (+35 more)
+Cohesion: 0.04
+Nodes (44): cloudflare, categories, dash, icon_urls, label, preview_image_url, products, dependencies (+36 more)
 
 ### Community 2 - "F1 Active Aerodynamics Challenge"
 Cohesion: 0.22
@@ -436,7 +436,7 @@ Cohesion: 0.50
 Nodes (3): escapeRegExp(), highlightText(), SearchItem
 
 ## Knowledge Gaps
-- **848 isolated node(s):** `redirectUrls`, `name`, `description`, `label`, `products` (+843 more)
+- **849 isolated node(s):** `redirectUrls`, `name`, `description`, `label`, `products` (+844 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **31 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -444,15 +444,15 @@ Nodes (3): escapeRegExp(), highlightText(), SearchItem
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `../components/Header.astro` connect `Community 116` to `Enterprise Homelab Infrastructure`, `Cloudflare Workers Stubable Interfaces`, `Community 112`, `Community 113`, `Community 114`, `Community 115`?**
-  _High betweenness centrality (0.004) - this node is a cross-community bridge._
+  _High betweenness centrality (0.003) - this node is a cross-community bridge._
 - **Why does `../components/Footer.astro` connect `Community 115` to `Enterprise Homelab Infrastructure`, `AI Chat and Edge Storage Stack`, `Community 112`, `Community 113`, `Community 114`?**
   _High betweenness centrality (0.003) - this node is a cross-community bridge._
-- **Why does `../components/BaseHead.astro` connect `Community 115` to `Enterprise Homelab Infrastructure`, `Community 113`, `Community 114`, `Community 112`?**
+- **Why does `../layouts/BlogPost.astro` connect `Enterprise Homelab Infrastructure` to `Community 112`, `Community 115`, `Community 116`?**
   _High betweenness centrality (0.001) - this node is a cross-community bridge._
 - **What connects `redirectUrls`, `name`, `description` to the rest of the system?**
-  _876 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _877 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `AI Art Studio and Workspace UI` be split into smaller, more focused modules?**
-  _Cohesion score 0.045454545454545456 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.044444444444444446 - nodes in this community are weakly interconnected._
 - **Should `ZFS Storage and Homelab Provisioning` be split into smaller, more focused modules?**
   _Cohesion score 0.14166666666666666 - nodes in this community are weakly interconnected._
 - **Should `Home Server and Self-Hosted Media` be split into smaller, more focused modules?**

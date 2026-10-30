@@ -433,10 +433,20 @@
       "norm_label": "preview"
     },
     {
-      "label": "test",
+      "label": "sync",
       "file_type": "code",
       "source_file": "package.json",
       "source_location": "L45",
+      "_origin": "ast",
+      "id": "package_scripts_sync",
+      "community": 1,
+      "norm_label": "sync"
+    },
+    {
+      "label": "test",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L46",
       "_origin": "ast",
       "id": "package_scripts_test",
       "community": 1,
@@ -446,7 +456,7 @@
       "label": "test:watch",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L46",
+      "source_location": "L47",
       "_origin": "ast",
       "id": "package_scripts_test_watch",
       "community": 1,
@@ -456,7 +466,7 @@
       "label": "typecheck",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L47",
+      "source_location": "L48",
       "_origin": "ast",
       "id": "package_scripts_typecheck",
       "community": 1,
@@ -466,7 +476,7 @@
       "label": "type",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L49",
+      "source_location": "L50",
       "_origin": "ast",
       "id": "package_type",
       "community": 1,
@@ -476,7 +486,7 @@
       "label": "engines",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L50",
+      "source_location": "L51",
       "_origin": "ast",
       "id": "package_engines",
       "community": 1,
@@ -486,7 +496,7 @@
       "label": "node",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L51",
+      "source_location": "L52",
       "_origin": "ast",
       "id": "package_engines_node",
       "community": 1,
@@ -496,7 +506,7 @@
       "label": "license",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L53",
+      "source_location": "L54",
       "_origin": "ast",
       "id": "package_license",
       "community": 1,
@@ -13514,9 +13524,9 @@
       "source_file": "package.json",
       "source_location": "L28",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "package_devdependencies",
-      "target": "package_devdependencies_astrojs_check",
-      "confidence_score": 1.0
+      "target": "package_devdependencies_astrojs_check"
     },
     {
       "relation": "contains",
@@ -13524,9 +13534,9 @@
       "source_file": "package.json",
       "source_location": "L29",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "package_devdependencies",
-      "target": "package_devdependencies_eslint",
-      "confidence_score": 1.0
+      "target": "package_devdependencies_eslint"
     },
     {
       "relation": "contains",
@@ -13534,9 +13544,9 @@
       "source_file": "package.json",
       "source_location": "L30",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "package_devdependencies",
-      "target": "package_devdependencies_eslint_plugin_astro",
-      "confidence_score": 1.0
+      "target": "package_devdependencies_eslint_plugin_astro"
     },
     {
       "relation": "contains",
@@ -13555,9 +13565,9 @@
       "source_file": "package.json",
       "source_location": "L32",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "package_devdependencies",
-      "target": "package_devdependencies_typescript_eslint",
-      "confidence_score": 1.0
+      "target": "package_devdependencies_typescript_eslint"
     },
     {
       "relation": "contains",
@@ -13565,9 +13575,9 @@
       "source_file": "package.json",
       "source_location": "L33",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "package_devdependencies",
-      "target": "package_devdependencies_vitest",
-      "confidence_score": 1.0
+      "target": "package_devdependencies_vitest"
     },
     {
       "relation": "contains",
@@ -13652,9 +13662,9 @@
       "source_file": "package.json",
       "source_location": "L43",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "package_scripts",
-      "target": "package_scripts_lint",
-      "confidence_score": 1.0
+      "target": "package_scripts_lint"
     },
     {
       "relation": "contains",
@@ -13674,8 +13684,18 @@
       "source_location": "L45",
       "weight": 1.0,
       "source": "package_scripts",
-      "target": "package_scripts_test",
+      "target": "package_scripts_sync",
       "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L45",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "package_scripts",
+      "target": "package_scripts_test"
     },
     {
       "relation": "contains",
@@ -13683,9 +13703,9 @@
       "source_file": "package.json",
       "source_location": "L46",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "package_scripts",
-      "target": "package_scripts_test_watch",
-      "confidence_score": 1.0
+      "target": "package_scripts_test_watch"
     },
     {
       "relation": "contains",
@@ -13693,9 +13713,9 @@
       "source_file": "package.json",
       "source_location": "L47",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "package_scripts",
-      "target": "package_scripts_typecheck",
-      "confidence_score": 1.0
+      "target": "package_scripts_typecheck"
     },
     {
       "relation": "contains",
@@ -15227,9 +15247,9 @@
       "source_file": "tests/consts.test.ts",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_consts_test",
-      "target": "src_consts",
-      "confidence_score": 1.0
+      "target": "src_consts"
     },
     {
       "relation": "contains",
@@ -15717,9 +15737,9 @@
       "source_file": "tests/content.test.ts",
       "source_location": "L7",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_content_test",
-      "target": "tests_content_test_blogschema",
-      "confidence_score": 1.0
+      "target": "tests_content_test_blogschema"
     },
     {
       "relation": "contains",
@@ -15727,9 +15747,9 @@
       "source_file": "tests/content.test.ts",
       "source_location": "L29",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_content_test",
-      "target": "tests_content_test_extractfrontmatter",
-      "confidence_score": 1.0
+      "target": "tests_content_test_extractfrontmatter"
     },
     {
       "relation": "contains",
@@ -15737,9 +15757,9 @@
       "source_file": "tests/content.test.ts",
       "source_location": "L16",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_content_test",
-      "target": "tests_content_test_portfolioschema",
-      "confidence_score": 1.0
+      "target": "tests_content_test_portfolioschema"
     },
     {
       "relation": "contains",
@@ -15747,9 +15767,9 @@
       "source_file": "tests/search.test.ts",
       "source_location": "L21",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_search_test",
-      "target": "tests_search_test_calculatescore",
-      "confidence_score": 1.0
+      "target": "tests_search_test_calculatescore"
     },
     {
       "relation": "contains",
@@ -15757,9 +15777,9 @@
       "source_file": "tests/search.test.ts",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_search_test",
-      "target": "tests_search_test_escaperegexp",
-      "confidence_score": 1.0
+      "target": "tests_search_test_escaperegexp"
     },
     {
       "relation": "contains",
@@ -15767,9 +15787,9 @@
       "source_file": "tests/search.test.ts",
       "source_location": "L7",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_search_test",
-      "target": "tests_search_test_highlighttext",
-      "confidence_score": 1.0
+      "target": "tests_search_test_highlighttext"
     },
     {
       "relation": "contains",
@@ -15777,9 +15797,9 @@
       "source_file": "tests/search.test.ts",
       "source_location": "L14",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_search_test",
-      "target": "tests_search_test_searchitem",
-      "confidence_score": 1.0
+      "target": "tests_search_test_searchitem"
     },
     {
       "relation": "calls",
@@ -15788,9 +15808,9 @@
       "source_file": "tests/search.test.ts",
       "source_location": "L9",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_search_test_highlighttext",
-      "target": "tests_search_test_escaperegexp",
-      "confidence_score": 1.0
+      "target": "tests_search_test_escaperegexp"
     },
     {
       "relation": "contains",
@@ -27070,5 +27090,5 @@
       "source_file": "src/content/blog/spacex-ipo-equation.mdx"
     }
   ],
-  "built_at_commit": "446bdf558f3a8adf37a998f394b11e472eccc563"
+  "built_at_commit": "c87e72fd47e88b55f3e05a205493dd519612fdae"
 }

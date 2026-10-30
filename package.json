@@ -42,9 +42,10 @@
     "dev": "astro dev",
     "lint": "eslint .",
     "preview": "astro build && wrangler dev",
+    "sync": "astro sync",
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "astro sync && tsc --noEmit"
   },
   "type": "module",
   "engines": {

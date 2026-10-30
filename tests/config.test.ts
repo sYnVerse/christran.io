@@ -13,7 +13,7 @@ describe('Project Configuration Files', () => {
     expect(pkg.scripts.build).toBe('astro build');
     expect(pkg.scripts.check).toBeDefined();
     expect(pkg.scripts.lint).toBe('eslint .');
-    expect(pkg.scripts.typecheck).toBe('tsc --noEmit');
+    expect(pkg.scripts.typecheck).toBe('astro sync && tsc --noEmit');
     expect(pkg.scripts.test).toBe('vitest run');
   });
 
