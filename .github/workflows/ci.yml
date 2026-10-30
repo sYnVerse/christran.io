@@ -14,8 +14,36 @@ permissions:
   contents: read
 
 jobs:
+  changes:
+    name: Detect changes
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      non-tools: ${{ steps.filter.outputs.non-tools }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Filter paths
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          # On push to main, compare against the previous commit on the same branch.
+          base: ${{ github.ref }}
+          predicate-quantifier: every
+          filters: |
+            non-tools:
+              - '**'
+              - '!tools/**'
+
   ci:
     name: CD
+    needs: changes
+    if: needs.changes.outputs.non-tools == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
