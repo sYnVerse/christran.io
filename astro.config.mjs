@@ -6,6 +6,7 @@ import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import { unified } from "@astrojs/markdown-remark";
 import fs from "node:fs";
+import { parseRedirectUrls } from "./src/lib/sitemap-redirects.mjs";
 
 import cloudflare from "@astrojs/cloudflare";
 
@@ -19,19 +20,7 @@ let redirectUrls = [];
 try {
   const redirectsPath = new URL("./public/_redirects", import.meta.url);
   const fileContent = fs.readFileSync(redirectsPath, "utf-8");
-  redirectUrls = fileContent
-    .split("\n")
-    .map((line) => line.trim())
-    .filter((line) => line && !line.startsWith("#"))
-    .map((line) => {
-      const parts = line.split(/\s+/);
-      const fromPath = parts[0];
-      if (fromPath && fromPath.startsWith("/") && fromPath !== "/sitemap.xml") {
-        return `${siteUrl}${fromPath}`;
-      }
-      return null;
-    })
-    .filter((url) => url !== null);
+  redirectUrls = parseRedirectUrls(fileContent, siteUrl);
 } catch (error) {
   console.error("Failed to read public/_redirects", error);
 }

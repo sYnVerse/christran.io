@@ -22,9 +22,9 @@ export default [
       '@typescript-eslint/no-unused-vars': [
         'warn',
         {
-          argsIgnorePattern: '^_|e|err|error',
-          varsIgnorePattern: '^_|e|err|error',
-          caughtErrorsIgnorePattern: '^_|e|err|error',
+          argsIgnorePattern: '^(_|e|err|error)$',
+          varsIgnorePattern: '^(_|e|err|error)$',
+          caughtErrorsIgnorePattern: '^(_|e|err|error)$',
         },
       ],
       '@typescript-eslint/no-empty-object-type': 'off',

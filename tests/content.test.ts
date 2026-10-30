@@ -2,29 +2,7 @@ import { describe, it, expect } from 'vitest';
 import fs from 'node:fs';
 import path from 'node:path';
 import yaml from 'yaml';
-import { z } from 'zod';
-
-const blogSchema = z.object({
-  title: z.string().min(1),
-  description: z.string().min(1),
-  pubDate: z.coerce.date(),
-  updatedDate: z.coerce.date().optional(),
-  heroImage: z.string().optional(),
-  tags: z.array(z.string()).optional(),
-});
-
-const portfolioSchema = z.object({
-  title: z.string().min(1),
-  description: z.string().min(1),
-  category: z.enum(['app', 'infrastructure', 'community']),
-  tags: z.array(z.string()),
-  techStack: z.array(z.string()),
-  image: z.string().optional(),
-  liveUrl: z.string().optional(),
-  sourceUrl: z.string().optional(),
-  featured: z.boolean(),
-  order: z.number(),
-});
+import { blogSchema, portfolioSchema } from '../src/content/schemas';
 
 function extractFrontmatter(filePath: string): Record<string, unknown> {
   const content = fs.readFileSync(filePath, 'utf-8');
