@@ -1,3 +1,7 @@
+import { calculateScore, highlightText } from './search-utils';
+
+export { calculateScore, escapeRegExp, highlightText } from './search-utils';
+
 let searchIndex: any[] | null = null;
 let modalOpen = false;
 let activeIndex = -1;
@@ -9,7 +13,6 @@ let modal: HTMLElement | null = null;
 let container: HTMLElement | null = null;
 let input: HTMLInputElement | null = null;
 let closeBtn: HTMLElement | null = null;
-let resultsWrapper: HTMLElement | null = null;
 let suggestions: HTMLElement | null = null;
 let resultsContainer: HTMLElement | null = null;
 let emptyState: HTMLElement | null = null;
@@ -63,17 +66,6 @@ function closeModal() {
 	}
 }
 
-function escapeRegExp(string: string) {
-	return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
-function highlightText(text: string, query: string): string {
-	if (!query) return text;
-	const escapedQuery = escapeRegExp(query);
-	const regex = new RegExp(`(${escapedQuery})`, 'gi');
-	return text.replace(regex, '<mark class="search-highlight">$1</mark>');
-}
-
 function performSearch(query: string) {
 	if (!searchIndex || !resultsContainer || !suggestions || !emptyState || !queryDisplay) return;
 
@@ -90,18 +82,7 @@ function performSearch(query: string) {
 
 	const matches = searchIndex
 		.map(item => {
-			let score = 0;
-			const titleIdx = item.title.toLowerCase().indexOf(cleanQuery);
-			const descIdx = item.description.toLowerCase().indexOf(cleanQuery);
-			const bodyIdx = item.body ? item.body.toLowerCase().indexOf(cleanQuery) : -1;
-			const matchedTags = item.tags ? item.tags.filter((t: string) => t.toLowerCase().includes(cleanQuery)).length : 0;
-
-			if (titleIdx === 0) score += 100;
-			else if (titleIdx > 0) score += 80;
-			if (descIdx !== -1) score += 40;
-			if (matchedTags > 0) score += 30 * matchedTags;
-			if (bodyIdx !== -1) score += 10;
-
+			const score = calculateScore(item, cleanQuery);
 			return { item, score };
 		})
 		.filter(match => match.score > 0)
@@ -204,7 +185,6 @@ export function initSearch() {
 	container = document.getElementById('search-modal-container');
 	input = document.getElementById('search-input') as HTMLInputElement;
 	closeBtn = document.getElementById('search-close-btn');
-	resultsWrapper = document.getElementById('search-results-wrapper');
 	suggestions = document.getElementById('search-suggestions');
 	resultsContainer = document.getElementById('search-results');
 	emptyState = document.getElementById('search-empty-state');
@@ -325,18 +305,7 @@ async function executeFromAgent(query: string) {
 
 	const matches = searchIndex
 		.map(item => {
-			let score = 0;
-			const titleIdx = item.title.toLowerCase().indexOf(cleanQuery);
-			const descIdx = item.description.toLowerCase().indexOf(cleanQuery);
-			const bodyIdx = item.body ? item.body.toLowerCase().indexOf(cleanQuery) : -1;
-			const matchedTags = item.tags ? item.tags.filter((t: string) => t.toLowerCase().includes(cleanQuery)).length : 0;
-
-			if (titleIdx === 0) score += 100;
-			else if (titleIdx > 0) score += 80;
-			if (descIdx !== -1) score += 40;
-			if (matchedTags > 0) score += 30 * matchedTags;
-			if (bodyIdx !== -1) score += 10;
-
+			const score = calculateScore(item, cleanQuery);
 			return { item, score };
 		})
 		.filter(match => match.score > 0)
