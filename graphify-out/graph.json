@@ -53,6 +53,16 @@
       "norm_label": "redirecturls"
     },
     {
+      "label": "eslint.config.mjs",
+      "file_type": "code",
+      "source_file": "eslint.config.mjs",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "eslint_config",
+      "community": 119,
+      "norm_label": "eslint.config.mjs"
+    },
+    {
       "label": "package.json",
       "file_type": "code",
       "source_file": "package.json",
@@ -263,20 +273,70 @@
       "norm_label": "devdependencies"
     },
     {
-      "label": "sharp",
+      "label": "@astrojs/check",
       "file_type": "code",
       "source_file": "package.json",
       "source_location": "L28",
+      "_origin": "ast",
+      "id": "package_devdependencies_astrojs_check",
+      "community": 1,
+      "norm_label": "@astrojs/check"
+    },
+    {
+      "label": "eslint",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L29",
+      "_origin": "ast",
+      "id": "package_devdependencies_eslint",
+      "community": 1,
+      "norm_label": "eslint"
+    },
+    {
+      "label": "eslint-plugin-astro",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L30",
+      "_origin": "ast",
+      "id": "package_devdependencies_eslint_plugin_astro",
+      "community": 1,
+      "norm_label": "eslint-plugin-astro"
+    },
+    {
+      "label": "sharp",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L31",
       "_origin": "ast",
       "id": "package_devdependencies_sharp",
       "community": 1,
       "norm_label": "sharp"
     },
     {
+      "label": "typescript-eslint",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L32",
+      "_origin": "ast",
+      "id": "package_devdependencies_typescript_eslint",
+      "community": 1,
+      "norm_label": "typescript-eslint"
+    },
+    {
+      "label": "vitest",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L33",
+      "_origin": "ast",
+      "id": "package_devdependencies_vitest",
+      "community": 1,
+      "norm_label": "vitest"
+    },
+    {
       "label": "wrangler",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L29",
+      "source_location": "L34",
       "_origin": "ast",
       "id": "package_devdependencies_wrangler",
       "community": 1,
@@ -286,7 +346,7 @@
       "label": "scripts",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L31",
+      "source_location": "L36",
       "_origin": "ast",
       "id": "package_scripts",
       "community": 1,
@@ -296,7 +356,7 @@
       "label": "astro",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L32",
+      "source_location": "L37",
       "_origin": "ast",
       "id": "package_scripts_astro",
       "community": 1,
@@ -306,7 +366,7 @@
       "label": "build",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L33",
+      "source_location": "L38",
       "_origin": "ast",
       "id": "package_scripts_build",
       "community": 1,
@@ -316,7 +376,7 @@
       "label": "cf-typegen",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L34",
+      "source_location": "L39",
       "_origin": "ast",
       "id": "package_scripts_cf_typegen",
       "community": 1,
@@ -326,7 +386,7 @@
       "label": "check",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L35",
+      "source_location": "L40",
       "_origin": "ast",
       "id": "package_scripts_check",
       "community": 1,
@@ -336,7 +396,7 @@
       "label": "deploy",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L36",
+      "source_location": "L41",
       "_origin": "ast",
       "id": "package_scripts_deploy",
       "community": 1,
@@ -346,27 +406,77 @@
       "label": "dev",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L37",
+      "source_location": "L42",
       "_origin": "ast",
       "id": "package_scripts_dev",
       "community": 1,
       "norm_label": "dev"
     },
     {
+      "label": "lint",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L43",
+      "_origin": "ast",
+      "id": "package_scripts_lint",
+      "community": 1,
+      "norm_label": "lint"
+    },
+    {
       "label": "preview",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L38",
+      "source_location": "L44",
       "_origin": "ast",
       "id": "package_scripts_preview",
       "community": 1,
       "norm_label": "preview"
     },
     {
+      "label": "sync",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L45",
+      "_origin": "ast",
+      "id": "package_scripts_sync",
+      "community": 1,
+      "norm_label": "sync"
+    },
+    {
+      "label": "test",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L46",
+      "_origin": "ast",
+      "id": "package_scripts_test",
+      "community": 1,
+      "norm_label": "test"
+    },
+    {
+      "label": "test:watch",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L47",
+      "_origin": "ast",
+      "id": "package_scripts_test_watch",
+      "community": 1,
+      "norm_label": "test:watch"
+    },
+    {
+      "label": "typecheck",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L48",
+      "_origin": "ast",
+      "id": "package_scripts_typecheck",
+      "community": 1,
+      "norm_label": "typecheck"
+    },
+    {
       "label": "type",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L40",
+      "source_location": "L50",
       "_origin": "ast",
       "id": "package_type",
       "community": 1,
@@ -376,7 +486,7 @@
       "label": "engines",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L41",
+      "source_location": "L51",
       "_origin": "ast",
       "id": "package_engines",
       "community": 1,
@@ -386,7 +496,7 @@
       "label": "node",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L42",
+      "source_location": "L52",
       "_origin": "ast",
       "id": "package_engines_node",
       "community": 1,
@@ -396,7 +506,7 @@
       "label": "license",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L44",
+      "source_location": "L54",
       "_origin": "ast",
       "id": "package_license",
       "community": 1,
@@ -1795,6 +1905,136 @@
       "id": "scripts_search_executefromagent",
       "community": 46,
       "norm_label": "executefromagent()"
+    },
+    {
+      "label": "config.test.ts",
+      "file_type": "code",
+      "source_file": "tests/config.test.ts",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "tests_config_test",
+      "community": 120,
+      "norm_label": "config.test.ts"
+    },
+    {
+      "label": "consts.test.ts",
+      "file_type": "code",
+      "source_file": "tests/consts.test.ts",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "tests_consts_test",
+      "community": 113,
+      "norm_label": "consts.test.ts"
+    },
+    {
+      "label": "content.test.ts",
+      "file_type": "code",
+      "source_file": "tests/content.test.ts",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "tests_content_test",
+      "community": 118,
+      "norm_label": "content.test.ts"
+    },
+    {
+      "label": "blogSchema",
+      "file_type": "code",
+      "source_file": "tests/content.test.ts",
+      "source_location": "L7",
+      "_origin": "ast",
+      "id": "tests_content_test_blogschema",
+      "community": 118,
+      "norm_label": "blogschema"
+    },
+    {
+      "label": "portfolioSchema",
+      "file_type": "code",
+      "source_file": "tests/content.test.ts",
+      "source_location": "L16",
+      "_origin": "ast",
+      "id": "tests_content_test_portfolioschema",
+      "community": 118,
+      "norm_label": "portfolioschema"
+    },
+    {
+      "label": "extractFrontmatter()",
+      "file_type": "code",
+      "source_file": "tests/content.test.ts",
+      "source_location": "L29",
+      "_origin": "ast",
+      "id": "tests_content_test_extractfrontmatter",
+      "community": 118,
+      "norm_label": "extractfrontmatter()"
+    },
+    {
+      "label": "headers.test.ts",
+      "file_type": "code",
+      "source_file": "tests/headers.test.ts",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "tests_headers_test",
+      "community": 121,
+      "norm_label": "headers.test.ts"
+    },
+    {
+      "label": "redirects.test.ts",
+      "file_type": "code",
+      "source_file": "tests/redirects.test.ts",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "tests_redirects_test",
+      "community": 122,
+      "norm_label": "redirects.test.ts"
+    },
+    {
+      "label": "search.test.ts",
+      "file_type": "code",
+      "source_file": "tests/search.test.ts",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "tests_search_test",
+      "community": 117,
+      "norm_label": "search.test.ts"
+    },
+    {
+      "label": "escapeRegExp()",
+      "file_type": "code",
+      "source_file": "tests/search.test.ts",
+      "source_location": "L3",
+      "_origin": "ast",
+      "id": "tests_search_test_escaperegexp",
+      "community": 117,
+      "norm_label": "escaperegexp()"
+    },
+    {
+      "label": "highlightText()",
+      "file_type": "code",
+      "source_file": "tests/search.test.ts",
+      "source_location": "L7",
+      "_origin": "ast",
+      "id": "tests_search_test_highlighttext",
+      "community": 117,
+      "norm_label": "highlighttext()"
+    },
+    {
+      "label": "SearchItem",
+      "file_type": "code",
+      "source_file": "tests/search.test.ts",
+      "source_location": "L14",
+      "_origin": "ast",
+      "id": "tests_search_test_searchitem",
+      "community": 117,
+      "norm_label": "searchitem"
+    },
+    {
+      "label": "calculateScore()",
+      "file_type": "code",
+      "source_file": "tests/search.test.ts",
+      "source_location": "L21",
+      "_origin": "ast",
+      "id": "tests_search_test_calculatescore",
+      "community": 117,
+      "norm_label": "calculatescore()"
     },
     {
       "label": "package.json",
@@ -3365,6 +3605,16 @@
       "id": "tsconfig_compileroptions_strictnullchecks",
       "community": 65,
       "norm_label": "strictnullchecks"
+    },
+    {
+      "label": "vitest.config.ts",
+      "file_type": "code",
+      "source_file": "vitest.config.ts",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "vitest_config",
+      "community": 123,
+      "norm_label": "vitest.config.ts"
     },
     {
       "label": "worker-configuration.d.ts",
@@ -8740,7 +8990,7 @@
       "label": "License",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": "L126",
+      "source_location": "L130",
       "_origin": "ast",
       "id": "readme_license",
       "community": 47,
@@ -13272,12 +13522,62 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
+      "source_location": "L28",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "package_devdependencies",
+      "target": "package_devdependencies_astrojs_check"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L29",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "package_devdependencies",
+      "target": "package_devdependencies_eslint"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L30",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "package_devdependencies",
+      "target": "package_devdependencies_eslint_plugin_astro"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
       "source_location": "L27",
       "weight": 1.0,
       "_origin": "ast",
       "confidence_score": 1.0,
       "source": "package_devdependencies",
       "target": "package_devdependencies_sharp"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L32",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "package_devdependencies",
+      "target": "package_devdependencies_typescript_eslint"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L33",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "package_devdependencies",
+      "target": "package_devdependencies_vitest"
     },
     {
       "relation": "contains",
@@ -13360,12 +13660,62 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "package.json",
+      "source_location": "L43",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "package_scripts",
+      "target": "package_scripts_lint"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
       "source_location": "L37",
       "weight": 1.0,
       "_origin": "ast",
       "confidence_score": 1.0,
       "source": "package_scripts",
       "target": "package_scripts_preview"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L45",
+      "weight": 1.0,
+      "source": "package_scripts",
+      "target": "package_scripts_sync",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L45",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "package_scripts",
+      "target": "package_scripts_test"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L46",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "package_scripts",
+      "target": "package_scripts_test_watch"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L47",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "package_scripts",
+      "target": "package_scripts_typecheck"
     },
     {
       "relation": "contains",
@@ -14891,6 +15241,17 @@
       "target": "src_consts"
     },
     {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/consts.test.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "tests_consts_test",
+      "target": "src_consts"
+    },
+    {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/content.config.ts",
@@ -15012,9 +15373,9 @@
       "source_file": "src/pages/about.astro",
       "source_location": "L166",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "pages_about",
-      "target": "pages_about_careerhops",
-      "confidence_score": 1.0
+      "target": "pages_about_careerhops"
     },
     {
       "relation": "contains",
@@ -15022,9 +15383,9 @@
       "source_file": "src/pages/about.astro",
       "source_location": "L8",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "pages_about",
-      "target": "pages_about_impactmetrics",
-      "confidence_score": 1.0
+      "target": "pages_about_impactmetrics"
     },
     {
       "relation": "contains",
@@ -15032,9 +15393,9 @@
       "source_file": "src/pages/about.astro",
       "source_location": "L75",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "pages_about",
-      "target": "pages_about_secondarycerts",
-      "confidence_score": 1.0
+      "target": "pages_about_secondarycerts"
     },
     {
       "relation": "contains",
@@ -15042,9 +15403,9 @@
       "source_file": "src/pages/about.astro",
       "source_location": "L865",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "pages_about",
-      "target": "pages_about_select",
-      "confidence_score": 1.0
+      "target": "pages_about_select"
     },
     {
       "relation": "contains",
@@ -15052,9 +15413,9 @@
       "source_file": "src/pages/about.astro",
       "source_location": "L39",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "pages_about",
-      "target": "pages_about_stackcerts",
-      "confidence_score": 1.0
+      "target": "pages_about_stackcerts"
     },
     {
       "relation": "contains",
@@ -15062,9 +15423,9 @@
       "source_file": "src/pages/about.astro",
       "source_location": "L119",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "pages_about",
-      "target": "pages_about_storychapters",
-      "confidence_score": 1.0
+      "target": "pages_about_storychapters"
     },
     {
       "relation": "contains",
@@ -15072,9 +15433,9 @@
       "source_file": "src/pages/about.astro",
       "source_location": "L236",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "pages_about",
-      "target": "pages_about_toolkitdomains",
-      "confidence_score": 1.0
+      "target": "pages_about_toolkitdomains"
     },
     {
       "relation": "contains",
@@ -15369,6 +15730,87 @@
       "confidence_score": 1.0,
       "source": "scripts_search_executefromagent",
       "target": "scripts_search_performsearch"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/content.test.ts",
+      "source_location": "L7",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "tests_content_test",
+      "target": "tests_content_test_blogschema"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/content.test.ts",
+      "source_location": "L29",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "tests_content_test",
+      "target": "tests_content_test_extractfrontmatter"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/content.test.ts",
+      "source_location": "L16",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "tests_content_test",
+      "target": "tests_content_test_portfolioschema"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/search.test.ts",
+      "source_location": "L21",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "tests_search_test",
+      "target": "tests_search_test_calculatescore"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/search.test.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "tests_search_test",
+      "target": "tests_search_test_escaperegexp"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/search.test.ts",
+      "source_location": "L7",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "tests_search_test",
+      "target": "tests_search_test_highlighttext"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/search.test.ts",
+      "source_location": "L14",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "tests_search_test",
+      "target": "tests_search_test_searchitem"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/search.test.ts",
+      "source_location": "L9",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "tests_search_test_highlighttext",
+      "target": "tests_search_test_escaperegexp"
     },
     {
       "relation": "contains",
@@ -26648,5 +27090,5 @@
       "source_file": "src/content/blog/spacex-ipo-equation.mdx"
     }
   ],
-  "built_at_commit": "bd7876a9975a5eb86e2df81fdfa33401a5cd3257"
+  "built_at_commit": "c87e72fd47e88b55f3e05a205493dd519612fdae"
 }

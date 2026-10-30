@@ -119,6 +119,10 @@ npm start              # http://localhost:5000
 | `npm run dev` | Astro dev server |
 | `npm run build` | Production build → `./dist` |
 | `npm run preview` | Build + Wrangler local preview |
+| `npm run lint` | ESLint static analysis |
+| `npm run typecheck` | TypeScript compiler type check |
+| `npm run test` | Run Vitest test suite |
+| `npm run test:watch` | Run Vitest in interactive watch mode |
 | `npm run check` | Build + TypeScript + Wrangler dry-run |
 | `npm run deploy` | Build + Wrangler deploy |
 | `npm run cf-typegen` | Regenerate Cloudflare types |

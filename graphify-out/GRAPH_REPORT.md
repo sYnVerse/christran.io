@@ -1,16 +1,16 @@
-# Graph Report - christran.io  (2026-10-27)
+# Graph Report - christran.io  (2026-10-29)
 
 ## Corpus Check
-- 88 files · ~2,564,567 words
+- 96 files · ~2,565,904 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1224 nodes · 1291 edges · 118 communities (88 shown, 30 thin omitted)
+- 1249 nodes · 1310 edges · 125 communities (94 shown, 31 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 40 edges (avg confidence: 0.86)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `bd7876a9`
+- Built from commit: `c87e72fd`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -114,15 +114,17 @@
 - [[_COMMUNITY_Community 114|Community 114]]
 - [[_COMMUNITY_Community 115|Community 115]]
 - [[_COMMUNITY_Community 116|Community 116]]
+- [[_COMMUNITY_Community 117|Community 117]]
+- [[_COMMUNITY_Community 118|Community 118]]
 - [[_COMMUNITY_Migrating Docker LXCs to NixOS|Migrating Docker LXCs to NixOS]]
 
 ## God Nodes (most connected - your core abstractions)
-1. `../components/Header.astro` - 11 edges
-2. `../components/BaseHead.astro` - 10 edges
-3. `../layouts/BlogPost.astro` - 10 edges
-4. `../components/Footer.astro` - 9 edges
-5. `christran.io` - 9 edges
-6. `scripts` - 8 edges
+1. `scripts` - 13 edges
+2. `../components/Header.astro` - 11 edges
+3. `../components/BaseHead.astro` - 10 edges
+4. `../layouts/BlogPost.astro` - 10 edges
+5. `../components/Footer.astro` - 9 edges
+6. `christran.io` - 9 edges
 7. `cloudflare` - 7 edges
 8. `Event` - 7 edges
 9. `ExtendableEvent` - 7 edges
@@ -147,15 +149,15 @@
 - **Elon Musk Business Ecosystem** — src_content_blog_spacex_ipo_equation_spacex, src_content_blog_tesla_fsd_tesla, src_content_blog_spacex_ipo_equation_xai [INFERRED 0.90]
 - **Orbital Infrastructure Components** — src_content_blog_spacex_ipo_equation_starship, src_content_blog_spacex_ipo_equation_starlink, src_content_blog_spacex_ipo_equation_orbital_data_center [EXTRACTED 0.95]
 
-## Communities (118 total, 30 thin omitted)
+## Communities (125 total, 31 thin omitted)
 
 ### Community 0 - "Enterprise Homelab Infrastructure"
 Cohesion: 0.15
 Nodes (6): ../components/CodeBlock.astro, ../layouts/BlogPost.astro, ../../layouts/PortfolioPost.astro, blog, collections, portfolio
 
 ### Community 1 - "AI Art Studio and Workspace UI"
-Cohesion: 0.06
-Nodes (34): cloudflare, categories, dash, icon_urls, label, preview_image_url, products, dependencies (+26 more)
+Cohesion: 0.04
+Nodes (44): cloudflare, categories, dash, icon_urls, label, preview_image_url, products, dependencies (+36 more)
 
 ### Community 2 - "F1 Active Aerodynamics Challenge"
 Cohesion: 0.22
@@ -414,7 +416,7 @@ Cohesion: 0.20
 Nodes (9): ../assets/img/network-bg-desktop.webp, ../assets/img/network-bg-mobile.webp, ../assets/img/network-bg-ultrawide.webp, ../assets/img/network-bg.webp, ../components/BlogCard.astro, ../../components/FormattedDate.astro, ../../components/ProjectCard.astro, featured (+1 more)
 
 ### Community 113 - "Community 113"
-Cohesion: 0.20
+Cohesion: 0.18
 Nodes (3): posts, ../consts, checkboxes
 
 ### Community 114 - "Community 114"
@@ -429,10 +431,14 @@ Nodes (7): ../styles/global.css, ../components/BaseHead.astro, canonicalURL, ../
 Cohesion: 0.33
 Nodes (4): ../components/Header.astro, pathname, subpath, astro/types
 
+### Community 117 - "Community 117"
+Cohesion: 0.50
+Nodes (3): escapeRegExp(), highlightText(), SearchItem
+
 ## Knowledge Gaps
-- **836 isolated node(s):** `redirectUrls`, `name`, `description`, `label`, `products` (+831 more)
+- **849 isolated node(s):** `redirectUrls`, `name`, `description`, `label`, `products` (+844 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **30 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **31 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
@@ -444,9 +450,9 @@ _Questions this graph is uniquely positioned to answer:_
 - **Why does `../layouts/BlogPost.astro` connect `Enterprise Homelab Infrastructure` to `Community 112`, `Community 115`, `Community 116`?**
   _High betweenness centrality (0.001) - this node is a cross-community bridge._
 - **What connects `redirectUrls`, `name`, `description` to the rest of the system?**
-  _864 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _877 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `AI Art Studio and Workspace UI` be split into smaller, more focused modules?**
-  _Cohesion score 0.05714285714285714 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.044444444444444446 - nodes in this community are weakly interconnected._
 - **Should `ZFS Storage and Homelab Provisioning` be split into smaller, more focused modules?**
   _Cohesion score 0.14166666666666666 - nodes in this community are weakly interconnected._
 - **Should `Home Server and Self-Hosted Media` be split into smaller, more focused modules?**
