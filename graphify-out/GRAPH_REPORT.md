@@ -1,16 +1,16 @@
-# Graph Report - christran.io  (2026-10-29)
+# Graph Report - christran.io  (2026-11-03)
 
 ## Corpus Check
-- 96 files · ~2,565,904 words
+- 99 files · ~2,566,711 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1249 nodes · 1310 edges · 125 communities (94 shown, 31 thin omitted)
+- 1252 nodes · 1330 edges · 118 communities (88 shown, 30 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 40 edges (avg confidence: 0.86)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `c87e72fd`
+- Built from commit: `3c251afc`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -109,12 +109,6 @@
 - [[_COMMUNITY_Community 93|Community 93]]
 - [[_COMMUNITY_Community 101|Community 101]]
 - [[_COMMUNITY_Community 111|Community 111]]
-- [[_COMMUNITY_Community 112|Community 112]]
-- [[_COMMUNITY_Community 113|Community 113]]
-- [[_COMMUNITY_Community 114|Community 114]]
-- [[_COMMUNITY_Community 115|Community 115]]
-- [[_COMMUNITY_Community 116|Community 116]]
-- [[_COMMUNITY_Community 117|Community 117]]
 - [[_COMMUNITY_Community 118|Community 118]]
 - [[_COMMUNITY_Migrating Docker LXCs to NixOS|Migrating Docker LXCs to NixOS]]
 
@@ -149,15 +143,15 @@
 - **Elon Musk Business Ecosystem** — src_content_blog_spacex_ipo_equation_spacex, src_content_blog_tesla_fsd_tesla, src_content_blog_spacex_ipo_equation_xai [INFERRED 0.90]
 - **Orbital Infrastructure Components** — src_content_blog_spacex_ipo_equation_starship, src_content_blog_spacex_ipo_equation_starlink, src_content_blog_spacex_ipo_equation_orbital_data_center [EXTRACTED 0.95]
 
-## Communities (125 total, 31 thin omitted)
+## Communities (118 total, 30 thin omitted)
 
 ### Community 0 - "Enterprise Homelab Infrastructure"
-Cohesion: 0.15
-Nodes (6): ../components/CodeBlock.astro, ../layouts/BlogPost.astro, ../../layouts/PortfolioPost.astro, blog, collections, portfolio
+Cohesion: 0.05
+Nodes (33): posts, ../assets/img/network-bg-desktop.webp, ../assets/img/network-bg-mobile.webp, ../assets/img/network-bg-ultrawide.webp, ../assets/img/network-bg.webp, ../assets/img/profile.png, ../consts, ../styles/global.css (+25 more)
 
 ### Community 1 - "AI Art Studio and Workspace UI"
 Cohesion: 0.04
-Nodes (44): cloudflare, categories, dash, icon_urls, label, preview_image_url, products, dependencies (+36 more)
+Nodes (45): cloudflare, categories, dash, icon_urls, label, preview_image_url, products, dependencies (+37 more)
 
 ### Community 2 - "F1 Active Aerodynamics Challenge"
 Cohesion: 0.22
@@ -277,7 +271,7 @@ Nodes (12): 1. Analyzing the Hardware Landscape: VRAM is King, 2. Deploying the 
 
 ### Community 46 - "Cloudflare Workers Stubable Interfaces"
 Cohesion: 0.24
-Nodes (9): loadSearch(), closeModal(), escapeRegExp(), executeFromAgent(), highlightText(), loadSearchIndex(), openModal(), performSearch() (+1 more)
+Nodes (11): loadSearch(), closeModal(), executeFromAgent(), loadSearchIndex(), openModal(), performSearch(), resultItems, calculateScore() (+3 more)
 
 ### Community 47 - "Cloudflare Workers Workflow Backoffs"
 Cohesion: 0.15
@@ -411,48 +405,28 @@ Nodes (3): Agent Authentication Policy, Discovery Metadata, Registration Methods
 Cohesion: 0.67
 Nodes (3): F1 Fandom Wiki Integration, F1 Fandom Wiki Project Documentation, Scribunto Lua Scripting
 
-### Community 112 - "Community 112"
-Cohesion: 0.20
-Nodes (9): ../assets/img/network-bg-desktop.webp, ../assets/img/network-bg-mobile.webp, ../assets/img/network-bg-ultrawide.webp, ../assets/img/network-bg.webp, ../components/BlogCard.astro, ../../components/FormattedDate.astro, ../../components/ProjectCard.astro, featured (+1 more)
-
-### Community 113 - "Community 113"
-Cohesion: 0.18
-Nodes (3): posts, ../consts, checkboxes
-
-### Community 114 - "Community 114"
-Cohesion: 0.22
-Nodes (7): ../assets/img/profile.png, careerHops, impactMetrics, secondaryCerts, stackCerts, storyChapters, toolkitDomains
-
-### Community 115 - "Community 115"
-Cohesion: 0.25
-Nodes (7): ../styles/global.css, ../components/BaseHead.astro, canonicalURL, ../components/Footer.astro, categories, sortedProjects, string
-
-### Community 116 - "Community 116"
+### Community 118 - "Community 118"
 Cohesion: 0.33
-Nodes (4): ../components/Header.astro, pathname, subpath, astro/types
-
-### Community 117 - "Community 117"
-Cohesion: 0.50
-Nodes (3): escapeRegExp(), highlightText(), SearchItem
+Nodes (5): blogSchema, portfolioSchema, blog, collections, portfolio
 
 ## Knowledge Gaps
-- **849 isolated node(s):** `redirectUrls`, `name`, `description`, `label`, `products` (+844 more)
+- **848 isolated node(s):** `redirectUrls`, `name`, `description`, `label`, `products` (+843 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **31 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **30 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `../components/Header.astro` connect `Community 116` to `Enterprise Homelab Infrastructure`, `Cloudflare Workers Stubable Interfaces`, `Community 112`, `Community 113`, `Community 114`, `Community 115`?**
-  _High betweenness centrality (0.003) - this node is a cross-community bridge._
-- **Why does `../components/Footer.astro` connect `Community 115` to `Enterprise Homelab Infrastructure`, `AI Chat and Edge Storage Stack`, `Community 112`, `Community 113`, `Community 114`?**
-  _High betweenness centrality (0.003) - this node is a cross-community bridge._
-- **Why does `../layouts/BlogPost.astro` connect `Enterprise Homelab Infrastructure` to `Community 112`, `Community 115`, `Community 116`?**
-  _High betweenness centrality (0.001) - this node is a cross-community bridge._
+- **Why does `../components/Header.astro` connect `Enterprise Homelab Infrastructure` to `Cloudflare Workers Stubable Interfaces`?**
+  _High betweenness centrality (0.004) - this node is a cross-community bridge._
+- **Why does `../components/Footer.astro` connect `Enterprise Homelab Infrastructure` to `AI Chat and Edge Storage Stack`?**
+  _High betweenness centrality (0.004) - this node is a cross-community bridge._
 - **What connects `redirectUrls`, `name`, `description` to the rest of the system?**
-  _877 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _876 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Should `Enterprise Homelab Infrastructure` be split into smaller, more focused modules?**
+  _Cohesion score 0.05310734463276836 - nodes in this community are weakly interconnected._
 - **Should `AI Art Studio and Workspace UI` be split into smaller, more focused modules?**
-  _Cohesion score 0.044444444444444446 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.043478260869565216 - nodes in this community are weakly interconnected._
 - **Should `ZFS Storage and Homelab Provisioning` be split into smaller, more focused modules?**
   _Cohesion score 0.14166666666666666 - nodes in this community are weakly interconnected._
 - **Should `Home Server and Self-Hosted Media` be split into smaller, more focused modules?**
