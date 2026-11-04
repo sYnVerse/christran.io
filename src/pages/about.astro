@@ -15,9 +15,9 @@ const impactMetrics = [
 	},
 	{
 		label: 'Certifications',
-		value: '6 Active',
-		badge: '+2 NEW · OCT 2026',
-		subtext: 'CompTIA CIOS Stack Unlocked',
+		value: '9 Active',
+		badge: '+3 FORTINET · OCT 2026',
+		subtext: 'Fortinet NSE & CompTIA CIOS',
 		accent: 'emerald',
 	},
 	{
@@ -73,6 +73,39 @@ const stackCerts = {
 };
 
 const secondaryCerts = [
+	{
+		id: 'fortinet-nse-1',
+		title: 'Fortinet NSE 1',
+		subtitle: 'Certified in Cybersecurity',
+		issuer: 'Fortinet',
+		date: 'Oct 2026',
+		badge: 'FORTINET NSE',
+		description: 'Foundational cybersecurity concepts, modern threat landscape analysis, threat intelligence, and core information security principles.',
+		verificationUrl: 'https://www.credly.com/badges/3f536388-f68d-42b1-9b34-e6853d738c94',
+		isRoadmap: false,
+	},
+	{
+		id: 'fortinet-nse-2',
+		title: 'Fortinet NSE 2',
+		subtitle: 'Certified in Cybersecurity',
+		issuer: 'Fortinet',
+		date: 'Oct 2026',
+		badge: 'FORTINET NSE',
+		description: 'Evolution of enterprise network defense, Next-Generation Firewall (NGFW) technical architecture, and threat mitigation mechanisms.',
+		verificationUrl: 'https://www.credly.com/badges/ae1df511-7bd5-473e-b279-999863473b1f',
+		isRoadmap: false,
+	},
+	{
+		id: 'fortinet-nse-3',
+		title: 'Fortinet NSE 3',
+		subtitle: 'Certified in Cybersecurity',
+		issuer: 'Fortinet',
+		date: 'Oct 2026',
+		badge: 'FORTINET NSE',
+		description: 'High-level FortiGate device operations, SSL inspection, antivirus, web filtering, application control, and IPsec/SSL VPN security policies.',
+		verificationUrl: 'https://www.credly.com/badges/55adaa15-0224-47a4-bc34-635dbe629287',
+		isRoadmap: false,
+	},
 	{
 		id: 'itil-4',
 		title: 'ITIL® 4 Foundation',
@@ -336,6 +369,36 @@ const toolkitDomains = [
 		  "hasCredential": [
 		    {
 		      "@type": "EducationalOccupationalCredential",
+		      "name": "Fortinet NSE 3 Certified in Cybersecurity",
+		      "credentialCategory": "certification",
+		      "url": "https://www.credly.com/badges/55adaa15-0224-47a4-bc34-635dbe629287",
+		      "recognizedBy": {
+		        "@type": "Organization",
+		        "name": "Fortinet"
+		      }
+		    },
+		    {
+		      "@type": "EducationalOccupationalCredential",
+		      "name": "Fortinet NSE 2 Certified in Cybersecurity",
+		      "credentialCategory": "certification",
+		      "url": "https://www.credly.com/badges/ae1df511-7bd5-473e-b279-999863473b1f",
+		      "recognizedBy": {
+		        "@type": "Organization",
+		        "name": "Fortinet"
+		      }
+		    },
+		    {
+		      "@type": "EducationalOccupationalCredential",
+		      "name": "Fortinet NSE 1 Certified in Cybersecurity",
+		      "credentialCategory": "certification",
+		      "url": "https://www.credly.com/badges/3f536388-f68d-42b1-9b34-e6853d738c94",
+		      "recognizedBy": {
+		        "@type": "Organization",
+		        "name": "Fortinet"
+		      }
+		    },
+		    {
+		      "@type": "EducationalOccupationalCredential",
 		      "name": "CompTIA IT Operations Specialist (CIOS)",
 		      "credentialCategory": "certification",
 		      "url": "https://www.credly.com/badges/42b705f3-02ad-4397-bb7a-e8a4099e9c58",
@@ -423,7 +486,7 @@ const toolkitDomains = [
 						<span class="telemetry-item"><span class="k">ROLE:</span> <strong class="v">NET_ENGINEER</strong></span>
 						<span class="telemetry-item"><span class="k">SITES:</span> <strong class="v-accent">70+ ONLINE</strong></span>
 						<span class="telemetry-item"><span class="k">DATA_CENTERS:</span> <strong class="v-accent">2 ACTIVE</strong></span>
-						<span class="telemetry-item"><span class="k">CERT_STACK:</span> <strong class="v-cios">CIOS_VERIFIED</strong></span>
+						<span class="telemetry-item"><span class="k">CERT_STACK:</span> <strong class="v-cios">CIOS & NSE_ACTIVE</strong></span>
 					</div>
 				</header>
 
@@ -462,6 +525,7 @@ const toolkitDomains = [
 							<span class="meta-chip">🎓 B.S. Math-CS (UCSD)</span>
 							<span class="meta-chip">🎓 M.S. ITM (WGU '27)</span>
 							<span class="meta-chip chip-highlight">🛡️ CompTIA CIOS Stack</span>
+							<span class="meta-chip chip-highlight">🔒 Fortinet NSE 1-3</span>
 						</div>
 
 						<div class="dossier-actions">
@@ -508,7 +572,7 @@ const toolkitDomains = [
 						</div>
 						<div class="celebration-badge">
 							<span class="celebration-icon">⚡</span>
-							<span>Passed Network+ Oct 2026 · Unlocked CompTIA CIOS Stack</span>
+							<span>Earned Fortinet NSE 1-3 · Unlocked CompTIA CIOS Stack (Oct 2026)</span>
 						</div>
 					</div>
 
@@ -638,9 +702,9 @@ const toolkitDomains = [
 						</div>
 					</div>
 
-					<!-- Secondary Certifications & Roadmap Grid (4-Card Row) -->
+					<!-- Secondary Certifications & Roadmap Grid -->
 					<div class="secondary-certs-header">
-						<span class="secondary-certs-title">Additional Credentials & Roadmap Target</span>
+						<span class="secondary-certs-title">Fortinet Security Fabric & Additional Credentials</span>
 						<span class="secondary-certs-note">Verified Third-Party Issuers</span>
 					</div>
 
@@ -649,7 +713,7 @@ const toolkitDomains = [
 							<div class:list={['secondary-cert-card', { 'roadmap-card': cert.isRoadmap }]}>
 								<div class="secondary-card-top">
 									<div class="sec-badge-row">
-										<span class="sec-category">{cert.badge}</span>
+										<span class:list={['sec-category', { 'fortinet-category': cert.badge === 'FORTINET NSE' }]}>{cert.badge}</span>
 										<span class="sec-date">{cert.date}</span>
 									</div>
 									<h4 class="sec-cert-title">{cert.title}</h4>
@@ -1618,8 +1682,11 @@ const toolkitDomains = [
 			}
 			.secondary-certs-grid {
 				display: grid;
-				grid-template-columns: repeat(4, 1fr);
+				grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
 				gap: 1rem;
+			}
+			.fortinet-category {
+				color: #f87171 !important;
 			}
 			.secondary-cert-card {
 				background: rgba(15, 20, 38, 0.65);

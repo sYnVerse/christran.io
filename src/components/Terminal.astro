@@ -1007,8 +1007,18 @@
 					ls: function () {
 						return '__HTML__' + 'skills  certs  contact  portfolio  resume  about  explore<br><br>Tip: try <code>cat resume</code>, <code>explore</code>, or <code>shortestpath</code>.';
 					},
+					fortinet: function () {
+						return 'Fortinet Security Fabric (chris.local):\n\n' +
+							'  ✔ Fortinet NSE 3 Certified in Cybersecurity (Oct 2026)\n' +
+							'  ✔ Fortinet NSE 2 Certified in Cybersecurity (Oct 2026)\n' +
+							'  ✔ Fortinet NSE 1 Certified in Cybersecurity (Oct 2026)\n' +
+							'  Active Infrastructure: FortiGate, FortiManager, FortiAnalyzer across 70+ sites.';
+					},
 					certs: function () {
 						return 'Certificate inventory (chris.local):\n\n' +
+							'  ✔ Fortinet NSE 3 Certified in Cybersecurity (Earned Oct 2026)\n' +
+							'  ✔ Fortinet NSE 2 Certified in Cybersecurity (Earned Oct 2026)\n' +
+							'  ✔ Fortinet NSE 1 Certified in Cybersecurity (Earned Oct 2026)\n' +
 							'  ★ CompTIA IT Operations Specialist (CIOS) [Stacked: A+ & Net+]\n' +
 							'  ✔ CompTIA Network+ (Earned 2026)\n' +
 							'  ✔ CompTIA A+ (Earned 2025)\n' +
@@ -1045,8 +1055,8 @@
 							return commands['resume']();
 						} else if (file === 'skills') {
 							return commands['skills']();
-						} else if (file === 'certs') {
-							return commands['certs']();
+						} else if (file === 'certs' || file === 'fortinet') {
+							return commands[file] ? commands[file]() : commands['certs']();
 						} else if (file === 'contact') {
 							return commands['contact']();
 						} else if (file === 'about') {
@@ -1350,7 +1360,7 @@
 						let canonical = baseCmd;
 						if (baseCmd === 'tr' || baseCmd === 'tracert') {
 							canonical = 'traceroute';
-						} else if (baseCmd === 'certifications') {
+						} else if (baseCmd === 'certifications' || baseCmd === 'nse') {
 							canonical = 'certs';
 						}
 
