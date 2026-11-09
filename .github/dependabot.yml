@@ -4,6 +4,8 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "weekly"
+    exclude-paths:
+      - "tools/**"
     allow:
       - dependency-type: "production"
     groups:
