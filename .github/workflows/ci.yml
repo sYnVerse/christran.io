@@ -1,8 +1,6 @@
 name: CI
 
 on:
-  push:
-    branches: [main]
   pull_request:
     branches: [main]
 
@@ -32,8 +30,6 @@ jobs:
         uses: dorny/paths-filter@v3
         id: filter
         with:
-          # On push to main, compare against the previous commit on the same branch.
-          base: ${{ github.ref }}
           predicate-quantifier: every
           filters: |
             non-tools:
