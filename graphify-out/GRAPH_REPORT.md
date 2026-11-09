@@ -1,16 +1,16 @@
-# Graph Report - christran.io  (2026-11-03)
+# Graph Report - christran.io  (2026-11-08)
 
 ## Corpus Check
-- 99 files · ~2,566,711 words
+- 100 files · ~2,587,033 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1252 nodes · 1330 edges · 118 communities (88 shown, 30 thin omitted)
+- 1253 nodes · 1330 edges · 119 communities (89 shown, 30 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 40 edges (avg confidence: 0.86)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `3c251afc`
+- Built from commit: `5c74b150`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -143,7 +143,7 @@
 - **Elon Musk Business Ecosystem** — src_content_blog_spacex_ipo_equation_spacex, src_content_blog_tesla_fsd_tesla, src_content_blog_spacex_ipo_equation_xai [INFERRED 0.90]
 - **Orbital Infrastructure Components** — src_content_blog_spacex_ipo_equation_starship, src_content_blog_spacex_ipo_equation_starlink, src_content_blog_spacex_ipo_equation_orbital_data_center [EXTRACTED 0.95]
 
-## Communities (118 total, 30 thin omitted)
+## Communities (119 total, 30 thin omitted)
 
 ### Community 0 - "Enterprise Homelab Infrastructure"
 Cohesion: 0.05

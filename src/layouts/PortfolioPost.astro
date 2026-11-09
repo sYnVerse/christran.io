@@ -87,9 +87,10 @@ const { title, description } = Astro.props;
 				border-collapse: collapse;
 			}
 			:global(.spec-table td) {
-				padding: 0.4rem 0;
+				padding: 0.45rem 0;
 				font-size: 0.88rem;
 				border-bottom: 1px solid rgba(123, 158, 255, 0.08);
+				vertical-align: top;
 			}
 			:global(.spec-table tr:last-child td) {
 				border-bottom: none;
@@ -97,7 +98,9 @@ const { title, description } = Astro.props;
 			:global(.spec-label) {
 				color: rgb(var(--gray));
 				font-weight: 600;
-				width: 5rem;
+				width: 5.5rem;
+				min-width: 5rem;
+				padding-right: 0.75rem;
 			}
 			:global(.lab-note) {
 				display: flex;

@@ -65,7 +65,7 @@
     "semantic_hash": ""
   },
   "src/components/Terminal.astro": {
-    "mtime": 1793766419.0221343,
+    "mtime": 1793861105.7121444,
     "ast_hash": "92909b083cf0026f5419b20aad811c04",
     "semantic_hash": ""
   },
@@ -110,12 +110,12 @@
     "semantic_hash": ""
   },
   "src/layouts/PortfolioPost.astro": {
-    "mtime": 1781571214.6761708,
-    "ast_hash": "c81cdbad5347092cbb9fd48e812c611b",
-    "semantic_hash": "c81cdbad5347092cbb9fd48e812c611b"
+    "mtime": 1794208106.020981,
+    "ast_hash": "64397e040f90eb4a68c6bbdde1ce7c74",
+    "semantic_hash": ""
   },
   "src/pages/about.astro": {
-    "mtime": 1793766419.019148,
+    "mtime": 1793861105.7236786,
     "ast_hash": "ef26bdd43b6ccfc91903f45a50e3208f",
     "semantic_hash": ""
   },
@@ -135,7 +135,7 @@
     "semantic_hash": ""
   },
   "src/pages/index.astro": {
-    "mtime": 1793766419.0201333,
+    "mtime": 1793861105.732844,
     "ast_hash": "b71cb8c432b2d9d5f125f0ce86374b5a",
     "semantic_hash": ""
   },
@@ -370,8 +370,8 @@
     "semantic_hash": ""
   },
   "src/content/portfolio/synx.mdx": {
-    "mtime": 1793765666.6206963,
-    "ast_hash": "caabcef4c2b2913a3a44935fe8e3face",
+    "mtime": 1794208113.275187,
+    "ast_hash": "d7bf19c91768ce973d8e947f0f522863",
     "semantic_hash": ""
   },
   "tools/blog-generator/Instructions.md": {
@@ -727,6 +727,16 @@
   ".github/workflows/codeql.yml": {
     "mtime": 1793765666.303131,
     "ast_hash": "30689adee6971b5925b0b1d00a88e47d",
+    "semantic_hash": ""
+  },
+  "src/content/portfolio/synfi.mdx": {
+    "mtime": 1794208143.6311135,
+    "ast_hash": "042d3097cfb8e9cfa6d0169f199e51a5",
+    "semantic_hash": ""
+  },
+  "src/assets/img/projects/synfi.png": {
+    "mtime": 1793769550.4814713,
+    "ast_hash": "0a420629f620aa638012cc4a444195a1",
     "semantic_hash": ""
   }
 }

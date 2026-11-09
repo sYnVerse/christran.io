@@ -1,9 +1,9 @@
 ---
 title: "sYnX"
-description: "A to-do list app for the web and Android featuring shared and collaborative lists, nested subtasks, recurring reminders, a calendar view, home screen widgets, and reminders by email, text, Discord, and push notification. Built with Remix on Cloudflare Workers and Cloudflare D1, with an Expo / React Native Android app."
+description: "A fast, collaborative to-do list app for the web and Android featuring shared lists, nested subtasks, recurring reminders, calendar view, home screen widgets, Over-The-Air (OTA) updates, and reminders by email, text, Discord, and push notifications. Built with React Router on Cloudflare Workers and Cloudflare D1, with an Expo / React Native Android app."
 category: "app"
 tags: ["Task Management", "Productivity", "Web App", "Mobile App"]
-techStack: ["Cloudflare Workers", "D1 Database", "Remix", "React Native", "Expo", "TypeScript"]
+techStack: ["Cloudflare Workers", "D1 Database", "React Router", "React Native", "Expo", "TypeScript"]
 image: "/img/projects/synx.jpg"
 liveUrl: "https://synx.christran.io"
 sourceUrl: "https://github.com/sYnVerse/sYnX"
@@ -12,7 +12,7 @@ order: 5
 ---
 
 <p>
-	<strong>sYnX</strong> is a fast, collaborative to-do list app for organizing and tracking personal and professional tasks on the web and on Android. The web app is built with the Remix framework and runs on Cloudflare Workers with a Cloudflare D1 database. The Android app is built with Expo and React Native and uses the same account and data through the web app's REST API. Sign-in goes through <a href="/portfolio/synid">sYnID</a>, the sYnVerse single sign-on server.
+	<strong>sYnX</strong> is a fast, collaborative to-do list app for organizing and tracking personal and professional tasks on the web and on Android. The web app is built with React Router 8 and runs on Cloudflare Workers with a Cloudflare D1 database. The Android app is built with Expo and React Native and uses the same account and data through the web app's REST API. Sign-in goes through <a href="/portfolio/synid">sYnID</a>, the sYnVerse single sign-on server.
 </p>
 
 <p>
@@ -31,8 +31,8 @@ order: 5
 		</div>
 		<table class="spec-table">
 			<tbody>
-				<tr><td class="spec-label">Framework</td><td>Remix 2 with React 19</td></tr>
-				<tr><td class="spec-label">Build Tool</td><td>Vite (using Remix Vite Plugin)</td></tr>
+				<tr><td class="spec-label">Framework</td><td>React Router 8 with React 19</td></tr>
+				<tr><td class="spec-label">Build Tool</td><td>Vite (using @react-router/dev & Cloudflare Vite Plugin)</td></tr>
 				<tr><td class="spec-label">Language</td><td>TypeScript</td></tr>
 				<tr><td class="spec-label">Styling</td><td>Tailwind CSS</td></tr>
 				<tr><td class="spec-label">Validation</td><td>Valibot</td></tr>
@@ -51,6 +51,7 @@ order: 5
 			<tbody>
 				<tr><td class="spec-label">Hosting</td><td>Cloudflare Workers Assets (Static + Dynamic routing)</td></tr>
 				<tr><td class="spec-label">Database</td><td>Cloudflare D1 (Serverless SQL, versioned migrations)</td></tr>
+				<tr><td class="spec-label">Data Loading</td><td>Streaming Deferred Loaders (Suspense + &lt;Await&gt;)</td></tr>
 				<tr><td class="spec-label">Reminders</td><td>Cron Trigger (runs every minute)</td></tr>
 				<tr><td class="spec-label">Auth</td><td>sYnID (OpenAuth, PKCE)</td></tr>
 				<tr><td class="spec-label">CI/CD</td><td>GitHub Actions + Cloudflare Workers Builds</td></tr>
@@ -68,10 +69,11 @@ order: 5
 		<table class="spec-table">
 			<tbody>
 				<tr><td class="spec-label">Platform</td><td>Android</td></tr>
-				<tr><td class="spec-label">Framework</td><td>Expo + React Native</td></tr>
-				<tr><td class="spec-label">Data Sync</td><td>sYnX REST API + TanStack Query (offline copy)</td></tr>
-				<tr><td class="spec-label">Push</td><td>Firebase Cloud Messaging</td></tr>
-				<tr><td class="spec-label">Builds</td><td>EAS Build (Android preview APKs)</td></tr>
+				<tr><td class="spec-label">Framework</td><td>Expo SDK 58 with React Native 0.88</td></tr>
+				<tr><td class="spec-label">Updates & CI</td><td>Over-the-Air (OTA) via expo-updates + EAS Fingerprint</td></tr>
+				<tr><td class="spec-label">Data Sync</td><td>sYnX REST API + TanStack Query (offline persistence)</td></tr>
+				<tr><td class="spec-label">Push & Calendar</td><td>Firebase Cloud Messaging + Device Calendar Sync</td></tr>
+				<tr><td class="spec-label">Versioning</td><td>Dynamic runtime versioning with expo-application</td></tr>
 			</tbody>
 		</table>
 	</div>
@@ -80,22 +82,25 @@ order: 5
 <div class="lab-note">
 	<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
 	<span>
-		<strong>Cloudflare D1 Database Binding:</strong> The developer setup utilizes Cloudflare's Dev Proxy to dynamically bridge bindings (such as the <code>synx-db</code> D1 database) directly into the local Remix Vite server during development.
+		<strong>Cloudflare D1 Database Binding:</strong> The developer setup utilizes Cloudflare's Dev Proxy to dynamically bridge bindings (such as the <code>synx-db</code> D1 database) directly into the local React Router Vite server during development.
 	</span>
 </div>
 
 <h2>Core Features</h2>
 <ul>
-	<li><strong>Collaborative Sharing</strong> — Share task lists as Private, View-Only, or Collaborative. Lists opened from someone else's link appear under "Shared with me" with the owner's display name, and emails are never shown. On Collaborative lists, collaborators send delete requests that the owner approves or declines.</li>
+	<li><strong>Collaborative Sharing & Creator Deletes</strong> — Share task lists as Private, View-Only, or Collaborative. Lists opened from someone else's link appear under "Shared with me" with the owner's display name, and emails are never shown. On Collaborative lists, collaborators can delete tasks they added themselves immediately without waiting for owner approval, while deleting tasks added by others still routes through owner approval queues.</li>
 	<li><strong>Activity Log</strong> — Shared lists keep an owner-only Activity log of who added, edited, completed, or deleted tasks and who requested deletes. Entries are removed automatically after 90 days.</li>
-	<li><strong>Nested Subtasks</strong> — Break tasks down into subtasks nested under their parent task.</li>
-	<li><strong>Priorities, Durations & Categories</strong> — Give tasks a priority and an optional duration, and organize lists by category (Checklist, Study, Shopping, Work, Travel, and more, or a custom one).</li>
-	<li><strong>Reminders & Recurring Tasks</strong> — Set reminders with quick presets or a picked date and time, and repeat tasks Daily, Weekly, or Monthly. Repeating tasks keep their local time in your home time zone, even across daylight saving changes.</li>
-	<li><strong>Calendar View</strong> — See tasks on a calendar next to the list view. On the web, drag unscheduled tasks onto a day.</li>
-	<li><strong>Search & Sorting Options</strong> — Search tasks (including subtasks), filter by All, Active, or Done, and sort by Date Created, Priority, Reminder Time, or Name.</li>
-	<li><strong>Multi-Channel Notifications</strong> — An every-minute cron sends due reminders by email, text message, Discord webhook, and push notification to your phones, with browser notifications while the web app is open.</li>
-	<li><strong>Single Sign-On & Guest Mode</strong> — Sign in once with sYnID, with sessions that renew in the background. If you sign in with Google, GitHub, or Microsoft, your profile photo and name can carry over. Without signing in, the web app works in guest mode: guest lists stay in the browser and move to your account when you sign in. Guests can view other people's shared lists but must sign in to edit them.</li>
-	<li><strong>Android App & Widgets</strong> — A native Android app with Tasks, Calendar, Lists, and Settings tabs, three home screen widgets (check off tasks, see what's up next, track progress and quick add), deep links, an offline copy of your lists, and optional sync of reminders to a device calendar.</li>
+	<li><strong>Completed Section</strong> — Completed tasks and subtasks automatically move into a collapsible "Completed (N)" section at the bottom of lists and subtask lists on both web and mobile, keeping workflows tidy while preserving one-tap unchecking and restoration.</li>
+	<li><strong>Nested Subtasks & Dedicated Editing</strong> — Break tasks down into subtasks nested under their parent task. On mobile, a dedicated subtask editing modal provides pencil actions, multiline title text wrapping, and compact duration indicators.</li>
+	<li><strong>Priorities, Durations & Category Emojis</strong> — Assign priority levels with visual colored left stripes on mobile, optional task durations with narrow-screen responsive pickers, and category tags displaying preset emoji indicators (🛒 Shopping, 🎬 Movies, 📚 Study, ✈️ Travel, etc.) across web and mobile, with support for clearing back to None.</li>
+	<li><strong>Reminders & Recurring Tasks</strong> — Set reminders with quick presets or a custom date and time picker (with distinct reminder date and time indicators on mobile task cards), and repeat tasks Daily, Weekly, or Monthly. Repeating tasks preserve their local time in your home time zone across daylight saving changes.</li>
+	<li><strong>Calendar View & Device Sync</strong> — View tasks on an interactive calendar next to the list view. On the web, drag unscheduled tasks onto any day; on mobile, synchronize reminders directly to device calendars with interactive permission prompt detection.</li>
+	<li><strong>Search & Sorting Options</strong> — Search tasks and subtasks with isolated matching subtasks and highlighted query terms. Filter by All, Active, or Done, and sort by Reminder Time (with priority fallback), Date Created, or Name, remembered per list.</li>
+	<li><strong>Streaming Performance & Instant Navigation</strong> — The web app utilizes React Router deferred loaders to render task lists instantly while streaming activity logs, delete queues, and profile avatars via Suspense. Sidebar list switching leverages client-side prefetching (<code>Link prefetch="intent"</code>) for instantaneous transitions without full-page reloads.</li>
+	<li><strong>Over-The-Air (OTA) Mobile Updates</strong> — The mobile app receives rapid over-the-air JavaScript and asset updates through <code>expo-updates</code>. The EAS CI/CD pipeline calculates runtime fingerprints to auto-publish OTA updates when native code is untouched, and only builds new preview APKs when native dependencies change.</li>
+	<li><strong>Multi-Channel Notifications</strong> — An every-minute cron trigger sends due reminders by email, text message (supporting all major carriers), Discord webhook, and push notifications to phones, with real-time browser notifications while the web app is open.</li>
+	<li><strong>Single Sign-On & Guest Mode</strong> — Sign in once with sYnID, with sessions that renew seamlessly in the background and support OAuth profiles (Google, GitHub, Microsoft). Without signing in, guest mode stores lists in local browser storage and seamlessly migrates them upon authentication. Guests can view shared lists in read-only mode and sign in to collaborate.</li>
+	<li><strong>Android App & Interactive Widgets</strong> — Native Android app featuring Tasks, Calendar, Lists, and Settings screens, plus three home screen widgets. The Pinned List widget allows switching the active list directly from the home screen widget and adheres to the list's custom task sort order.</li>
 	<li><strong>Theme Customizer</strong> — Choose between Midnight Indigo, Emerald Forest, Sunset Rose, Cyberpunk Neon, and Light Pastel themes on the web, and light, dark, or system themes on Android.</li>
 </ul>
 
@@ -105,7 +110,7 @@ order: 5
 </p>
 
 <div class="tech-tags">
-	<span class="tag">Remix</span>
+	<span class="tag">React Router</span>
 	<span class="tag">Cloudflare Workers Assets</span>
 	<span class="tag">Cloudflare D1</span>
 	<span class="tag">TypeScript</span>
@@ -113,5 +118,6 @@ order: 5
 	<span class="tag">React</span>
 	<span class="tag">React Native</span>
 	<span class="tag">Expo</span>
+	<span class="tag">expo-updates</span>
 	<span class="tag">Tailwind CSS</span>
 </div>
