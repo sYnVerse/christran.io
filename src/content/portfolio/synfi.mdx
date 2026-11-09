@@ -6,7 +6,6 @@ tags: ["Personal Finance", "Peer Lending", "Expense Tracker", "Mobile App", "Web
 techStack: ["Cloudflare Workers", "D1 Database", "React Native", "Expo", "Hono", "TypeScript", "Plaid"]
 image: "/img/projects/synfi.png"
 liveUrl: "https://synfi.christran.io"
-sourceUrl: "https://github.com/sYnVerse/sYnFi"
 featured: false
 order: 12
 ---
@@ -16,7 +15,7 @@ order: 12
 </p>
 
 <p>
-	sYnFi is open source under the GNU AGPL-3.0 license. The full source code is available on <a href="https://github.com/sYnVerse/sYnFi" target="_blank" rel="noopener noreferrer">GitHub</a>.
+	sYnFi is developed as a private, proprietary personal finance application within the sYnVerse ecosystem, purpose-built for secure family lending, peer agreements, and collaborative travel ledgers.
 </p>
 
 <h2>Technical Stack</h2>
@@ -35,7 +34,7 @@ order: 12
 				<tr><td class="spec-label">Universal</td><td>iOS, Android & Web (PWA)</td></tr>
 				<tr><td class="spec-label">API Engine</td><td>Hono 4 on Cloudflare Workers</td></tr>
 				<tr><td class="spec-label">Language</td><td>TypeScript</td></tr>
-				<tr><td class="spec-label">Secure Store</td><td>expo-secure-store (Keychain / Keystore)</td></tr>
+				<tr><td class="spec-label">Security</td><td>expo-secure-store (Keychain / Keystore)</td></tr>
 			</tbody>
 		</table>
 	</div>
@@ -51,9 +50,9 @@ order: 12
 			<tbody>
 				<tr><td class="spec-label">Hosting</td><td>Cloudflare Workers Assets (SPA routing + API)</td></tr>
 				<tr><td class="spec-label">Database</td><td>Cloudflare D1 (Serverless SQLite, versioned SQL)</td></tr>
-				<tr><td class="spec-label">Cron Engine</td><td>Worker Scheduled Events (daily ledger sync)</td></tr>
-				<tr><td class="spec-label">Auth</td><td>sYnID (OpenAuth, PKCE S256, audience check)</td></tr>
-				<tr><td class="spec-label">CI/CD & E2E</td><td>GitHub Actions + Playwright Cross-Viewport Suite</td></tr>
+				<tr><td class="spec-label">Crons</td><td>Worker Scheduled Events (daily ledger sync)</td></tr>
+				<tr><td class="spec-label">Auth</td><td>sYnID (OpenAuth, PKCE S256, JWKS)</td></tr>
+				<tr><td class="spec-label">CI/CD</td><td>GitHub Actions + Cloudflare Workers Builds</td></tr>
 			</tbody>
 		</table>
 	</div>
@@ -70,8 +69,8 @@ order: 12
 				<tr><td class="spec-label">Banking</td><td>Plaid (Dual-Mode: mock sandbox engine + live)</td></tr>
 				<tr><td class="spec-label">Encryption</td><td>AES-256-GCM at rest via Web Crypto API</td></tr>
 				<tr><td class="spec-label">Privacy</td><td>Masked account digits (PII/PCI minimization)</td></tr>
-				<tr><td class="spec-label">Updates</td><td>Over-the-Air (OTA) updates via expo-updates</td></tr>
-				<tr><td class="spec-label">Architecture</td><td>Non-custodial agreement tracker & ledger</td></tr>
+				<tr><td class="spec-label">Tenancy</td><td>Row-level tenant isolation (RLS)</td></tr>
+				<tr><td class="spec-label">Ledger</td><td>Non-custodial peer agreement tracker</td></tr>
 			</tbody>
 		</table>
 	</div>
