@@ -1,0 +1,118 @@
+---
+title: "sYnFi"
+description: "A modern, mobile-first personal and family finance application for peer loans, formal promissory agreements, and group vacation trip expense splitting. Built with React Native, Expo, Cloudflare Workers, Cloudflare D1, Hono, and Plaid integration."
+category: "app"
+tags: ["Personal Finance", "Peer Lending", "Expense Tracker", "Mobile App", "Web App"]
+techStack: ["Cloudflare Workers", "D1 Database", "React Native", "Expo", "Hono", "TypeScript", "Plaid"]
+image: "/img/projects/synfi.png"
+liveUrl: "https://synfi.christran.io"
+sourceUrl: "https://github.com/sYnVerse/sYnFi"
+featured: false
+order: 12
+---
+
+<p>
+	<strong>sYnFi</strong> is a modern, mobile-first personal and family finance application in the sYnVerse ecosystem designed for tracking peer and family loans, generating formal promissory agreements, and managing group vacation travel expenses with automated debt simplification. Built with React Native and Expo for iOS, Android, and Web, sYnFi runs on a 100% serverless Cloudflare stack (Workers, D1 SQLite database, and Static Assets). Authentication is unified across the ecosystem through <a href="/portfolio/synid">sYnID</a> Single Sign-On.
+</p>
+
+<p>
+	sYnFi is open source under the GNU AGPL-3.0 license. The full source code is available on <a href="https://github.com/sYnVerse/sYnFi" target="_blank" rel="noopener noreferrer">GitHub</a>.
+</p>
+
+<h2>Technical Stack</h2>
+
+<div class="specs-grid">
+	<div class="spec-card">
+		<div class="spec-header">
+			<span class="spec-icon">
+				<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/></svg>
+			</span>
+			<h3>Application Layer</h3>
+		</div>
+		<table class="spec-table">
+			<tbody>
+				<tr><td class="spec-label">Framework</td><td>React Native 0.86 with Expo SDK 57</td></tr>
+				<tr><td class="spec-label">Universal</td><td>iOS, Android & Web (PWA)</td></tr>
+				<tr><td class="spec-label">API Engine</td><td>Hono 4 on Cloudflare Workers</td></tr>
+				<tr><td class="spec-label">Language</td><td>TypeScript</td></tr>
+				<tr><td class="spec-label">Secure Store</td><td>expo-secure-store (Keychain / Keystore)</td></tr>
+			</tbody>
+		</table>
+	</div>
+
+	<div class="spec-card">
+		<div class="spec-header">
+			<span class="spec-icon">
+				<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+			</span>
+			<h3>Edge Deployment</h3>
+		</div>
+		<table class="spec-table">
+			<tbody>
+				<tr><td class="spec-label">Hosting</td><td>Cloudflare Workers Assets (SPA routing + API)</td></tr>
+				<tr><td class="spec-label">Database</td><td>Cloudflare D1 (Serverless SQLite, versioned SQL)</td></tr>
+				<tr><td class="spec-label">Cron Engine</td><td>Worker Scheduled Events (daily ledger sync)</td></tr>
+				<tr><td class="spec-label">Auth</td><td>sYnID (OpenAuth, PKCE S256, audience check)</td></tr>
+				<tr><td class="spec-label">CI/CD & E2E</td><td>GitHub Actions + Playwright Cross-Viewport Suite</td></tr>
+			</tbody>
+		</table>
+	</div>
+
+	<div class="spec-card">
+		<div class="spec-header">
+			<span class="spec-icon">
+				<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+			</span>
+			<h3>Security & Banking</h3>
+		</div>
+		<table class="spec-table">
+			<tbody>
+				<tr><td class="spec-label">Banking</td><td>Plaid (Dual-Mode: mock sandbox engine + live)</td></tr>
+				<tr><td class="spec-label">Encryption</td><td>AES-256-GCM at rest via Web Crypto API</td></tr>
+				<tr><td class="spec-label">Privacy</td><td>Masked account digits (PII/PCI minimization)</td></tr>
+				<tr><td class="spec-label">Updates</td><td>Over-the-Air (OTA) updates via expo-updates</td></tr>
+				<tr><td class="spec-label">Architecture</td><td>Non-custodial agreement tracker & ledger</td></tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<div class="lab-note">
+	<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+	<span>
+		<strong>Exact-Cent Math & Non-Custodial Integrity:</strong> sYnFi employs an exact-cent distribution algorithm for 0% family loans and custom APR amortization schedules, eliminating fractional penny rounding drift over multi-year plans. Peer loans are strictly non-custodial: agreements and repayment schedules are tracked in sYnFi, while money moves directly peer-to-peer through channels like Zelle, Venmo, ACH, or check.
+	</span>
+</div>
+
+<h2>Core Features</h2>
+<ul>
+	<li><strong>Family & Peer Loan Management</strong> — Manage loans from either perspective: "Money I've Lent" (Lender) or "Money I've Borrowed" (Borrower), with real-time principal balance tracking, payment progress rings, and remaining installment counters.</li>
+	<li><strong>0% Family Courtesy Rate & Custom APR</strong> — Standard zero-interest family loan support with exact-cent penny distribution to eliminate fractional rounding errors. Also supports customizable APR amortization terms with monthly, bi-weekly, or lump-sum repayments extending up to 72 months.</li>
+	<li><strong>Promissory Agreement Generator</strong> — Create formal yet respectful promissory agreements tailored for family and friends. Borrowers and lenders can review terms, interest details, and payment schedules, then digitally acknowledge the agreement directly in the app.</li>
+	<li><strong>Immutable Payment Ledger</strong> — Record repayments via Zelle, Venmo, Bank Transfer, Cash, or Check. Includes custom transaction date pickers, notes, and real-time principal recalculation backed by an immutable audit trail.</li>
+	<li><strong>Vacation Trip Ledger (v2.0)</strong> — A dedicated group travel expense tracker for vacations and group outings. Create trips, invite travel companions, record split expenses across categories (Flights, Lodging, Dining, Transit, Activities, Shopping), and view real-time net balances.</li>
+	<li><strong>Smart Settle Debt Simplification</strong> — Built-in greedy minimal cash-flow engine that minimizes cross-debts among travelers into the smallest possible number of direct settlement transfers.</li>
+	<li><strong>Plaid Bank Linking (Dual-Mode)</strong> — Seamless account linking with a built-in mock sandbox engine for immediate testing without API keys, plus seamless developer tier integration for linking real institutions with masked account numbers and encrypted tokens.</li>
+	<li><strong>Glassmorphic Multi-Module Navigation</strong> — Universal floating glassmorphic tab bar with haptic feedback, dark obsidian and warm cream light themes, and an interactive Dashboard module switcher pill (<code>[ 🤝 Family Loans | ✈️ Vacation Trips ]</code>).</li>
+	<li><strong>Over-The-Air (OTA) Updates</strong> — Native mobile improvements and fixes deploy over-the-air through <code>expo-updates</code>. The EAS workflow computes native runtime fingerprints, automatically deploying OTA updates for JavaScript changes and building preview APKs only when native binary dependencies change.</li>
+	<li><strong>Single Sign-On (sYnID)</strong> — Seamless authentication powered by sYnID OpenAuth with PKCE S256, strict audience (<code>aud</code>) validation to prevent cross-app token reuse, and hardware-backed credential storage via iOS Keychain and Android Keystore.</li>
+	<li><strong>Automated E2E Testing</strong> — Comprehensive Playwright automated test suite verifying critical loan calculation workflows, trip ledger splits, and responsive viewports across desktop and mobile.</li>
+</ul>
+
+<h2>What's Next</h2>
+<p>
+	Upcoming roadmap enhancements include automated push reminders for scheduled loan installments, recurring trip expense templates, exportable PDF promissory agreements and tax documentation, and enhanced multi-currency support for international travel.
+</p>
+
+<div class="tech-tags">
+	<span class="tag">React Native</span>
+	<span class="tag">Expo</span>
+	<span class="tag">Cloudflare Workers</span>
+	<span class="tag">Cloudflare D1</span>
+	<span class="tag">Hono</span>
+	<span class="tag">TypeScript</span>
+	<span class="tag">Plaid</span>
+	<span class="tag">sYnID</span>
+	<span class="tag">expo-updates</span>
+	<span class="tag">Playwright</span>
+</div>

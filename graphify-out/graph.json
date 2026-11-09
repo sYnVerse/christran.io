@@ -10817,6 +10817,16 @@
       "norm_label": "synapse.mdx"
     },
     {
+      "label": "synfi.mdx",
+      "file_type": "document",
+      "source_file": "src/content/portfolio/synfi.mdx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "portfolio_synfi",
+      "community": 112,
+      "norm_label": "synfi.mdx"
+    },
+    {
       "label": "synid.mdx",
       "file_type": "document",
       "source_file": "src/content/portfolio/synid.mdx",
@@ -13294,9 +13304,9 @@
       "source_file": "astro.config.mjs",
       "source_location": "L9",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "astro_config",
-      "target": "lib_sitemap_redirects",
-      "confidence_score": 1.0
+      "target": "lib_sitemap_redirects"
     },
     {
       "relation": "imports",
@@ -13305,9 +13315,9 @@
       "source_file": "astro.config.mjs",
       "source_location": "L9",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "astro_config",
-      "target": "lib_sitemap_redirects_parseredirecturls",
-      "confidence_score": 1.0
+      "target": "lib_sitemap_redirects_parseredirecturls"
     },
     {
       "relation": "contains",
@@ -13638,9 +13648,9 @@
       "source_file": "package.json",
       "source_location": "L34",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "package_devdependencies",
-      "target": "package_devdependencies_yaml",
-      "confidence_score": 1.0
+      "target": "package_devdependencies_yaml"
     },
     {
       "relation": "contains",
@@ -13648,9 +13658,9 @@
       "source_file": "package.json",
       "source_location": "L35",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "package_devdependencies",
-      "target": "package_devdependencies_zod",
-      "confidence_score": 1.0
+      "target": "package_devdependencies_zod"
     },
     {
       "relation": "contains",
@@ -14731,9 +14741,9 @@
       "source_file": "src/scripts/search.ts",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "scripts_search",
-      "target": "scripts_search_utils",
-      "confidence_score": 1.0
+      "target": "scripts_search_utils"
     },
     {
       "relation": "re_exports",
@@ -14742,9 +14752,9 @@
       "source_file": "src/scripts/search.ts",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "scripts_search",
-      "target": "scripts_search_utils_calculatescore",
-      "confidence_score": 1.0
+      "target": "scripts_search_utils_calculatescore"
     },
     {
       "relation": "re_exports",
@@ -14753,9 +14763,9 @@
       "source_file": "src/scripts/search.ts",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "scripts_search",
-      "target": "scripts_search_utils_escaperegexp",
-      "confidence_score": 1.0
+      "target": "scripts_search_utils_escaperegexp"
     },
     {
       "relation": "re_exports",
@@ -14764,9 +14774,9 @@
       "source_file": "src/scripts/search.ts",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "scripts_search",
-      "target": "scripts_search_utils_highlighttext",
-      "confidence_score": 1.0
+      "target": "scripts_search_utils_highlighttext"
     },
     {
       "relation": "imports_from",
@@ -14775,9 +14785,9 @@
       "source_file": "tests/search.test.ts",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_search_test",
-      "target": "scripts_search",
-      "confidence_score": 1.0
+      "target": "scripts_search"
     },
     {
       "relation": "calls",
@@ -15355,9 +15365,9 @@
       "source_file": "src/content.config.ts",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_content_config",
-      "target": "content_schemas",
-      "confidence_score": 1.0
+      "target": "content_schemas"
     },
     {
       "relation": "imports",
@@ -15366,9 +15376,9 @@
       "source_file": "src/content.config.ts",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_content_config",
-      "target": "content_schemas_blogschema",
-      "confidence_score": 1.0
+      "target": "content_schemas_blogschema"
     },
     {
       "relation": "imports",
@@ -15377,9 +15387,9 @@
       "source_file": "src/content.config.ts",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_content_config",
-      "target": "content_schemas_portfolioschema",
-      "confidence_score": 1.0
+      "target": "content_schemas_portfolioschema"
     },
     {
       "relation": "contains",
@@ -15420,9 +15430,9 @@
       "source_file": "src/content/schemas.ts",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "content_schemas",
-      "target": "content_schemas_blogschema",
-      "confidence_score": 1.0
+      "target": "content_schemas_blogschema"
     },
     {
       "relation": "contains",
@@ -15430,9 +15440,9 @@
       "source_file": "src/content/schemas.ts",
       "source_location": "L13",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "content_schemas",
-      "target": "content_schemas_portfolioschema",
-      "confidence_score": 1.0
+      "target": "content_schemas_portfolioschema"
     },
     {
       "relation": "imports_from",
@@ -15441,9 +15451,9 @@
       "source_file": "tests/content.test.ts",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_content_test",
-      "target": "content_schemas",
-      "confidence_score": 1.0
+      "target": "content_schemas"
     },
     {
       "relation": "imports",
@@ -15452,9 +15462,9 @@
       "source_file": "tests/content.test.ts",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_content_test",
-      "target": "content_schemas_blogschema",
-      "confidence_score": 1.0
+      "target": "content_schemas_blogschema"
     },
     {
       "relation": "imports",
@@ -15463,9 +15473,9 @@
       "source_file": "tests/content.test.ts",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_content_test",
-      "target": "content_schemas_portfolioschema",
-      "confidence_score": 1.0
+      "target": "content_schemas_portfolioschema"
     },
     {
       "relation": "contains",
@@ -15545,9 +15555,9 @@
       "source_file": "src/lib/sitemap-redirects.mjs",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_sitemap_redirects",
-      "target": "lib_sitemap_redirects_parseredirecturls",
-      "confidence_score": 1.0
+      "target": "lib_sitemap_redirects_parseredirecturls"
     },
     {
       "relation": "imports_from",
@@ -15556,9 +15566,9 @@
       "source_file": "tests/redirects.test.ts",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_redirects_test",
-      "target": "lib_sitemap_redirects",
-      "confidence_score": 1.0
+      "target": "lib_sitemap_redirects"
     },
     {
       "relation": "imports",
@@ -15567,9 +15577,9 @@
       "source_file": "tests/redirects.test.ts",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_redirects_test",
-      "target": "lib_sitemap_redirects_parseredirecturls",
-      "confidence_score": 1.0
+      "target": "lib_sitemap_redirects_parseredirecturls"
     },
     {
       "relation": "imports_from",
@@ -15886,9 +15896,9 @@
       "source_file": "src/scripts/search-utils.ts",
       "source_location": "L19",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "scripts_search_utils",
-      "target": "scripts_search_utils_calculatescore",
-      "confidence_score": 1.0
+      "target": "scripts_search_utils_calculatescore"
     },
     {
       "relation": "contains",
@@ -15896,9 +15906,9 @@
       "source_file": "src/scripts/search-utils.ts",
       "source_location": "L8",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "scripts_search_utils",
-      "target": "scripts_search_utils_escaperegexp",
-      "confidence_score": 1.0
+      "target": "scripts_search_utils_escaperegexp"
     },
     {
       "relation": "contains",
@@ -15906,9 +15916,9 @@
       "source_file": "src/scripts/search-utils.ts",
       "source_location": "L12",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "scripts_search_utils",
-      "target": "scripts_search_utils_highlighttext",
-      "confidence_score": 1.0
+      "target": "scripts_search_utils_highlighttext"
     },
     {
       "relation": "contains",
@@ -15916,9 +15926,9 @@
       "source_file": "src/scripts/search-utils.ts",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "scripts_search_utils",
-      "target": "scripts_search_utils_searchitem",
-      "confidence_score": 1.0
+      "target": "scripts_search_utils_searchitem"
     },
     {
       "relation": "calls",
@@ -15927,9 +15937,9 @@
       "source_file": "src/scripts/search-utils.ts",
       "source_location": "L14",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "scripts_search_utils_highlighttext",
-      "target": "scripts_search_utils_escaperegexp",
-      "confidence_score": 1.0
+      "target": "scripts_search_utils_escaperegexp"
     },
     {
       "relation": "imports",
@@ -15938,9 +15948,9 @@
       "source_file": "tests/search.test.ts",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_search_test",
-      "target": "scripts_search_utils_escaperegexp",
-      "confidence_score": 1.0
+      "target": "scripts_search_utils_escaperegexp"
     },
     {
       "relation": "calls",
@@ -15949,9 +15959,9 @@
       "source_file": "src/scripts/search.ts",
       "source_location": "L124",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "scripts_search_performsearch",
-      "target": "scripts_search_utils_highlighttext",
-      "confidence_score": 1.0
+      "target": "scripts_search_utils_highlighttext"
     },
     {
       "relation": "imports",
@@ -15960,9 +15970,9 @@
       "source_file": "tests/search.test.ts",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_search_test",
-      "target": "scripts_search_utils_highlighttext",
-      "confidence_score": 1.0
+      "target": "scripts_search_utils_highlighttext"
     },
     {
       "relation": "calls",
@@ -15971,9 +15981,9 @@
       "source_file": "src/scripts/search.ts",
       "source_location": "L308",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "scripts_search_executefromagent",
-      "target": "scripts_search_utils_calculatescore",
-      "confidence_score": 1.0
+      "target": "scripts_search_utils_calculatescore"
     },
     {
       "relation": "calls",
@@ -15982,9 +15992,9 @@
       "source_file": "src/scripts/search.ts",
       "source_location": "L85",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "scripts_search_performsearch",
-      "target": "scripts_search_utils_calculatescore",
-      "confidence_score": 1.0
+      "target": "scripts_search_utils_calculatescore"
     },
     {
       "relation": "imports",
@@ -15993,9 +16003,9 @@
       "source_file": "tests/search.test.ts",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_search_test",
-      "target": "scripts_search_utils_calculatescore",
-      "confidence_score": 1.0
+      "target": "scripts_search_utils_calculatescore"
     },
     {
       "relation": "calls",
@@ -27340,5 +27350,5 @@
       "source_file": "src/content/blog/spacex-ipo-equation.mdx"
     }
   ],
-  "built_at_commit": "3c251afcb1ec8d825da28e12e09545bd54a12a08"
+  "built_at_commit": "5c74b15024a4844eb36a7e74ed95094fe2fc5e2d"
 }
